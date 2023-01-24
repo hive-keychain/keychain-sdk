@@ -42,13 +42,31 @@ function App() {
         console.log('It should has it!!');
         // const isKeyChainInstalled = await KeyChainSDK.isKeyChainInstalled();
         // console.log({ isKeyChainInstalled });
-        const encodeMessage = await KeyChainSDK.requestEncodeMessage(
+
+        // const encodeMessage = await KeyChainSDK.requestEncodeMessage(
+        //   'keychain.tests',
+        //   'theghost1980',
+        //   '#Hi there man!',
+        //   'memo',
+        // );
+        // console.log({ encodeMessage });
+
+        // const verifyKey = await KeyChainSDK.requestVerifyKey(
+        //   'keychain.tests',
+        //   '#JnyQbbpLdRBT8ev7SALsNru6c4bftPCf4c6AkTN42YTc52aDvcRqKVqK6yMhRAGhW8fbasR8xz14ofs63WXLP6nxDndKsBMkmg7UsAS9ucTDrKFoZkuJFCyvLmksyCYgD',
+        //   'memo',
+        // );
+        // console.log({ verifyKey });
+
+        const signBuffer = await KeyChainSDK.requestSignBuffer(
           'keychain.tests',
-          'theghost1980',
-          '#Hi there man!',
-          'memo',
+          '',
+          'active',
+          undefined,
+          'Login in Into Saturnoman.com\nProceed?',
         );
-        console.log({ encodeMessage });
+        console.log({ signBuffer });
+
         // window.hive_keychain.requestEncodeMessage(
         //   'keychain.tests',
         //   'theghost1980',

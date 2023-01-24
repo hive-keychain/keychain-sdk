@@ -10,9 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KeyChain = void 0;
-//NOTE for testing the SDK for now:
-// - There is a reactjs app within the folder: testing/
-// type WindowKeychained = Window & typeof globalThis 
 class KeyChain {
     constructor(window, options) {
         //end testing
@@ -25,7 +22,7 @@ class KeyChain {
             if (this.window) {
                 ///TODO how to add hive_keychain.js props into this new type?? WindowKeychained
                 const window = this.window;
-                return new Promise(function (resolve, rejects) {
+                return new Promise(function (resolve, reject) {
                     if (window.hive_keychain) {
                         try {
                             window.hive_keychain.requestHandshake(function () {
@@ -33,7 +30,7 @@ class KeyChain {
                             });
                         }
                         catch (error) {
-                            rejects({ handShakeError: 'Extension do not respond, please try reloading the extension!' });
+                            reject({ keychainError: 'Extension do not respond, please try reloading the extension!', type: 'Error_Hanshake' });
                         }
                     }
                     else {
@@ -43,30 +40,96 @@ class KeyChain {
             }
             else {
                 return new Promise(function (rejects) {
-                    rejects({ configError: 'Windows object not assigned, please follow SDK setup.' });
+                    rejects({ keychainError: 'Windows object not assigned, please follow SDK setup.', type: 'Error_Class_setup' });
                 });
             }
         });
         //TODO login 
         // login : (key:KeyType, message?:string) => LoginResult // Based on a verified signMessage. 
         // If no message is specified, it will be randomly generated.
+        //TODO login
+        // login = async(key: KeychainKeyTypes, message?: string) => {
+        //     if(await this.isKeyChainInstalled()){
+        //         // if(!message) //TODO generates randomly
+        //     }else{
+        //         return keychainNotInstalled;
+        //     }
+        // };
         this.requestEncodeMessage = (username, receiver, message, key) => __awaiter(this, void 0, void 0, function* () {
             if ((yield this.isKeyChainInstalled()) === true) {
                 //TODO: validation
                 ///TODO how to add hive_keychain.js props into this new type?? WindowKeychained
                 const window = this.window;
-                const cb = function (result) {
-                    return new Promise((resolve, rejects) => {
-                        resolve(result);
+                return new Promise((resolve, reject) => {
+                    window.hive_keychain.requestEncodeMessage(username, receiver, message, key, (response) => {
+                        if (response.error) {
+                            reject(response);
+                        }
+                        else {
+                            resolve(response);
+                        }
                     });
-                };
-                window.hive_keychain.requestEncodeMessage(username, receiver, message, key, cb);
-                // return new Promise((resolve, rejects) => {
-                //     //will resolve or rejects depending on result
-                // })
+                });
             }
             else {
-                //TODO handle not installed 'Request no possible if keychain extension not detected'
+                return Promise.reject({ keychainError: 'Keychain not installed, please visit: www.www.com', type: 'Error_not_installed' });
+            }
+        });
+        this.requestVerifyKey = (account, message, key) => __awaiter(this, void 0, void 0, function* () {
+            //test data:
+            //'memo' "#JnyQbbpLdRBT8ev7SALsNru6c4bftPCf4c6AkTN42YTc52aDvcRqKVqK6yMhRAGhW8fbasR8xz14ofs63WXLP6nxDndKsBMkmg7UsAS9ucTDrKFoZkuJFCyvLmksyCYgD"
+            if ((yield this.isKeyChainInstalled()) === true) {
+                const window = this.window;
+                return new Promise((resolve, reject) => {
+                    window.hive_keychain.requestVerifyKey(account, message, key, (response) => {
+                        if (response.error) {
+                            reject(response);
+                        }
+                        else {
+                            resolve(response);
+                        }
+                    });
+                });
+            }
+            else {
+                return Promise.reject({ keychainError: 'Keychain not installed, please visit: www.www.com', type: 'Error_not_installed' });
+            }
+        });
+        this.requestSignBuffer = (account, message, key, rpc, title) => __awaiter(this, void 0, void 0, function* () {
+            if ((yield this.isKeyChainInstalled()) === true) {
+                const window = this.window;
+                return new Promise((resolve, reject) => {
+                    window.hive_keychain.requestSignBuffer(account, message, key, (response) => {
+                        if (response.error) {
+                            reject(response);
+                        }
+                        else {
+                            resolve(response);
+                        }
+                    }, rpc, title);
+                });
+            }
+            else {
+                return Promise.reject({ keychainError: 'Keychain not installed, please visit: www.www.com', type: 'Error_not_installed' });
+            }
+        });
+        //TODO finish it
+        this.requestAddAccountAuthority = (account, authorizedUsername, role, weight, rpc) => __awaiter(this, void 0, void 0, function* () {
+            if ((yield this.isKeyChainInstalled()) === true) {
+                const window = this.window;
+                return new Promise((resolve, reject) => {
+                    window.hive_keychain.requestAddAccountAuthority(account, authorizedUsername, role, weight, (response) => {
+                        if (response.error) {
+                            reject(response);
+                        }
+                        else {
+                            resolve(response);
+                        }
+                    }, rpc);
+                });
+            }
+            else {
+                return Promise.reject({ keychainError: 'Keychain not installed, please visit: www.www.com', type: 'Error_not_installed' });
             }
         });
         this.window = window;

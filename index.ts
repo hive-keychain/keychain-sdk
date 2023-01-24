@@ -1,3 +1,4 @@
+import { KeychainKeyTypes } from "./interfaces/keychain.interface";
 import { Key } from "./interfaces/local-account.interface";
 
 type KeychainOptions = {rpc?:string} 
@@ -6,6 +7,30 @@ type KeychainOptions = {rpc?:string}
 // - There is a reactjs app within the folder: testing/
 
 // type WindowKeychained = Window & typeof globalThis 
+
+type KeychainRequestResponse = {
+            success: boolean;
+            error: string;
+            result: string | null;
+            data: {
+                key: string; //TODO add types & each request will vary, so later on will be data: RequestEncode | RequestTransfer....
+                message: string;
+                method: string;
+                receiver: string;
+                request_id: number,
+                type: string;
+                username: string;
+            },
+            message: string;
+            request_id: number;
+};
+
+type KeychainRequestError = {
+    keychainError: string;
+    type: string;
+};
+
+type PromiseOrError = Promise<KeychainRequestResponse | KeychainRequestError>;
 
 export class KeyChain {
     window: Window | undefined;
@@ -33,18 +58,18 @@ export class KeyChain {
      * 
      * Note: will check if window object set + keychain extension detected!
      */
-    isKeyChainInstalled = async () => {
+    isKeyChainInstalled = async (): Promise<boolean | KeychainRequestError> => {
         if(this.window){
             ///TODO how to add hive_keychain.js props into this new type?? WindowKeychained
             const window: any = this.window; 
-            return new Promise(function(resolve,rejects){
+            return new Promise(function(resolve,reject){
                 if(window.hive_keychain){
                     try {
                         window.hive_keychain.requestHandshake(function () {
                             resolve(true);
                         });   
                     } catch (error) {
-                        rejects({handShakeError: 'Extension do not respond, please try reloading the extension!'});
+                        reject({keychainError: 'Extension do not respond, please try reloading the extension!', type: 'Error_Hanshake'});
                     }   
                 }else{
                     resolve(false);
@@ -52,7 +77,7 @@ export class KeyChain {
             })
         }else{
             return new Promise(function(rejects){
-                rejects({configError: 'Windows object not assigned, please follow SDK setup.'});
+                rejects({keychainError: 'Windows object not assigned, please follow SDK setup.', type: 'Error_Class_setup'});
             })
         }
     }
@@ -61,25 +86,92 @@ export class KeyChain {
     // login : (key:KeyType, message?:string) => LoginResult // Based on a verified signMessage. 
     // If no message is specified, it will be randomly generated.
 
-    requestEncodeMessage = async(username: string, receiver: string, message: string, key: Key ) => {
+    //TODO login
+    // login = async(key: KeychainKeyTypes, message?: string) => {
+    //     if(await this.isKeyChainInstalled()){
+    //         // if(!message) //TODO generates randomly
+
+    //     }else{
+    //         return keychainNotInstalled;
+    //     }
+    // };
+
+    requestEncodeMessage = async(username: string, receiver: string, message: string, key: KeychainKeyTypes ): PromiseOrError => {
         if(await this.isKeyChainInstalled() === true){
             //TODO: validation
             ///TODO how to add hive_keychain.js props into this new type?? WindowKeychained
             const window: any = this.window; 
-            const cb = function(result: any){
-                return new Promise((resolve,rejects) => {
-                    resolve(result);
+            return new Promise((resolve,reject) => {
+                window.hive_keychain.requestEncodeMessage(username, receiver, message, key, (response: KeychainRequestResponse) => {
+                    if(response.error){
+                        reject(response);
+                    }else{
+                        resolve(response);
+                    }
                 });
-            };
-            window.hive_keychain.requestEncodeMessage(username, receiver, message, key, cb);
-            // return new Promise((resolve, rejects) => {
-            //     //will resolve or rejects depending on result
-            // })
+            })
         }else{
-            //TODO handle not installed 'Request no possible if keychain extension not detected'
+            return Promise.reject({keychainError: 'Keychain not installed, please visit: www.www.com', type: 'Error_not_installed'} as KeychainRequestError);
         }
     }
 
+    requestVerifyKey = async(account: string, message: string, key: KeychainKeyTypes): PromiseOrError => {
+        //test data:
+        //'memo' "#JnyQbbpLdRBT8ev7SALsNru6c4bftPCf4c6AkTN42YTc52aDvcRqKVqK6yMhRAGhW8fbasR8xz14ofs63WXLP6nxDndKsBMkmg7UsAS9ucTDrKFoZkuJFCyvLmksyCYgD"
+        if(await this.isKeyChainInstalled() === true){
+            const window: any = this.window;
+            return new Promise((resolve,reject) => {
+                window.hive_keychain.requestVerifyKey(account, message, key, (response: KeychainRequestResponse) => {
+                    if(response.error){
+                        reject(response);
+                    }else{
+                        resolve(response);
+                    }
+                })
+            })
+        }else{
+            return Promise.reject({keychainError: 'Keychain not installed, please visit: www.www.com', type: 'Error_not_installed'} as KeychainRequestError);
+        }
+    };
+
+    requestSignBuffer = async(account: string, message: string, key: KeychainKeyTypes, rpc?: string, title?: string ): PromiseOrError => {
+        if(await this.isKeyChainInstalled() === true){
+            const window: any = this.window;
+            return new Promise((resolve,reject) => {
+                window.hive_keychain.requestSignBuffer(account, message, key, (response: KeychainRequestResponse) => {
+                    if(response.error){
+                        reject(response);
+                    }else{
+                        resolve(response);
+                    }
+                }, rpc,title)
+            });
+        }else{
+            return Promise.reject({keychainError: 'Keychain not installed, please visit: www.www.com', type: 'Error_not_installed'} as KeychainRequestError);
+        }
+    };
+
+    //TODO finish it
+    requestAddAccountAuthority = async(account: string,
+        authorizedUsername: string,
+        role: KeychainKeyTypes,
+        weight: number,
+        rpc: string | undefined,): PromiseOrError => {
+        if(await this.isKeyChainInstalled() === true){
+            const window: any = this.window;
+            return new Promise((resolve,reject) => {
+                window.hive_keychain.requestAddAccountAuthority(account, authorizedUsername, role, weight, (response: KeychainRequestResponse) => {
+                    if(response.error){
+                        reject(response);
+                    }else{
+                        resolve(response);
+                    }
+                }, rpc);
+            });
+        }else{
+            return Promise.reject({keychainError: 'Keychain not installed, please visit: www.www.com', type: 'Error_not_installed'} as KeychainRequestError);
+        }
+    };
 }
 
 // export default KeyChain ;
