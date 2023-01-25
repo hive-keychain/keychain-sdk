@@ -2,13 +2,34 @@
 import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
+import { KeyChain } from 'keychain-sdk';
 
-const KeyChainLIB = require('keychain-sdk');
-const { KeyChain } = KeyChainLIB;
+// const generateRandomString = (size) => {
+//   const randomString = Math.random() + 1;
+//   const dictionary = {
+//     0: 'A',
+//     1: 'K-',
+//     2: 'x',
+//     3: 'E',
+//     4: 'S',
+//     5: 's',
+//     6: 'l',
+//     7: '#',
+//     8: 'P',
+//     9: '&',
+//   };
+//   return (
+//     randomString
+//       .toString()
+//       .split('')
+//       .map((char) => dictionary[char])
+//       .join('') + ' Keychain SDK Login'
+//   );
+// };
 
 function App() {
   const KeyChainSDK = new KeyChain(window, { rpc: 'DEFAULT' });
-
+  // console.log(generateRandomString());
   //tests on requestHandshake
   // useEffect(() => {
   //   const onLoadHandler = async () => {
@@ -58,14 +79,173 @@ function App() {
         // );
         // console.log({ verifyKey });
 
-        const signBuffer = await KeyChainSDK.requestSignBuffer(
-          'keychain.tests',
-          '',
-          'active',
-          undefined,
-          'Login in Into Saturnoman.com\nProceed?',
-        );
-        console.log({ signBuffer });
+        // const signBuffer = await KeyChainSDK.requestSignBuffer(
+        //   'keychain.tests',
+        //   'message!!',
+        //   'active',
+        //   undefined,
+        //   'Login in Into Saturnoman.com\nProceed?',
+        // );
+        // console.log({ signBuffer });
+
+        // const login = await KeyChainSDK.login(
+        //   'keychain.tests',
+        //   undefined,
+        //   'posting',
+        //   undefined,
+        //   'Saturnoman.com',
+        // );
+        // console.log({ login });
+
+        // const addAccountAuthority =
+        //   await KeyChainSDK.requestAddAccountAuthority(
+        //     'keychain.tests',
+        //     'sexosentido',
+        //     'posting',
+        //     1,
+        //   );
+        // console.log({ addAccountAuthority });
+
+        // const removeAccountAuthority =
+        //   await KeyChainSDK.requestRemoveAccountAuthority(
+        //     'keychain.tests',
+        //     'sexosentido',
+        //     'posting',
+        //   );
+        // console.log({ removeAccountAuthority });
+
+        // const addKeyAuthority = await KeyChainSDK.requestAddKeyAuthority(
+        //   'keychain.tests',
+        //   'STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF',
+        //   'posting',
+        //   1,
+        // );
+        // console.log({ addKeyAuthority });
+
+        // const removeKeyAuthority = await KeyChainSDK.requestRemoveKeyAuthority(
+        //   'keychain.tests',
+        //   'STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF',
+        //   'posting',
+        // );
+        // console.log({ removeKeyAuthority });
+
+        // const broadcast = await KeyChainSDK.requestBroadcast(
+        //   'keychain.tests',
+        //   [
+        //     [
+        //       'transfer',
+        //       {
+        //         from: 'keychain.tests',
+        //         to: 'theghost1980',
+        //         amount: '0.001 HIVE',
+        //         memo: 'testing keychain SDK - requestBroadcast',
+        //       },
+        //     ],
+        //   ],
+        //   'active',
+        // );
+        // console.log({ broadcast });
+
+        // const signTx = await KeyChainSDK.requestSignTx(
+        //   'keychain.tests',
+        //   {
+        //     ref_block_num: 11000,
+        //     ref_block_prefix: 112233,
+        //     expiration: new Date().toISOString(),
+        //     extensions: [],
+        //     operations: [
+        //       [
+        //         'transfer',
+        //         {
+        //           from: 'keychain.tests',
+        //           to: 'theghost1980',
+        //           amount: '0.001 HIVE',
+        //           memo: 'testing keychain SDK - requestBroadcast',
+        //         },
+        //       ],
+        //     ],
+        //   },
+        //   'active',
+        // );
+        // console.log({ signTx });
+
+        // const signedCall = await KeyChainSDK.requestSignedCall(
+        //   'keychain.tests',
+        //   'method',
+        //   'params',
+        //   'active',
+        // );
+        // console.log({ signedCall });
+
+        //         keychain.requestPost(
+        //           'stoodkev',
+        //           'Hello World!',
+        //           '## This is a blog post \
+        // \
+        // And this is some text',
+        //           'Blog',
+        //           null,
+        //           { format: 'markdown', description: 'A blog post', tags: ['Blog'] },
+        //           'hello-world',
+        //           {
+        //             author: 'stoodkev',
+        //             permlink: 'hi',
+        //             max_accepted_payout: '100000.000 SBD',
+        //             percent_steem_dollars: 10000,
+        //             allow_votes: true,
+        //             allow_curation_rewards: true,
+        //             extensions: [
+        //               [
+        //                 0,
+        //                 {
+        //                   beneficiaries: [
+        //                     { account: 'yabapmatt', weight: 1000 },
+        //                     { account: 'steemplus-pay', weight: 500 },
+        //                   ],
+        //                 },
+        //               ],
+        //             ],
+        //           },
+        //           (response) => {
+        //             console.log(response);
+        //           },
+        //         );
+
+        //TODO this one need to be completed & tested
+        // const post = await KeyChainSDK.requestPost(
+        //   'keychain.tests',
+        //   'Tha best post',
+        //   'Body:  Keychain SDK v1.0Hive Keychain TEAM :D',
+        //   [],
+        //   [],
+        //   { format: 'markdown', description: 'A blog post', tags: ['Blog'] },
+        //   'hello-world',
+        //   {
+        //     author: 'keychain.tests',
+        //     permlink: 'hi',
+        //     max_accepted_payout: '100000.000 SBD',
+        //     percent_steem_dollars: 10000,
+        //     allow_votes: true,
+        //     allow_curation_rewards: true,
+        //     extensions: [
+        //       [
+        //         0,
+        //         {
+        //           beneficiaries: [{ account: 'yabapmatt', weight: 1000 }],
+        //         },
+        //       ],
+        //     ],
+        //   },
+        // );
+        // console.log({ post });
+
+        // const vote = await KeyChainSDK.requestVote(
+        //   'keychain.tests',
+        //   '3speak-major-announcement-or-refactor-or-3speak-v20',
+        //   'threespeak',
+        //   10000,
+        // );
+        // console.log({ vote });
 
         // window.hive_keychain.requestEncodeMessage(
         //   'keychain.tests',

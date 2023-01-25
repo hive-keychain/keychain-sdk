@@ -23,7 +23,7 @@
   "homepage": "https://github.com/hive-keychain/keychain-sdk#readme",
   "devDependencies": {
     "@types/chrome": "^0.0.209",
-    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
     "eslint": "^8.32.0",
     "eslint-config-standard-with-typescript": "^31.0.0",
     "eslint-plugin-import": "^2.27.5",
