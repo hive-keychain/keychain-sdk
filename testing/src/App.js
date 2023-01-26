@@ -178,40 +178,45 @@ function App() {
         // console.log({ signedCall });
 
         //TODO this one need to be completed & tested
-        // const post = await KeyChainSDK.requestPost(
-        //   'keychain.tests',
-        //   'Tha best post',
-        //   'Body:  Keychain SDK v1.0Hive Keychain TEAM :D',
-        //   [],
-        //   [],
-        //   { format: 'markdown', description: 'A blog post', tags: ['Blog'] },
-        //   'hello-world',
-        //   {
-        //     author: 'keychain.tests',
-        //     permlink: 'hi',
-        //     max_accepted_payout: '100000.000 SBD',
-        //     percent_steem_dollars: 10000,
-        //     allow_votes: true,
-        //     allow_curation_rewards: true,
-        //     extensions: [
-        //       [
-        //         0,
+        //       const post = await KeyChainSDK.requestPost(
+        //         'stoodkev',
+        //         'Hello World!',
+        //         '## This is a blog post \
+        //  * \
+        //  * And this is some text',
+        //         'Blog',
+        //         [],
+        //         { format: 'markdown', description: 'A blog post', tags: ['Blog'] },
+        //         'hello-world',
         //         {
-        //           beneficiaries: [{ account: 'yabapmatt', weight: 1000 }],
+        //           author: 'stoodkev',
+        //           permlink: 'hi-there',
+        //           max_accepted_payout: '100000.000 SBD',
+        //           percent_steem_dollars: 10000,
+        //           allow_votes: true,
+        //           allow_curation_rewards: true,
+        //           extensions: [
+        //             [
+        //               0,
+        //               {
+        //                 beneficiaries: [
+        //                   { account: 'yabapmatt', weight: 1000 },
+        //                   { account: 'steemplus-pay', weight: 500 },
+        //                 ],
+        //               },
+        //             ],
+        //           ],
         //         },
-        //       ],
-        //     ],
-        //   },
-        // );
-        // console.log({ post });
+        //       );
+        //       console.log({ post });
 
-        const vote = await KeyChainSDK.requestVote(
-          'keychain.tests',
-          '3speak-major-announcement-or-refactor-or-3speak-v20',
-          'threespeak',
-          10000,
-        );
-        console.log({ vote });
+        // const vote = await KeyChainSDK.requestVote(
+        //   'theghost1980',
+        //   'wuswihum',
+        //   'khaleelkazi',
+        //   10000,
+        // );
+        // console.log({ vote });
 
         // const custom_json = await KeyChainSDK.requestCustomJson(
         //   undefined,
@@ -255,7 +260,7 @@ function App() {
         // const witnessVote = await KeyChainSDK.requestWitnessVote(
         //   undefined,
         //   'stoodkev',
-        //   false,
+        //   true,
         // );
         // console.log({ witnessVote });
 
@@ -265,39 +270,40 @@ function App() {
         // const powerUp = await KeyChainSDK.requestPowerUp(
         //   'keychain.tests',
         //   'keychain.tests',
-        //   '1.000',
+        //   '0.500',
         // );
         // console.log({ powerUp });
 
         // const powerDown = await KeyChainSDK.requestPowerDown(
         //   'keychain.tests',
-        //   '0.500',
+        //   '0.100',
         // );
         // console.log({ powerDown });
 
-        // keychain.requestCustomJson(
-        //   null,
-        //   'sm_market_rent',
-        //   'Active',
-        //   JSON.stringify({
-        //     items: ['9292cd44ccaef8b73a607949cc787f1679ede10b-93'],
-        //     currency: 'DEC',
-        //     days: 1,
-        //   }),
-        //   'Rent 1 card on Splinterlands',
-        //   (response) => {
-        //     console.log(response);
-        //   },
+        // const conversionCollateralized = await KeyChainSDK.requestConversion(
+        //   'keychain.tests',
+        //   '0.001',
+        //   true,
         // );
-        // window.hive_keychain.requestEncodeMessage(
+        // console.log({ conversionCollateralized });
+
+        // const conversion = await KeyChainSDK.requestConversion(
+        //   'keychain.tests',
+        //   '0.001',
+        //   false,
+        // );
+        // console.log({ conversion });
+
+        // const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
         //   'keychain.tests',
         //   'theghost1980',
-        //   '#Hi there man!',
-        //   'Memo',
-        //   (result) => {
-        //     console.log({ result });
-        //   },
+        //   '0.001',
+        //   'HIVE',
+        //   'KeychainSDK rt',
+        //   24,
+        //   2,
         // );
+        // console.log({ recurrentTransfer });
       }
     };
 

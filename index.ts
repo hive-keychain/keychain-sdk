@@ -1,5 +1,6 @@
 import { Authority, Operation, Transaction } from '@hiveio/dhive';
 import { KeychainKeyTypes } from './interfaces/keychain.interface';
+import { Keys } from './interfaces/local-account.interface';
 import utils from './testing/src/utils/utils';
 interface KeychainOptions {
   rpc?: string;
@@ -30,22 +31,7 @@ declare global {
   }
 }
 
-//TODO may be good to split each method as:
-//  - utils:
-//    - getConfig()
-//    - isKeyChainInstalled()
-//    - login
-//    - generateRandomString
-//  - crypto:
-//    - encode
-//    - decode
-//    - signBuffer
-//    - signTx
-//  - requests:
-//    - currency requests?
-//    - token requests?
-
-//TODO add same params/exit info on each method as hive_keychain.js
+//TODO add same params/examples info on each method as hive_keychain.js
 export class KeychainSDK {
   window: Window;
   options: KeychainOptions | undefined;
@@ -54,50 +40,13 @@ export class KeychainSDK {
     this.window = window;
     this.options = options;
   }
-
+  //////utils////////
   getConfig() {
     return {
       window: this.window,
       options: this.options,
     };
   }
-
-  //reuse code //TODO to remove after refactor
-  checkKeyChain = async (): Promise<undefined | KeychainRequestError> => {
-    const check = await this.isKeyChainInstalled();
-    if (check !== true) {
-      return Promise.reject({
-        keychainError: 'Keychain not installed, please visit: www.www.com',
-        type: 'Error_not_installed',
-      } as KeychainRequestError);
-    }
-  };
-
-  requestHiveKeyChain = (args: any) => {
-    //TODO how to add window type + added prop['hive_keychain']??
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestBroadcast(...args);
-    });
-  };
-
-  cbPromise = (
-    response: KeychainRequestResponse,
-    reject: (reason?: any) => void,
-    resolve: (
-      value:
-        | KeychainRequestError
-        | KeychainRequestResponse
-        | PromiseLike<KeychainRequestError | KeychainRequestResponse>,
-    ) => void,
-  ) => {
-    if (response.error) {
-      reject(response);
-    } else {
-      resolve(response);
-    }
-  };
-  //end reuse
 
   /**
    *
@@ -156,6 +105,7 @@ export class KeychainSDK {
       }
     });
   };
+  //////END utils///////
 
   requestEncodeMessage = async (
     username: string,
@@ -217,7 +167,7 @@ export class KeychainSDK {
     key: KeychainKeyTypes,
     rpc?: string,
     title?: string,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
+  ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -247,7 +197,7 @@ export class KeychainSDK {
     role: KeychainKeyTypes,
     weight: number,
     rpc: string | undefined,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
+  ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -300,7 +250,7 @@ export class KeychainSDK {
     authorizedUsername: string,
     role: KeychainKeyTypes,
     rpc: string | undefined,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
+  ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -352,7 +302,7 @@ export class KeychainSDK {
     role: KeychainKeyTypes,
     weight: Number,
     rpc: string | undefined,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
+  ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -381,7 +331,7 @@ export class KeychainSDK {
     authorizedKey: string,
     role: KeychainKeyTypes,
     rpc: string | undefined,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
+  ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -409,7 +359,7 @@ export class KeychainSDK {
     operations: Operation[],
     key: KeychainKeyTypes,
     rpc: string | undefined,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
+  ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -437,7 +387,7 @@ export class KeychainSDK {
     tx: Transaction,
     key: KeychainKeyTypes,
     rpc: string | undefined,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
+  ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -454,7 +404,9 @@ export class KeychainSDK {
           },
           rpc,
         );
-      } catch (error) {}
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
@@ -475,9 +427,7 @@ export class KeychainSDK {
     });
   };
 
-  //TODO
-  // search a question related to it, on the discord that quentin already answered.
-  // it looks like some params have changed??
+  //TODO how to fix it???
   requestPost = async (
     account: string,
     title: string,
@@ -488,46 +438,61 @@ export class KeychainSDK {
     permlink: string,
     comment_options: object,
     rpc: string | undefined,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestPost(
-        account,
-        title,
-        body,
-        parent_perm,
-        parent_account,
-        json_metadata,
-        permlink,
-        comment_options,
-        (response: KeychainRequestResponse) =>
-          this.cbPromise(response, reject, resolve),
-        rpc,
-      );
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestPost(
+          account,
+          title,
+          body,
+          parent_perm,
+          parent_account,
+          json_metadata,
+          permlink,
+          comment_options,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
-  //TODO refactor as previouses
+
   requestVote = async (
     account: string,
     permlink: string,
     author: string,
     weight: number,
     rpc: string | undefined,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestVote(
-        account,
-        permlink,
-        author,
-        weight,
-        (response: KeychainRequestResponse) => {
-          this.cbPromise(response, reject, resolve);
-        },
-        rpc,
-      );
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestVote(
+          account,
+          permlink,
+          author,
+          weight,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
@@ -538,20 +503,28 @@ export class KeychainSDK {
     json: string,
     display_msg: string,
     rpc: string | undefined,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestCustomJson(
-        account,
-        id,
-        key,
-        json,
-        display_msg,
-        (response: KeychainRequestResponse) =>
-          this.cbPromise(response, reject, resolve),
-        rpc,
-      );
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestCustomJson(
+          account,
+          id,
+          key,
+          json,
+          display_msg,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
@@ -563,22 +536,29 @@ export class KeychainSDK {
     currency: string,
     enforce: boolean = false,
     rpc: string | undefined,
-  ) => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestTransfer(
-        account,
-        to,
-        amount,
-        memo,
-        currency,
-        (response: KeychainRequestResponse) => {
-          this.cbPromise(response, reject, resolve);
-        },
-        enforce,
-        rpc,
-      );
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestTransfer(
+          account,
+          to,
+          amount,
+          memo,
+          currency,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          enforce,
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
@@ -589,20 +569,28 @@ export class KeychainSDK {
     memo: string,
     currency: string,
     rpc: string | undefined,
-  ) => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestSendToken(
-        account,
-        to,
-        amount,
-        memo,
-        currency,
-        (response: KeychainRequestResponse) =>
-          this.cbPromise(response, reject, resolve),
-        rpc,
-      );
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestSendToken(
+          account,
+          to,
+          amount,
+          memo,
+          currency,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
@@ -612,19 +600,27 @@ export class KeychainSDK {
     amount: string,
     unit: string = 'HP' || 'VESTS',
     rpc: string | undefined,
-  ) => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestDelegation(
-        username,
-        delegatee,
-        amount,
-        unit,
-        (response: KeychainRequestResponse) =>
-          this.cbPromise(response, reject, resolve),
-        rpc,
-      );
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestDelegation(
+          username,
+          delegatee,
+          amount,
+          unit,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
@@ -633,18 +629,26 @@ export class KeychainSDK {
     witness: string,
     vote: boolean,
     rpc: string | undefined,
-  ) => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestWitnessVote(
-        username,
-        witness,
-        vote,
-        (response: KeychainRequestResponse) =>
-          this.cbPromise(response, reject, resolve),
-        rpc,
-      );
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestWitnessVote(
+          username,
+          witness,
+          vote,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
@@ -652,17 +656,25 @@ export class KeychainSDK {
     username: string | undefined,
     proxy: string,
     rpc: string | undefined,
-  ) => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestProxy(
-        username,
-        proxy,
-        (response: KeychainRequestResponse) =>
-          this.cbPromise(response, reject, resolve),
-        rpc,
-      );
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestProxy(
+          username,
+          proxy,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
@@ -671,18 +683,26 @@ export class KeychainSDK {
     recipient: string,
     hive: string,
     rpc: string | undefined,
-  ) => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestPowerUp(
-        username,
-        recipient,
-        hive,
-        (response: KeychainRequestResponse) =>
-          this.cbPromise(response, reject, resolve),
-        rpc,
-      );
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestPowerUp(
+          username,
+          recipient,
+          hive,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
@@ -690,17 +710,25 @@ export class KeychainSDK {
     username: string,
     hive_power: string,
     rpc: string | undefined,
-  ) => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestPowerDown(
-        username,
-        hive_power,
-        (response: KeychainRequestResponse) =>
-          this.cbPromise(response, reject, resolve),
-        rpc,
-      );
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestPowerDown(
+          username,
+          hive_power,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
@@ -712,13 +740,240 @@ export class KeychainSDK {
     posting: Authority,
     memo: string,
     rpc: string | undefined,
-  ) => {
-    await this.checkKeyChain();
-    const window: any = this.window;
-    return new Promise((resolve, reject) => {
-      window.hive_keychain.requestCreateClaimedAccount();
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestCreateClaimedAccount(
+          username,
+          new_account,
+          owner,
+          active,
+          posting,
+          memo,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
+    });
+  };
+
+  //HF21
+  requestCreateProposal = async (
+    username: string,
+    receiver: string,
+    subject: string,
+    permlink: string,
+    daily_pay: string,
+    start: string,
+    end: string,
+    extensions: string,
+    rpc: string | undefined,
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestCreateProposal(
+          username,
+          receiver,
+          subject,
+          permlink,
+          daily_pay,
+          start,
+          end,
+          extensions,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
+    });
+  };
+
+  requestRemoveProposal = async (
+    username: string,
+    proposal_ids: string,
+    extensions: string,
+    rpc: string | undefined,
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestRemoveProposal(
+          username,
+          proposal_ids,
+          extensions,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
+    });
+  };
+
+  requestUpdateProposalVote = async (
+    username: string,
+    proposal_ids: string,
+    approve: boolean,
+    extensions: string,
+    rpc: string | undefined,
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestUpdateProposalVote(
+          username,
+          proposal_ids,
+          approve,
+          extensions,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
+    });
+  };
+
+  requestAddAccount = async (
+    username: string,
+    keys: Keys,
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestAddAccount(
+          username,
+          keys,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+        );
+      } catch (error) {
+        throw error;
+      }
+    });
+  };
+
+  /**
+   * @example
+   * import { KeychainSDK } from 'keychain-sdk';
+   * const SDKConnector = new KeychainSDK(window, { rpc: 'DEFAULT' });
+   * const conversionCollateralized = await SDKConnector.requestConversion(
+   *   'keychain.tests',
+   *   '0.001',
+   *   true,
+   * );
+   * console.log({ conversionCollateralized });
+   *
+   * @param {String} username Hive account to perform the request
+   * @param {String} amount amount to be converted.
+   * @param {Boolean} collaterized true to convert HIVE to HBD. false to convert HBD to HIVE.
+   * @param {String | undefined} rpc  Override user's RPC settings
+   */
+  requestConversion = async (
+    username: string,
+    amount: string,
+    collaterized: boolean,
+    rpc: string | undefined,
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestConversion(
+          username,
+          amount,
+          collaterized,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
+    });
+  };
+
+  /**
+   * @param {String| undefined} username Hive account to perform the request
+   * @param {String} to Hive account receiving the transfers.
+   * @param {String} amount amount to be sent on each execution.
+   * @param {String} currency HIVE or HBD on mainnet.
+   * @param {String} memo transfer memo
+   * @param {Number} recurrence How often will the payment be triggered (in hours) - minimum 24.
+   * @param {Number} executions The times the recurrent payment will be executed - minimum 2.
+   * @param {String| undefined} rpc Override user's RPC settings
+   */
+  requestRecurrentTransfer = async (
+    username: string | undefined,
+    to: string,
+    amount: string,
+    currency: string,
+    memo: string,
+    recurrence: number,
+    executions: number,
+    rpc: string | undefined,
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestRecurrentTransfer(
+          username,
+          to,
+          amount,
+          currency,
+          memo,
+          recurrence,
+          executions,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 }
-
-// export default KeyChain ;
