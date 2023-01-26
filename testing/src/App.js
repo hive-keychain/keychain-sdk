@@ -88,14 +88,14 @@ function App() {
         // );
         // console.log({ signBuffer });
 
-        const login = await KeyChainSDK.login(
-          'keychain.tests',
-          undefined,
-          'posting',
-          undefined,
-          'Saturnoman.com',
-        );
-        console.log({ login });
+        // const login = await KeyChainSDK.login(
+        //   'keychain.tests',
+        //   undefined,
+        //   'posting',
+        //   undefined,
+        //   'Saturnoman.com',
+        // );
+        // console.log({ login });
 
         // const addAccountAuthority =
         //   await KeyChainSDK.requestAddAccountAuthority(
@@ -177,40 +177,6 @@ function App() {
         // );
         // console.log({ signedCall });
 
-        //         keychain.requestPost(
-        //           'stoodkev',
-        //           'Hello World!',
-        //           '## This is a blog post \
-        // \
-        // And this is some text',
-        //           'Blog',
-        //           null,
-        //           { format: 'markdown', description: 'A blog post', tags: ['Blog'] },
-        //           'hello-world',
-        //           {
-        //             author: 'stoodkev',
-        //             permlink: 'hi',
-        //             max_accepted_payout: '100000.000 SBD',
-        //             percent_steem_dollars: 10000,
-        //             allow_votes: true,
-        //             allow_curation_rewards: true,
-        //             extensions: [
-        //               [
-        //                 0,
-        //                 {
-        //                   beneficiaries: [
-        //                     { account: 'yabapmatt', weight: 1000 },
-        //                     { account: 'steemplus-pay', weight: 500 },
-        //                   ],
-        //                 },
-        //               ],
-        //             ],
-        //           },
-        //           (response) => {
-        //             console.log(response);
-        //           },
-        //         );
-
         //TODO this one need to be completed & tested
         // const post = await KeyChainSDK.requestPost(
         //   'keychain.tests',
@@ -239,13 +205,13 @@ function App() {
         // );
         // console.log({ post });
 
-        // const vote = await KeyChainSDK.requestVote(
-        //   'keychain.tests',
-        //   '3speak-major-announcement-or-refactor-or-3speak-v20',
-        //   'threespeak',
-        //   10000,
-        // );
-        // console.log({ vote });
+        const vote = await KeyChainSDK.requestVote(
+          'keychain.tests',
+          '3speak-major-announcement-or-refactor-or-3speak-v20',
+          'threespeak',
+          10000,
+        );
+        console.log({ vote });
 
         // const custom_json = await KeyChainSDK.requestCustomJson(
         //   undefined,

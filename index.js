@@ -31,7 +31,7 @@ const utils_1 = __importDefault(require("./testing/src/utils/utils"));
 //TODO add same params/exit info on each method as hive_keychain.js
 class KeychainSDK {
     constructor(window, options) {
-        //reuse code
+        //reuse code //TODO to remove after refactor
         this.checkKeyChain = () => __awaiter(this, void 0, void 0, function* () {
             const check = yield this.isKeyChainInstalled();
             if (check !== true) {
@@ -96,14 +96,11 @@ class KeychainSDK {
                 }
             }));
         });
-        //TODO refactor reusing
         this.requestEncodeMessage = (username, receiver, message, key) => __awaiter(this, void 0, void 0, function* () {
-            if ((yield this.isKeyChainInstalled()) === true) {
-                //TODO: validation
-                ///TODO how to add hive_keychain.js props into this new type?? WindowKeychained
-                const window = this.window;
-                return new Promise((resolve, reject) => {
-                    window.hive_keychain.requestEncodeMessage(username, receiver, message, key, (response) => {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    this.window.hive_keychain.requestEncodeMessage(username, receiver, message, key, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -111,23 +108,17 @@ class KeychainSDK {
                             resolve(response);
                         }
                     });
-                });
-            }
-            else {
-                return Promise.reject({
-                    keychainError: 'Keychain not installed, please visit: www.www.com',
-                    type: 'Error_not_installed',
-                });
-            }
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
         });
-        //TODO refactor reusing
         this.requestVerifyKey = (account, message, key) => __awaiter(this, void 0, void 0, function* () {
-            //test data:
-            //'memo' "#JnyQbbpLdRBT8ev7SALsNru6c4bftPCf4c6AkTN42YTc52aDvcRqKVqK6yMhRAGhW8fbasR8xz14ofs63WXLP6nxDndKsBMkmg7UsAS9ucTDrKFoZkuJFCyvLmksyCYgD"
-            if ((yield this.isKeyChainInstalled()) === true) {
-                const window = this.window;
-                return new Promise((resolve, reject) => {
-                    window.hive_keychain.requestVerifyKey(account, message, key, (response) => {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    this.window.hive_keychain.requestVerifyKey(account, message, key, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -135,21 +126,17 @@ class KeychainSDK {
                             resolve(response);
                         }
                     });
-                });
-            }
-            else {
-                return Promise.reject({
-                    keychainError: 'Keychain not installed, please visit: www.www.com',
-                    type: 'Error_not_installed',
-                });
-            }
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
         });
-        //TODO refactor reusing
         this.requestSignBuffer = (account, message, key, rpc, title) => __awaiter(this, void 0, void 0, function* () {
-            if ((yield this.isKeyChainInstalled()) === true) {
-                const window = this.window;
-                return new Promise((resolve, reject) => {
-                    window.hive_keychain.requestSignBuffer(account, message, key, (response) => {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    this.window.hive_keychain.requestSignBuffer(account, message, key, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -157,21 +144,17 @@ class KeychainSDK {
                             resolve(response);
                         }
                     }, rpc, title);
-                });
-            }
-            else {
-                return Promise.reject({
-                    keychainError: 'Keychain not installed, please visit: www.www.com',
-                    type: 'Error_not_installed',
-                });
-            }
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
         });
-        //TODO refactor reusing
         this.requestAddAccountAuthority = (account, authorizedUsername, role, weight, rpc) => __awaiter(this, void 0, void 0, function* () {
-            if ((yield this.isKeyChainInstalled()) === true) {
-                const window = this.window;
-                return new Promise((resolve, reject) => {
-                    window.hive_keychain.requestAddAccountAuthority(account, authorizedUsername, role, weight, (response) => {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    this.window.hive_keychain.requestAddAccountAuthority(account, authorizedUsername, role, weight, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -179,21 +162,41 @@ class KeychainSDK {
                             resolve(response);
                         }
                     }, rpc);
-                });
-            }
-            else {
-                return Promise.reject({
-                    keychainError: 'Keychain not installed, please visit: www.www.com',
-                    type: 'Error_not_installed',
-                });
-            }
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
+            // if ((await this.isKeyChainInstalled()) === true) {
+            //   const window: any = this.window;
+            //   return new Promise((resolve, reject) => {
+            //     window.hive_keychain.requestAddAccountAuthority(
+            //       account,
+            //       authorizedUsername,
+            //       role,
+            //       weight,
+            //       (response: KeychainRequestResponse) => {
+            //         if (response.error) {
+            //           reject(response);
+            //         } else {
+            //           resolve(response);
+            //         }
+            //       },
+            //       rpc,
+            //     );
+            //   });
+            // } else {
+            //   return Promise.reject({
+            //     keychainError: 'Keychain not installed, please visit: www.www.com',
+            //     type: 'Error_not_installed',
+            //   } as KeychainRequestError);
+            // }
         });
-        //TODO refactor reusing
         this.requestRemoveAccountAuthority = (account, authorizedUsername, role, rpc) => __awaiter(this, void 0, void 0, function* () {
-            if ((yield this.isKeyChainInstalled()) === true) {
-                const window = this.window;
-                return new Promise((resolve, reject) => {
-                    window.hive_keychain.requestRemoveAccountAuthority(account, authorizedUsername, role, (response) => {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    this.window.hive_keychain.requestRemoveAccountAuthority(account, authorizedUsername, role, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -201,48 +204,115 @@ class KeychainSDK {
                             resolve(response);
                         }
                     }, rpc);
-                });
-            }
-            else {
-                return Promise.reject({
-                    keychainError: 'Keychain not installed, please visit: www.www.com',
-                    type: 'Error_not_installed',
-                });
-            }
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
+            // if ((await this.isKeyChainInstalled()) === true) {
+            //   const window: any = this.window;
+            //   return new Promise((resolve, reject) => {
+            //     window.hive_keychain.requestRemoveAccountAuthority(
+            //       account,
+            //       authorizedUsername,
+            //       role,
+            //       (response: KeychainRequestResponse) => {
+            //         if (response.error) {
+            //           reject(response);
+            //         } else {
+            //           resolve(response);
+            //         }
+            //       },
+            //       rpc,
+            //     );
+            //   });
+            // } else {
+            //   return Promise.reject({
+            //     keychainError: 'Keychain not installed, please visit: www.www.com',
+            //     type: 'Error_not_installed',
+            //   } as KeychainRequestError);
+            // }
         });
         this.requestAddKeyAuthority = (account, authorizedKey, role, weight, rpc) => __awaiter(this, void 0, void 0, function* () {
-            yield this.checkKeyChain();
-            const window = this.window;
-            return new Promise((resolve, reject) => {
-                window.hive_keychain.requestAddKeyAuthority(account, authorizedKey, role, weight, (response) => this.cbPromise(response, reject, resolve), rpc);
-            });
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    this.window.hive_keychain.requestAddKeyAuthority(account, authorizedKey, role, weight, (response) => {
+                        if (response.error) {
+                            reject(response);
+                        }
+                        else {
+                            resolve(response);
+                        }
+                    }, rpc);
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
         });
         this.requestRemoveKeyAuthority = (account, authorizedKey, role, rpc) => __awaiter(this, void 0, void 0, function* () {
-            yield this.checkKeyChain();
-            const window = this.window;
-            return new Promise((resolve, reject) => {
-                window.hive_keychain.requestRemoveKeyAuthority(account, authorizedKey, role, (response) => this.cbPromise(response, reject, resolve), rpc);
-            });
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    this.window.hive_keychain.requestRemoveKeyAuthority(account, authorizedKey, role, (response) => {
+                        if (response.error) {
+                            reject(response);
+                        }
+                        else {
+                            resolve(response);
+                        }
+                    }, rpc);
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
         });
         this.requestBroadcast = (account, operations, key, rpc) => __awaiter(this, void 0, void 0, function* () {
-            yield this.checkKeyChain();
-            const window = this.window;
-            return new Promise((resolve, reject) => {
-                window.hive_keychain.requestBroadcast(account, operations, key, (response) => this.cbPromise(response, reject, resolve), rpc);
-            });
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    this.window.hive_keychain.requestBroadcast(account, operations, key, (response) => {
+                        if (response.error) {
+                            reject(response);
+                        }
+                        else {
+                            resolve(response);
+                        }
+                    }, rpc);
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
         });
         this.requestSignTx = (account, tx, key, rpc) => __awaiter(this, void 0, void 0, function* () {
-            yield this.checkKeyChain();
-            const window = this.window;
-            return new Promise((resolve, reject) => {
-                window.hive_keychain.requestSignTx(account, tx, key, (response) => this.cbPromise(response, reject, resolve), rpc);
-            });
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    this.window.hive_keychain.requestSignTx(account, tx, key, (response) => {
+                        if (response.error) {
+                            reject(response);
+                        }
+                        else {
+                            resolve(response);
+                        }
+                    }, rpc);
+                }
+                catch (error) { }
+            }));
         });
         this.requestSignedCall = (account, method, params, key, rpc) => __awaiter(this, void 0, void 0, function* () {
-            yield this.checkKeyChain();
-            return new Promise((resolve, reject) => {
-                resolve(console.warn('requestSignedCall has been deprecated.'));
-            });
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    resolve('requestSignedCall has been deprecated.');
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
         });
         //TODO
         // search a question related to it, on the discord that quentin already answered.
@@ -254,6 +324,7 @@ class KeychainSDK {
                 window.hive_keychain.requestPost(account, title, body, parent_perm, parent_account, json_metadata, permlink, comment_options, (response) => this.cbPromise(response, reject, resolve), rpc);
             });
         });
+        //TODO refactor as previouses
         this.requestVote = (account, permlink, author, weight, rpc) => __awaiter(this, void 0, void 0, function* () {
             yield this.checkKeyChain();
             const window = this.window;
