@@ -291,12 +291,84 @@ class KeyChain {
                 }, rpc);
             });
         });
+        this.requestCustomJson = (account, id, key, json, display_msg, rpc) => __awaiter(this, void 0, void 0, function* () {
+            yield this.checkKeyChain();
+            const window = this.window;
+            return new Promise((resolve, reject) => {
+                window.hive_keychain.requestCustomJson(account, id, key, json, display_msg, (response) => this.cbPromise(response, reject, resolve), rpc);
+            });
+        });
+        this.requestTransfer = (account, to, amount, memo, currency, enforce = false, rpc) => __awaiter(this, void 0, void 0, function* () {
+            yield this.checkKeyChain();
+            const window = this.window;
+            return new Promise((resolve, reject) => {
+                window.hive_keychain.requestTransfer(account, to, amount, memo, currency, (response) => {
+                    this.cbPromise(response, reject, resolve);
+                }, enforce, rpc);
+            });
+        });
+        this.requestSendToken = (account, to, amount, memo, currency, rpc) => __awaiter(this, void 0, void 0, function* () {
+            yield this.checkKeyChain();
+            const window = this.window;
+            return new Promise((resolve, reject) => {
+                window.hive_keychain.requestSendToken(account, to, amount, memo, currency, (response) => this.cbPromise(response, reject, resolve), rpc);
+            });
+        });
+        this.requestDelegation = (username, delegatee, amount, unit = 'HP' || 'VESTS', rpc) => __awaiter(this, void 0, void 0, function* () {
+            yield this.checkKeyChain();
+            const window = this.window;
+            return new Promise((resolve, reject) => {
+                window.hive_keychain.requestDelegation(username, delegatee, amount, unit, (response) => this.cbPromise(response, reject, resolve), rpc);
+            });
+        });
+        this.requestWitnessVote = (username, witness, vote, rpc) => __awaiter(this, void 0, void 0, function* () {
+            yield this.checkKeyChain();
+            const window = this.window;
+            return new Promise((resolve, reject) => {
+                window.hive_keychain.requestWitnessVote(username, witness, vote, (response) => this.cbPromise(response, reject, resolve), rpc);
+            });
+        });
+        this.requestProxy = (username, proxy, rpc) => __awaiter(this, void 0, void 0, function* () {
+            yield this.checkKeyChain();
+            const window = this.window;
+            return new Promise((resolve, reject) => {
+                window.hive_keychain.requestProxy(username, proxy, (response) => this.cbPromise(response, reject, resolve), rpc);
+            });
+        });
+        this.requestPowerUp = (username, recipient, hive, rpc) => __awaiter(this, void 0, void 0, function* () {
+            yield this.checkKeyChain();
+            const window = this.window;
+            return new Promise((resolve, reject) => {
+                window.hive_keychain.requestPowerUp(username, recipient, hive, (response) => this.cbPromise(response, reject, resolve), rpc);
+            });
+        });
+        this.requestPowerDown = (username, hive_power, rpc) => __awaiter(this, void 0, void 0, function* () {
+            yield this.checkKeyChain();
+            const window = this.window;
+            return new Promise((resolve, reject) => {
+                window.hive_keychain.requestPowerDown(username, hive_power, (response) => this.cbPromise(response, reject, resolve), rpc);
+            });
+        });
         this.window = window;
         //TODO: a way to assign 'DEFAULT'
         //  - add keychain.ts, so when detect default, it can bring the defaultRPC
         //      from keychain EP.
         this.options = options;
     }
+    //TODO may be good to split each method as:
+    //  - utils:
+    //    - getConfig()
+    //    - isKeyChainInstalled()
+    //    - login
+    //    - generateRandomString
+    //  - crypto:
+    //    - encode
+    //    - decode
+    //    - signBuffer
+    //    - signTx
+    //  - requests:
+    //    - currency requests?
+    //    - token requests?
     //testing methods
     getConfig() {
         return {

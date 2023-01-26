@@ -69,6 +69,20 @@ export class KeyChain {
     this.options = options;
   }
 
+  //TODO may be good to split each method as:
+  //  - utils:
+  //    - getConfig()
+  //    - isKeyChainInstalled()
+  //    - login
+  //    - generateRandomString
+  //  - crypto:
+  //    - encode
+  //    - decode
+  //    - signBuffer
+  //    - signTx
+  //  - requests:
+  //    - currency requests?
+  //    - token requests?
   //testing methods
   getConfig() {
     return {
@@ -442,7 +456,7 @@ export class KeyChain {
     params: string,
     key: KeychainKeyTypes,
     rpc: string | undefined,
-  ) => {
+  ): Promise<void> => {
     await this.checkKeyChain();
     return new Promise((resolve, reject) => {
       resolve(console.warn('requestSignedCall has been deprecated.'));
@@ -456,12 +470,12 @@ export class KeyChain {
     title: string,
     body: string,
     parent_perm: string,
-    parent_account: [] | null,
+    parent_account: [] | undefined,
     json_metadata: object,
     permlink: string,
     comment_options: object,
     rpc: string | undefined,
-  ) => {
+  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
     await this.checkKeyChain();
     const window: any = this.window;
     return new Promise((resolve, reject) => {
@@ -487,7 +501,7 @@ export class KeyChain {
     author: string,
     weight: number,
     rpc: string | undefined,
-  ) => {
+  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
     await this.checkKeyChain();
     const window: any = this.window;
     return new Promise((resolve, reject) => {
@@ -499,6 +513,179 @@ export class KeyChain {
         (response: KeychainRequestResponse) => {
           this.cbPromise(response, reject, resolve);
         },
+        rpc,
+      );
+    });
+  };
+
+  requestCustomJson = async (
+    account: string | undefined,
+    id: string,
+    key: KeychainKeyTypes,
+    json: string,
+    display_msg: string,
+    rpc: string | undefined,
+  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
+    await this.checkKeyChain();
+    const window: any = this.window;
+    return new Promise((resolve, reject) => {
+      window.hive_keychain.requestCustomJson(
+        account,
+        id,
+        key,
+        json,
+        display_msg,
+        (response: KeychainRequestResponse) =>
+          this.cbPromise(response, reject, resolve),
+        rpc,
+      );
+    });
+  };
+
+  requestTransfer = async (
+    account: string,
+    to: string,
+    amount: string,
+    memo: string,
+    currency: string,
+    enforce: boolean = false,
+    rpc: string | undefined,
+  ) => {
+    await this.checkKeyChain();
+    const window: any = this.window;
+    return new Promise((resolve, reject) => {
+      window.hive_keychain.requestTransfer(
+        account,
+        to,
+        amount,
+        memo,
+        currency,
+        (response: KeychainRequestResponse) => {
+          this.cbPromise(response, reject, resolve);
+        },
+        enforce,
+        rpc,
+      );
+    });
+  };
+
+  requestSendToken = async (
+    account: string,
+    to: string,
+    amount: string,
+    memo: string,
+    currency: string,
+    rpc: string | undefined,
+  ) => {
+    await this.checkKeyChain();
+    const window: any = this.window;
+    return new Promise((resolve, reject) => {
+      window.hive_keychain.requestSendToken(
+        account,
+        to,
+        amount,
+        memo,
+        currency,
+        (response: KeychainRequestResponse) =>
+          this.cbPromise(response, reject, resolve),
+        rpc,
+      );
+    });
+  };
+
+  requestDelegation = async (
+    username: string | undefined,
+    delegatee: string,
+    amount: string,
+    unit: string = 'HP' || 'VESTS',
+    rpc: string | undefined,
+  ) => {
+    await this.checkKeyChain();
+    const window: any = this.window;
+    return new Promise((resolve, reject) => {
+      window.hive_keychain.requestDelegation(
+        username,
+        delegatee,
+        amount,
+        unit,
+        (response: KeychainRequestResponse) =>
+          this.cbPromise(response, reject, resolve),
+        rpc,
+      );
+    });
+  };
+
+  requestWitnessVote = async (
+    username: string | undefined,
+    witness: string,
+    vote: boolean,
+    rpc: string | undefined,
+  ) => {
+    await this.checkKeyChain();
+    const window: any = this.window;
+    return new Promise((resolve, reject) => {
+      window.hive_keychain.requestWitnessVote(
+        username,
+        witness,
+        vote,
+        (response: KeychainRequestResponse) =>
+          this.cbPromise(response, reject, resolve),
+        rpc,
+      );
+    });
+  };
+
+  requestProxy = async (
+    username: string | undefined,
+    proxy: string,
+    rpc: string | undefined,
+  ) => {
+    await this.checkKeyChain();
+    const window: any = this.window;
+    return new Promise((resolve, reject) => {
+      window.hive_keychain.requestProxy(
+        username,
+        proxy,
+        (response: KeychainRequestResponse) =>
+          this.cbPromise(response, reject, resolve),
+        rpc,
+      );
+    });
+  };
+
+  requestPowerUp = async (
+    username: string,
+    recipient: string,
+    hive: string,
+    rpc: string | undefined,
+  ) => {
+    await this.checkKeyChain();
+    const window: any = this.window;
+    return new Promise((resolve, reject) => {
+      window.hive_keychain.requestPowerUp(
+        username,
+        recipient,
+        hive,
+        (response: KeychainRequestResponse) =>
+          this.cbPromise(response, reject, resolve),
+        rpc,
+      );
+    });
+  };
+
+  requestPowerDown = async (
+    username: string,
+    hive_power: string,
+    rpc: string | undefined,
+  ) => {
+    await this.checkKeyChain();
+    const window: any = this.window;
+    return new Promise((resolve, reject) => {
+      window.hive_keychain.requestPowerDown(
+        username,
+        hive_power,
+        (response: KeychainRequestResponse) =>
+          this.cbPromise(response, reject, resolve),
         rpc,
       );
     });

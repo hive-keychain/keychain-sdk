@@ -247,6 +247,76 @@ function App() {
         // );
         // console.log({ vote });
 
+        // const custom_json = await KeyChainSDK.requestCustomJson(
+        //   undefined,
+        //   'sm_market_rent',
+        //   'Active',
+        //   JSON.stringify({
+        //     items: ['9292cd44ccaef8b73a607949cc787f1679ede10b-93'],
+        //     currency: 'DEC',
+        //     days: 1,
+        //   }),
+        //   'Rent 1 card on Splinterlands',
+        // );
+        // console.log({ custom_json });
+
+        // const transfer = await KeyChainSDK.requestTransfer(
+        //   'keychain.tests',
+        //   'theghost1980',
+        //   '0.001',
+        //   'pa los frescos',
+        //   'HIVE',
+        // );
+        // console.log({ transfer });
+
+        // const sendToken = await KeyChainSDK.requestSendToken(
+        //   'keychain.tests',
+        //   'theghost1980',
+        //   '0.001',
+        //   'frescos',
+        //   'LEO',
+        // );
+        // console.log({ sendToken });
+
+        // const delegation = await KeyChainSDK.requestDelegation(
+        //   'keychain.tests',
+        //   'theghost1980',
+        //   '1.000',
+        //   'HP',
+        // );
+        // console.log({ delegation });
+
+        // const witnessVote = await KeyChainSDK.requestWitnessVote(
+        //   undefined,
+        //   'stoodkev',
+        //   false,
+        // );
+        // console.log({ witnessVote });
+
+        // const proxy = await KeyChainSDK.requestProxy(undefined, 'stoodkev');
+        // console.log({ proxy });
+
+        const powerUp = await KeyChainSDK.requestPowerUp(
+          'keychain.tests',
+          'keychain.tests',
+          '1.000',
+        );
+        console.log({ powerUp });
+
+        // keychain.requestCustomJson(
+        //   null,
+        //   'sm_market_rent',
+        //   'Active',
+        //   JSON.stringify({
+        //     items: ['9292cd44ccaef8b73a607949cc787f1679ede10b-93'],
+        //     currency: 'DEC',
+        //     days: 1,
+        //   }),
+        //   'Rent 1 card on Splinterlands',
+        //   (response) => {
+        //     console.log(response);
+        //   },
+        // );
         // window.hive_keychain.requestEncodeMessage(
         //   'keychain.tests',
         //   'theghost1980',
