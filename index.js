@@ -8,39 +8,29 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.KeyChain = void 0;
-// type PromiseOrError = Promise<KeychainRequestResponse | KeychainRequestError>;
-//NOTE for testing the SDK for now:
-// - There is a reactjs app within the folder: testing/
-// type WindowKeychained = Window & typeof globalThis
-//TODO move to utils/
-const generateRandomString = () => {
-    const randomString = Math.random() + 1;
-    const dictionary = {
-        '0': 'A',
-        '1': 'Keychain-',
-        '2': 'x',
-        '3': 'E',
-        '4': 'S',
-        '5': 's',
-        '6': 'l',
-        '7': '#',
-        '8': 'P',
-        '9': '&',
-        '.': 'SDK Login',
-    };
-    return randomString
-        .toString()
-        .split('')
-        .map((char) => dictionary[char])
-        .join('');
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.KeychainSDK = void 0;
+const utils_1 = __importDefault(require("./testing/src/utils/utils"));
+//TODO may be good to split each method as:
+//  - utils:
+//    - getConfig()
+//    - isKeyChainInstalled()
+//    - login
+//    - generateRandomString
+//  - crypto:
+//    - encode
+//    - decode
+//    - signBuffer
+//    - signTx
+//  - requests:
+//    - currency requests?
+//    - token requests?
 //TODO add same params/exit info on each method as hive_keychain.js
-class KeyChain {
+class KeychainSDK {
     constructor(window, options) {
-        //end testing
-        //basic methods.
         //reuse code
         this.checkKeyChain = () => __awaiter(this, void 0, void 0, function* () {
             const check = yield this.isKeyChainInstalled();
@@ -72,43 +62,27 @@ class KeyChain {
          * Note: will check if window object set + keychain extension detected!
          */
         this.isKeyChainInstalled = () => __awaiter(this, void 0, void 0, function* () {
-            if (this.window) {
-                ///TODO how to add hive_keychain.js props into this new type?? WindowKeychained
-                const window = this.window;
-                return new Promise(function (resolve, reject) {
-                    if (window.hive_keychain) {
-                        try {
-                            window.hive_keychain.requestHandshake(function () {
-                                resolve(true);
-                            });
-                        }
-                        catch (error) {
-                            reject({
-                                keychainError: 'Extension do not respond, please try reloading the extension!',
-                                type: 'Error_Hanshake',
-                            });
-                        }
+            return new Promise((resolve, reject) => {
+                if (this.window.hive_keychain) {
+                    try {
+                        this.window.hive_keychain.requestHandshake(function () {
+                            resolve(true);
+                        });
                     }
-                    else {
-                        resolve(false);
+                    catch (error) {
+                        throw error;
                     }
-                });
-            }
-            else {
-                return new Promise(function (rejects) {
-                    rejects({
-                        keychainError: 'Windows object not assigned, please follow SDK setup.',
-                        type: 'Error_Class_setup',
-                    });
-                });
-            }
+                }
+                else {
+                    resolve(false);
+                }
+            });
         });
-        //TODO refactor reusing
         this.login = (account, message, key, rpc, title) => __awaiter(this, void 0, void 0, function* () {
-            if (yield this.isKeyChainInstalled()) {
-                const window = this.window;
-                return new Promise((resolve, reject) => {
-                    window.hive_keychain.requestSignBuffer(account, message ? message : generateRandomString(), key, (response) => {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                try {
+                    yield this.isKeyChainInstalled();
+                    this.window.hive_keychain.requestSignBuffer(account, message ? message : utils_1.default.generateRandomString(), key, (response) => {
                         if (response.error) {
                             reject(Object.assign(Object.assign({}, response), { success: false, result: title ? `Cannot login into: ${title}` : null }));
                         }
@@ -116,14 +90,11 @@ class KeyChain {
                             resolve(Object.assign(Object.assign({}, response), { success: false, result: title ? `Login successful: ${title}` : null }));
                         }
                     }, rpc, title);
-                });
-            }
-            else {
-                return Promise.reject({
-                    keychainError: 'Keychain not installed, please visit: www.www.com',
-                    type: 'Error_not_installed',
-                });
-            }
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
         });
         //TODO refactor reusing
         this.requestEncodeMessage = (username, receiver, message, key) => __awaiter(this, void 0, void 0, function* () {
@@ -274,6 +245,7 @@ class KeyChain {
             });
         });
         //TODO
+        // search a question related to it, on the discord that quentin already answered.
         // it looks like some params have changed??
         this.requestPost = (account, title, body, parent_perm, parent_account, json_metadata, permlink, comment_options, rpc) => __awaiter(this, void 0, void 0, function* () {
             yield this.checkKeyChain();
@@ -349,27 +321,16 @@ class KeyChain {
                 window.hive_keychain.requestPowerDown(username, hive_power, (response) => this.cbPromise(response, reject, resolve), rpc);
             });
         });
+        this.requestCreateClaimedAccount = (username, new_account, owner, active, posting, memo, rpc) => __awaiter(this, void 0, void 0, function* () {
+            yield this.checkKeyChain();
+            const window = this.window;
+            return new Promise((resolve, reject) => {
+                window.hive_keychain.requestCreateClaimedAccount();
+            });
+        });
         this.window = window;
-        //TODO: a way to assign 'DEFAULT'
-        //  - add keychain.ts, so when detect default, it can bring the defaultRPC
-        //      from keychain EP.
         this.options = options;
     }
-    //TODO may be good to split each method as:
-    //  - utils:
-    //    - getConfig()
-    //    - isKeyChainInstalled()
-    //    - login
-    //    - generateRandomString
-    //  - crypto:
-    //    - encode
-    //    - decode
-    //    - signBuffer
-    //    - signTx
-    //  - requests:
-    //    - currency requests?
-    //    - token requests?
-    //testing methods
     getConfig() {
         return {
             window: this.window,
@@ -377,5 +338,5 @@ class KeyChain {
         };
     }
 }
-exports.KeyChain = KeyChain;
+exports.KeychainSDK = KeychainSDK;
 // export default KeyChain ;

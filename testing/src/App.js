@@ -2,7 +2,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
-import { KeyChain } from 'keychain-sdk';
+import { KeychainSDK } from 'keychain-sdk';
 
 // const generateRandomString = (size) => {
 //   const randomString = Math.random() + 1;
@@ -28,7 +28,7 @@ import { KeyChain } from 'keychain-sdk';
 // };
 
 function App() {
-  const KeyChainSDK = new KeyChain(window, { rpc: 'DEFAULT' });
+  const KeyChainSDK = new KeychainSDK(window, { rpc: 'DEFAULT' });
   // console.log(generateRandomString());
   //tests on requestHandshake
   // useEffect(() => {
@@ -88,14 +88,14 @@ function App() {
         // );
         // console.log({ signBuffer });
 
-        // const login = await KeyChainSDK.login(
-        //   'keychain.tests',
-        //   undefined,
-        //   'posting',
-        //   undefined,
-        //   'Saturnoman.com',
-        // );
-        // console.log({ login });
+        const login = await KeyChainSDK.login(
+          'keychain.tests',
+          undefined,
+          'posting',
+          undefined,
+          'Saturnoman.com',
+        );
+        console.log({ login });
 
         // const addAccountAuthority =
         //   await KeyChainSDK.requestAddAccountAuthority(
@@ -296,12 +296,18 @@ function App() {
         // const proxy = await KeyChainSDK.requestProxy(undefined, 'stoodkev');
         // console.log({ proxy });
 
-        const powerUp = await KeyChainSDK.requestPowerUp(
-          'keychain.tests',
-          'keychain.tests',
-          '1.000',
-        );
-        console.log({ powerUp });
+        // const powerUp = await KeyChainSDK.requestPowerUp(
+        //   'keychain.tests',
+        //   'keychain.tests',
+        //   '1.000',
+        // );
+        // console.log({ powerUp });
+
+        // const powerDown = await KeyChainSDK.requestPowerDown(
+        //   'keychain.tests',
+        //   '0.500',
+        // );
+        // console.log({ powerDown });
 
         // keychain.requestCustomJson(
         //   null,

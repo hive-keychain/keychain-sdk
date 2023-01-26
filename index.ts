@@ -1,10 +1,10 @@
-import { Operation, Transaction } from '@hiveio/dhive';
+import { Authority, Operation, Transaction } from '@hiveio/dhive';
 import { KeychainKeyTypes } from './interfaces/keychain.interface';
-
-//TODO move to types file
-type KeychainOptions = { rpc?: string };
-
-type KeychainRequestResponse = {
+import utils from './testing/src/utils/utils';
+interface KeychainOptions {
+  rpc?: string;
+}
+interface KeychainRequestResponse {
   success: boolean;
   error: string;
   result: string | null;
@@ -19,80 +19,48 @@ type KeychainRequestResponse = {
   };
   message: string;
   request_id: number;
-};
-
-type KeychainRequestError = {
+}
+interface KeychainRequestError {
   keychainError: string;
   type: string;
-};
+}
+declare global {
+  interface Window {
+    hive_keychain: any;
+  }
+}
 
-// type PromiseOrError = Promise<KeychainRequestResponse | KeychainRequestError>;
+//TODO may be good to split each method as:
+//  - utils:
+//    - getConfig()
+//    - isKeyChainInstalled()
+//    - login
+//    - generateRandomString
+//  - crypto:
+//    - encode
+//    - decode
+//    - signBuffer
+//    - signTx
+//  - requests:
+//    - currency requests?
+//    - token requests?
 
-//NOTE for testing the SDK for now:
-// - There is a reactjs app within the folder: testing/
-
-// type WindowKeychained = Window & typeof globalThis
-
-//TODO move to utils/
-
-const generateRandomString = () => {
-  const randomString = Math.random() + 1;
-  const dictionary: { [key: string]: string } = {
-    '0': 'A',
-    '1': 'Keychain-',
-    '2': 'x',
-    '3': 'E',
-    '4': 'S',
-    '5': 's',
-    '6': 'l',
-    '7': '#',
-    '8': 'P',
-    '9': '&',
-    '.': 'SDK Login',
-  };
-  return randomString
-    .toString()
-    .split('')
-    .map((char) => dictionary[char])
-    .join('');
-};
 //TODO add same params/exit info on each method as hive_keychain.js
-export class KeyChain {
-  window: Window | undefined;
+export class KeychainSDK {
+  window: Window;
   options: KeychainOptions | undefined;
 
   constructor(window: Window, options?: KeychainOptions) {
     this.window = window;
-    //TODO: a way to assign 'DEFAULT'
-    //  - add keychain.ts, so when detect default, it can bring the defaultRPC
-    //      from keychain EP.
     this.options = options;
   }
 
-  //TODO may be good to split each method as:
-  //  - utils:
-  //    - getConfig()
-  //    - isKeyChainInstalled()
-  //    - login
-  //    - generateRandomString
-  //  - crypto:
-  //    - encode
-  //    - decode
-  //    - signBuffer
-  //    - signTx
-  //  - requests:
-  //    - currency requests?
-  //    - token requests?
-  //testing methods
   getConfig() {
     return {
       window: this.window,
       options: this.options,
     };
   }
-  //end testing
-
-  //basic methods.
 
   //reuse code
   checkKeyChain = async (): Promise<undefined | KeychainRequestError> => {
@@ -130,55 +98,40 @@ export class KeyChain {
     }
   };
   //end reuse
+
   /**
    *
    * Note: will check if window object set + keychain extension detected!
    */
-  isKeyChainInstalled = async (): Promise<boolean | KeychainRequestError> => {
-    if (this.window) {
-      ///TODO how to add hive_keychain.js props into this new type?? WindowKeychained
-      const window: any = this.window;
-      return new Promise(function (resolve, reject) {
-        if (window.hive_keychain) {
-          try {
-            window.hive_keychain.requestHandshake(function () {
-              resolve(true);
-            });
-          } catch (error) {
-            reject({
-              keychainError:
-                'Extension do not respond, please try reloading the extension!',
-              type: 'Error_Hanshake',
-            });
-          }
-        } else {
-          resolve(false);
+  isKeyChainInstalled = async (): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      if (this.window.hive_keychain) {
+        try {
+          this.window.hive_keychain.requestHandshake(function () {
+            resolve(true);
+          });
+        } catch (error) {
+          throw error;
         }
-      });
-    } else {
-      return new Promise(function (rejects) {
-        rejects({
-          keychainError:
-            'Windows object not assigned, please follow SDK setup.',
-          type: 'Error_Class_setup',
-        });
-      });
-    }
+      } else {
+        resolve(false);
+      }
+    });
   };
-  //TODO refactor reusing
+
   login = async (
     account: string,
     message: string | undefined,
     key: KeychainKeyTypes,
     rpc?: string,
     title?: string,
-  ): Promise<KeychainRequestResponse | KeychainRequestError> => {
-    if (await this.isKeyChainInstalled()) {
-      const window: any = this.window;
-      return new Promise((resolve, reject) => {
-        window.hive_keychain.requestSignBuffer(
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestSignBuffer(
           account,
-          message ? message : generateRandomString(),
+          message ? message : utils.generateRandomString(),
           key,
           (response: KeychainRequestResponse) => {
             if (response.error) {
@@ -198,14 +151,12 @@ export class KeyChain {
           rpc,
           title,
         );
-      });
-    } else {
-      return Promise.reject({
-        keychainError: 'Keychain not installed, please visit: www.www.com',
-        type: 'Error_not_installed',
-      } as KeychainRequestError);
-    }
+      } catch (error) {
+        throw error;
+      }
+    });
   };
+
   //TODO refactor reusing
   requestEncodeMessage = async (
     username: string,
@@ -464,6 +415,7 @@ export class KeyChain {
   };
 
   //TODO
+  // search a question related to it, on the discord that quentin already answered.
   // it looks like some params have changed??
   requestPost = async (
     account: string,
@@ -688,6 +640,22 @@ export class KeyChain {
           this.cbPromise(response, reject, resolve),
         rpc,
       );
+    });
+  };
+
+  requestCreateClaimedAccount = async (
+    username: string,
+    new_account: string,
+    owner: Authority,
+    active: Authority,
+    posting: Authority,
+    memo: string,
+    rpc: string | undefined,
+  ) => {
+    await this.checkKeyChain();
+    const window: any = this.window;
+    return new Promise((resolve, reject) => {
+      window.hive_keychain.requestCreateClaimedAccount();
     });
   };
 }
