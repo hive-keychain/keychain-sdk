@@ -564,6 +564,13 @@ class KeychainSDK {
                 }
             }));
         });
+        /**
+         * Request a power up
+         * @param {String} username Hive account to perform the request
+         * @param {String} recipient Account to receive the power up
+         * @param {String} hive Amount of HIVE to be powered up
+         * @param {String} [rpc=null] Override user's RPC settings
+         */
         this.requestPowerUp = (username, recipient, hive, rpc) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
@@ -582,6 +589,12 @@ class KeychainSDK {
                 }
             }));
         });
+        /**
+         * Request a power down
+         * @param {String} username Hive account to perform the request
+         * @param {String} hive_power Amount of HIVE to be powered down
+         * @param {String} [rpc=null] Override user's RPC settings
+         */
         this.requestPowerDown = (username, hive_power, rpc) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
@@ -600,6 +613,16 @@ class KeychainSDK {
                 }
             }));
         });
+        /**
+         * Request the creation of an account using claimed tokens
+         * @param {String} username Hive account to perform the request
+         * @param {String} new_account New account to be created
+         * @param {object} owner owner authority object
+         * @param {object} active active authority object
+         * @param {object} posting posting authority object
+         * @param {String} memo public memo key
+         * @param {String} [rpc=null] Override user's RPC settings
+         */
         this.requestCreateClaimedAccount = (username, new_account, owner, active, posting, memo, rpc) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
@@ -619,6 +642,18 @@ class KeychainSDK {
             }));
         });
         //HF21
+        /**
+         * Request the creation of a DHF proposal
+         * @param {String} username Hive account to perform the request
+         * @param {String} receiver Account receiving the funding if the proposal is voted
+         * @param {String} subject Title of the DAO
+         * @param {String} permlink Permlink to the proposal description
+         * @param {String} daily_pay Daily amount to be received by `receiver`
+         * @param {String} start Starting date
+         * @param {String} end Ending date
+         * @param {String} extensions Stringified Array of extensions
+         * @param {String} [rpc=null] Override user's RPC settings
+         */
         this.requestCreateProposal = (username, receiver, subject, permlink, daily_pay, start, end, extensions, rpc) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
@@ -637,6 +672,13 @@ class KeychainSDK {
                 }
             }));
         });
+        /**
+         * Request the removal of a DHF proposal
+         * @param {String} username Hive account to perform the request
+         * @param {String} proposal_ids Stringified Array of ids of the proposals to be removed
+         * @param {String} extensions Stringified Array of extensions
+         * @param {String} [rpc=null] Override user's RPC settings
+         */
         this.requestRemoveProposal = (username, proposal_ids, extensions, rpc) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
@@ -655,6 +697,14 @@ class KeychainSDK {
                 }
             }));
         });
+        /**
+         * Vote/Unvote a DHF proposal
+         * @param {String} username Hive account to perform the request
+         * @param {String} proposal_ids Stringified Array of Ids of the proposals to be voted
+         * @param {boolean} approve Set to true to support the proposal, false to remove a vote
+         * @param {String} extensions Stringified Array of extensions
+         * @param {String} [rpc=null] Override user's RPC settings
+         */
         this.requestUpdateProposalVote = (username, proposal_ids, approve, extensions, rpc) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
@@ -673,6 +723,11 @@ class KeychainSDK {
                 }
             }));
         });
+        /**
+         * Add a new account to Keychain
+         * @param {String} username username of the account to be added
+         * @param {Object} keys private keys of the account : {active:'...',posting:'...',memo:'...'}. At least one must be specified.
+         */
         this.requestAddAccount = (username, keys) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
@@ -692,16 +747,6 @@ class KeychainSDK {
             }));
         });
         /**
-         * @example
-         * import { KeychainSDK } from 'keychain-sdk';
-         * const SDKConnector = new KeychainSDK(window, { rpc: 'DEFAULT' });
-         * const conversionCollateralized = await SDKConnector.requestConversion(
-         *   'keychain.tests',
-         *   '0.001',
-         *   true,
-         * );
-         * console.log({ conversionCollateralized });
-         *
          * @param {String} username Hive account to perform the request
          * @param {String} amount amount to be converted.
          * @param {Boolean} collaterized true to convert HIVE to HBD. false to convert HBD to HIVE.
