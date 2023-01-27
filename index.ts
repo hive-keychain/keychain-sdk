@@ -107,6 +107,13 @@ export class KeychainSDK {
   };
   //////END utils///////
 
+  /**
+   * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
+   * @param {String} username Hive account to perform the request
+   * @param {String} receiver Account that will decode the string
+   * @param {String} message Message to be encrypted, i.e: "#To encrypt message"
+   * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
+   */
   requestEncodeMessage = async (
     username: string,
     receiver: string,
@@ -135,6 +142,12 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
+   * @param {String} account Hive account to perform the request
+   * @param {String} message Message to be decoded by the account
+   * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
+   */
   requestVerifyKey = async (
     account: string,
     message: string,
@@ -161,8 +174,16 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests a message to be signed with proper authority
+   * @param {String| undefined} account Hive account to perform the request. If undefined, user can choose the account from a dropdown
+   * @param {String} message Message to be signed by the account
+   * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
+   * @param {String| undefined} rpc Override user's RPC settings
+   * @param {String | undefined} title Override "Sign message" title
+   */
   requestSignBuffer = async (
-    account: string,
+    account: string | undefined,
     message: string,
     key: KeychainKeyTypes,
     rpc?: string,
@@ -191,6 +212,14 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests to add account authority over another account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
+   * @param {String} account Hive account to perform the request
+   * @param {String} authorizedUsername Authorized account
+   * @param {String} role Type of authority. Can be 'Posting','Active' or 'Memo'
+   * @param {number} weight Weight of the authority
+   * @param {String | undefined} rpc Override user's RPC settings
+   */
   requestAddAccountAuthority = async (
     account: string,
     authorizedUsername: string,
@@ -245,6 +274,13 @@ export class KeychainSDK {
     // }
   };
 
+  /**
+   * Requests to remove an account authority over another account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
+   * @param {String} account Hive account to perform the request
+   * @param {String} authorizedUsername Account to lose authority
+   * @param {String} role Type of authority. Can be 'Posting','Active' or 'Memo'
+   * @param {String |  undefined} rpc Override user's RPC settings
+   */
   requestRemoveAccountAuthority = async (
     account: string,
     authorizedUsername: string,
@@ -296,6 +332,14 @@ export class KeychainSDK {
     // }
   };
 
+  /**
+   * Requests to add a new key authority to an account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
+   * @param {String} account Hive account to perform the request
+   * @param {String} authorizedKey New public key to be associated with the account
+   * @param {String} role Type of authority. Can be 'Posting','Active' or 'Memo'
+   * @param {number} weight Weight of the key authority
+   * @param {String} rpc Override user's RPC settings
+   */
   requestAddKeyAuthority = async (
     account: string,
     authorizedKey: string,
@@ -326,6 +370,13 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests to remove a key to an account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
+   * @param {String} account Hive account to perform the request
+   * @param {String} authorizedKey Key to be removed (public key).
+   * @param {String} role Type of authority. Can be 'Posting','Active' or 'Memo'.
+   * @param {String} rpc Override user's RPC settings
+   */
   requestRemoveKeyAuthority = async (
     account: string,
     authorizedKey: string,
@@ -354,6 +405,13 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Generic broadcast request
+   * @param {String} account Hive account to perform the request
+   * @param {Array} operations Array of operations to be broadcasted
+   * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
+   * @param {String} rpc Override user's RPC settings
+   */
   requestBroadcast = async (
     account: string,
     operations: Operation[],
@@ -382,6 +440,13 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests to sign a transaction with a given authority
+   * @param {String} account Hive account to perform the request
+   * @param {Object} tx Unsigned transaction
+   * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
+   * @param {String} rpc Override user's RPC settings
+   */
   requestSignTx = async (
     account: string,
     tx: Transaction,
@@ -410,6 +475,15 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests a signed call
+   * @deprecated
+   * @param {String} account Hive account to perform the request
+   * @param {String} method Method of the call
+   * @param {String} params Parameters of the call
+   * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
+   * @param {String} rpc Override user's RPC settings
+   */
   requestSignedCall = async (
     account: string,
     method: string,
@@ -427,7 +501,18 @@ export class KeychainSDK {
     });
   };
 
-  //TODO how to fix it???
+  /**
+   * Requests to broadcast a blog post/comment
+   * @param {String} account Hive account to perform the request
+   * @param {String} title Title of the blog post
+   * @param {String} body Content of the blog post
+   * @param {String} parent_perm Permlink of the parent post. Main tag for a root post
+   * @param {String} parent_account Author of the parent post. Pass null for root post
+   * @param {Object} json_metadata Parameters of the call
+   * @param {String} permlink Permlink of the blog post
+   * @param {Object} comment_options Options attached to the blog post. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it
+   * @param {String} rpc Override user's RPC settings
+   */
   requestPost = async (
     account: string,
     title: string,
@@ -466,6 +551,14 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests a vote
+   * @param {String} account Hive account to perform the request
+   * @param {String} permlink Permlink of the blog post
+   * @param {String} author Author of the blog post
+   * @param {Number} weight Weight of the vote, comprised between -10,000 (-100%) and 10,000 (100%)
+   * @param {String} rpc Override user's RPC settings
+   */
   requestVote = async (
     account: string,
     permlink: string,
@@ -496,6 +589,15 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests a custom JSON broadcast
+   * @param {String} account Hive account to perform the request. If null, user can choose the account from a dropdown
+   * @param {String} id Type of custom_json to be broadcasted
+   * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
+   * @param {String} json Stringified custom json
+   * @param {String} display_msg Message to display to explain to the user what this broadcast is about
+   * @param {String} rpc Override user's RPC settings
+   */
   requestCustomJson = async (
     account: string | undefined,
     id: string,
@@ -528,6 +630,16 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests a transfer
+   * @param {String} account Hive account to perform the request
+   * @param {String} to Hive account to receive the transfer
+   * @param {String} amount Amount to be transfered. Requires 3 decimals.
+   * @param {String} memo The memo will be automatically encrypted if starting by '#' and the memo key is available on Keychain. It will also overrule the account to be enforced, regardless of the 'enforce' parameter
+   * @param {String} currency 'HIVE' or 'HBD'
+   * @param {boolean} enforce If set to true, user cannot chose to make the transfer from another account
+   * @param {String} rpc Override user's RPC settings
+   */
   requestTransfer = async (
     account: string,
     to: string,
@@ -562,6 +674,15 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests a token transfer
+   * @param {String} account Hive account to perform the request
+   * @param {String} to Hive account to receive the transfer
+   * @param {String} amount Amount to be transferred. Requires 3 decimals.
+   * @param {String} memo Memo attached to the transfer
+   * @param {String} currency Token symbol to be sent
+   * @param {String} rpc Override user's RPC settings
+   */
   requestSendToken = async (
     account: string,
     to: string,
@@ -594,6 +715,14 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests a delegation broadcast
+   * @param {String} username Hive account to perform the request. If null, user can choose the account from a dropdown
+   * @param {String} delegatee Account to receive the delegation
+   * @param {String} amount Amount to be transfered. Requires 3 decimals for HP, 6 for VESTS.
+   * @param {String} unit HP or VESTS
+   * @param {String} rpc Override user's RPC settings
+   */
   requestDelegation = async (
     username: string | undefined,
     delegatee: string,
@@ -624,6 +753,13 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Requests a witness vote broadcast
+   * @param {String} [username=null] Hive account to perform the request. If null, user can choose the account from a dropdown
+   * @param {String} witness Account to receive the witness vote
+   * @param {boolean} vote Set to true to vote for the witness, false to unvote
+   * @param {String} [rpc=null] Override user's RPC settings
+   */
   requestWitnessVote = async (
     username: string | undefined,
     witness: string,
@@ -652,6 +788,12 @@ export class KeychainSDK {
     });
   };
 
+  /**
+   * Select an account as proxy
+   * @param {String} [username=null] Hive account to perform the request. If null, user can choose the account from a dropdown
+   * @param {String} proxy Account to become the proxy. Empty string ('') to remove a proxy
+   * @param {String} [rpc=null] Override user's RPC settings
+   */
   requestProxy = async (
     username: string | undefined,
     proxy: string,
