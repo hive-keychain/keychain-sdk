@@ -28,7 +28,12 @@ import { KeychainSDK } from 'keychain-sdk';
 // };
 
 function App() {
-  const KeyChainSDK = new KeychainSDK(window, { rpc: 'DEFAULT' });
+  //using DEFAULT RPC.
+  // const KeyChainSDK = new KeychainSDK(window, { rpc: 'DEFAULT' });
+
+  // no RPC
+  const KeyChainSDK = new KeychainSDK(window);
+
   // console.log(generateRandomString());
   //tests on requestHandshake
   // useEffect(() => {
@@ -60,13 +65,14 @@ function App() {
   useEffect(() => {
     const onLoadHandler = async () => {
       console.log('Fully loaded!');
-      const encodeMessage = await KeyChainSDK.requestEncodeMessage(
-        'keychain.tests',
-        'theghost1980',
-        '#Hi there man!',
-        'memo',
-      );
-      console.log({ encodeMessage });
+      // const encodeMessage = await KeyChainSDK.requestEncodeMessage(
+      //   'keychain.tests',
+      //   'theghost1980',
+      //   '#Hi there man!',
+      //   'memo',
+      // );
+      // console.log({ encodeMessage });
+
       // if (window.hive_keychain) {
       //   console.log('It should has it!!');
       //   // const isKeyChainInstalled = await KeyChainSDK.isKeyChainInstalled();
@@ -87,14 +93,14 @@ function App() {
       //   // );
       //   // console.log({ verifyKey });
 
-      //   // const signBuffer = await KeyChainSDK.requestSignBuffer(
-      //   //   'keychain.tests',
-      //   //   'message!!',
-      //   //   'active',
-      //   //   undefined,
-      //   //   'Login in Into Saturnoman.com\nProceed?',
-      //   // );
-      //   // console.log({ signBuffer });
+      const signBuffer = await KeyChainSDK.requestSignBuffer(
+        'keychain.tests',
+        'message!!',
+        'active',
+        undefined,
+        'Login in Into Saturnoman.com\nProceed?',
+      );
+      console.log({ signBuffer });
 
       //   // const login = await KeyChainSDK.login(
       //   //   'keychain.tests',

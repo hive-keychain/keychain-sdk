@@ -31,7 +31,6 @@ declare global {
   }
 }
 
-//TODO add same params/examples info on each method as hive_keychain.js
 export class KeychainSDK {
   window: Window;
   options: KeychainOptions | undefined;
@@ -203,7 +202,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
           title,
         );
       } catch (error) {
@@ -242,36 +241,12 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
       }
     });
-    // if ((await this.isKeyChainInstalled()) === true) {
-    //   const window: any = this.window;
-    //   return new Promise((resolve, reject) => {
-    //     window.hive_keychain.requestAddAccountAuthority(
-    //       account,
-    //       authorizedUsername,
-    //       role,
-    //       weight,
-    //       (response: KeychainRequestResponse) => {
-    //         if (response.error) {
-    //           reject(response);
-    //         } else {
-    //           resolve(response);
-    //         }
-    //       },
-    //       rpc,
-    //     );
-    //   });
-    // } else {
-    //   return Promise.reject({
-    //     keychainError: 'Keychain not installed, please visit: www.www.com',
-    //     type: 'Error_not_installed',
-    //   } as KeychainRequestError);
-    // }
   };
 
   /**
@@ -301,35 +276,12 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
       }
     });
-    // if ((await this.isKeyChainInstalled()) === true) {
-    //   const window: any = this.window;
-    //   return new Promise((resolve, reject) => {
-    //     window.hive_keychain.requestRemoveAccountAuthority(
-    //       account,
-    //       authorizedUsername,
-    //       role,
-    //       (response: KeychainRequestResponse) => {
-    //         if (response.error) {
-    //           reject(response);
-    //         } else {
-    //           resolve(response);
-    //         }
-    //       },
-    //       rpc,
-    //     );
-    //   });
-    // } else {
-    //   return Promise.reject({
-    //     keychainError: 'Keychain not installed, please visit: www.www.com',
-    //     type: 'Error_not_installed',
-    //   } as KeychainRequestError);
-    // }
   };
 
   /**
@@ -362,7 +314,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -397,7 +349,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -432,7 +384,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -467,7 +419,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -543,7 +495,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -581,7 +533,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -622,7 +574,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -666,7 +618,7 @@ export class KeychainSDK {
             }
           },
           enforce,
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -707,7 +659,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -745,7 +697,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -780,7 +732,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -812,7 +764,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -847,7 +799,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -879,7 +831,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -923,7 +875,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -974,7 +926,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -1009,7 +961,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -1047,7 +999,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -1110,7 +1062,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -1156,7 +1108,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
