@@ -1,5 +1,10 @@
 import { Authority, Operation, Transaction } from '@hiveio/dhive';
 import { KeychainKeyTypes } from './interfaces/keychain.interface';
+import {
+  EncodeMessageParams,
+  TransferParams,
+} from './interfaces/keychain.request-params';
+import { TransferOptionalParams } from './interfaces/keychain.request.optional-params';
 import { Keys } from './interfaces/local-account.interface';
 import utils from './testing/src/utils/utils';
 interface KeychainOptions {
@@ -96,7 +101,7 @@ export class KeychainSDK {
               });
             }
           },
-          rpc,
+          rpc ?? this.options?.rpc,
           title,
         );
       } catch (error) {
@@ -106,27 +111,24 @@ export class KeychainSDK {
   };
   //////END utils///////
 
-  /**
-   * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
-   * @param {String} username Hive account to perform the request
-   * @param {String} receiver Account that will decode the string
-   * @param {String} message Message to be encrypted, i.e: "#To encrypt message"
-   * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
-   */
+  // /**
+  //  * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
+  //  * @param {String} username Hive account to perform the request
+  //  * @param {String} receiver Account that will decode the string
+  //  * @param {String} message Message to be encrypted, i.e: "#To encrypt message"
+  //  * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
+  //  */
   requestEncodeMessage = async (
-    username: string,
-    receiver: string,
-    message: string,
-    key: KeychainKeyTypes,
+    params: EncodeMessageParams,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestEncodeMessage(
-          username,
-          receiver,
-          message,
-          key,
+          params.username,
+          params.receiver,
+          params.message,
+          params.key,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -593,23 +595,19 @@ export class KeychainSDK {
    * @param {String} rpc Override user's RPC settings
    */
   requestTransfer = async (
-    account: string,
-    to: string,
-    amount: string,
-    memo: string,
-    currency: string,
-    enforce: boolean = false,
-    rpc: string | undefined,
+    params: TransferParams,
+    optional?: TransferOptionalParams,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
+        //TODO add amount check & formatting
         this.window.hive_keychain.requestTransfer(
-          account,
-          to,
-          amount,
-          memo,
-          currency,
+          params.account,
+          params.to,
+          params.amount,
+          params.memo,
+          params.currency,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -617,8 +615,8 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          enforce,
-          rpc ?? this.options?.rpc,
+          optional?.enforce ?? false,
+          optional?.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
