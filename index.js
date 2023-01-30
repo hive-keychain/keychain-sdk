@@ -397,16 +397,6 @@ class KeychainSDK {
                 }
             }));
         });
-        /**
-         * Requests a transfer
-         * @param {String} account Hive account to perform the request
-         * @param {String} to Hive account to receive the transfer
-         * @param {String} amount Amount to be transfered. Requires 3 decimals.
-         * @param {String} memo The memo will be automatically encrypted if starting by '#' and the memo key is available on Keychain. It will also overrule the account to be enforced, regardless of the 'enforce' parameter
-         * @param {String} currency 'HIVE' or 'HBD'
-         * @param {boolean} enforce If set to true, user cannot chose to make the transfer from another account
-         * @param {String} rpc Override user's RPC settings
-         */
         this.requestTransfer = (params, optional) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _m, _o, _p;
