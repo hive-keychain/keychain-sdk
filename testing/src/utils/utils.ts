@@ -45,4 +45,20 @@ const formatCurrencyValue = (value: string | Asset | number, digits = 3) => {
   );
 };
 
-export default { generateRandomString, formatCurrencyValue };
+const checkAndFormatAmount = (amount: string | Asset) => {
+  return typeof amount === 'string'
+    ? {
+        amount: formatCurrencyValue(amount.split(' ')[0]),
+        currency: amount.split(' ')[1],
+      }
+    : {
+        amount: formatCurrencyValue(amount.amount),
+        currency: amount.symbol,
+      };
+};
+
+export default {
+  generateRandomString,
+  formatCurrencyValue,
+  checkAndFormatAmount,
+};

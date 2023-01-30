@@ -38,4 +38,19 @@ const formatCurrencyValue = (value, digits = 3) => {
     }
     return withCommas(value.toString().replace('HBD', '').replace('HIVE', '').trim(), digits);
 };
-exports.default = { generateRandomString, formatCurrencyValue };
+const checkAndFormatAmount = (amount) => {
+    return typeof amount === 'string'
+        ? {
+            amount: formatCurrencyValue(amount.split(' ')[0]),
+            currency: amount.split(' ')[1],
+        }
+        : {
+            amount: formatCurrencyValue(amount.amount),
+            currency: amount.symbol,
+        };
+};
+exports.default = {
+    generateRandomString,
+    formatCurrencyValue,
+    checkAndFormatAmount,
+};

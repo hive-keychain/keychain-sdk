@@ -112,14 +112,14 @@ function App() {
       //   // );
       //   // console.log({ login });
 
-      //   // const addAccountAuthority =
-      //   //   await KeyChainSDK.requestAddAccountAuthority(
-      //   //     'keychain.tests',
-      //   //     'sexosentido',
-      //   //     'posting',
-      //   //     1,
-      //   //   );
-      //   // console.log({ addAccountAuthority });
+      // const addAccountAuthority =
+      //   await KeyChainSDK.requestAddAccountAuthority(
+      //     'keychain.tests',
+      //     'sexosentido',
+      //     'posting',
+      //     1,
+      //   );
+      // console.log({ addAccountAuthority });
 
       //   // const removeAccountAuthority =
       //   //   await KeyChainSDK.requestRemoveAccountAuthority(
@@ -225,38 +225,47 @@ function App() {
       //   //       );
       //   //       console.log({ post });
 
-      //   // const vote = await KeyChainSDK.requestVote(
-      //   //   'theghost1980',
-      //   //   'wuswihum',
-      //   //   'khaleelkazi',
-      //   //   10000,
-      //   // );
-      //   // console.log({ vote });
+      // const vote = await KeyChainSDK.requestVote(
+      //   {
+      //     0: 'vote',
+      //     1: {
+      //       voter: 'keychain.tests',
+      //       author: 'khaleelkazi',
+      //       permlink: 'wuswihum',
+      //       weight: 10000,
+      //     },
+      //   },
+      //   {},
+      // );
+      // console.log({ vote });
 
-      //   // const custom_json = await KeyChainSDK.requestCustomJson(
-      //   //   undefined,
-      //   //   'sm_market_rent',
-      //   //   'Active',
-      //   //   JSON.stringify({
-      //   //     items: ['9292cd44ccaef8b73a607949cc787f1679ede10b-93'],
-      //   //     currency: 'DEC',
-      //   //     days: 1,
-      //   //   }),
-      //   //   'Rent 1 card on Splinterlands',
-      //   // );
-      //   // console.log({ custom_json });
+      // const custom_json = await KeyChainSDK.requestCustomJson(
+      //   undefined,
+      //   'sm_market_rent',
+      //   'Active',
+      //   JSON.stringify({
+      //     items: ['9292cd44ccaef8b73a607949cc787f1679ede10b-93'],
+      //     currency: 'DEC',
+      //     days: 1,
+      //   }),
+      //   'Rent 1 card on Splinterlands',
+      // );
+      // console.log({ custom_json });
 
-      const transfer = await KeyChainSDK.requestTransfer({
-        0: 'transfer',
-        1: {
-          from: 'keychain.tests',
-          // amount: '10 HIVE',
-          amount: new Asset(10, 'HIVE'),
-          to: 'theghost1980',
-          memo: 'Test Keychain SDK transfer',
-        },
-      });
-      console.log({ transfer });
+      // const transfer = await KeyChainSDK.requestTransfer(
+      //   {
+      //     0: 'transfer',
+      //     1: {
+      //       from: 'keychain.tests',
+      //       amount: '10 HIVE',
+      //       // amount: new Asset(10, 'HIVE'),
+      //       to: 'theghost1980',
+      //       memo: 'Test Keychain SDK transfer',
+      //     },
+      //   },
+      //   {},
+      // );
+      // console.log({ transfer });
 
       //   // const sendToken = await KeyChainSDK.requestSendToken(
       //   //   'keychain.tests',
@@ -275,15 +284,30 @@ function App() {
       //   // );
       //   // console.log({ delegation });
 
-      //   // const witnessVote = await KeyChainSDK.requestWitnessVote(
-      //   //   undefined,
-      //   //   'stoodkev',
-      //   //   true,
-      //   // );
-      //   // console.log({ witnessVote });
+      // const witnessVote2 = await KeyChainSDK.requestWitnessVote(
+      //   {
+      //     0: 'account_witness_vote',
+      //     1: {
+      //       account: 'sexosentido',
+      //       witness: 'stoodkev',
+      //       approve: false,
+      //     },
+      //   },
+      //   {},
+      // );
+      // console.log({ witnessVote2 });
 
-      //   // const proxy = await KeyChainSDK.requestProxy(undefined, 'stoodkev');
-      //   // console.log({ proxy });
+      // const proxy = await KeyChainSDK.requestProxy(
+      //   {
+      //     0: 'account_witness_proxy',
+      //     1: {
+      //       account: 'keychain.tests',
+      //       proxy: 'stoodkev',
+      //     },
+      //   },
+      //   'stoodkev',
+      // );
+      // console.log({ proxy });
 
       //   // const powerUp = await KeyChainSDK.requestPowerUp(
       //   //   'keychain.tests',
@@ -298,12 +322,12 @@ function App() {
       //   // );
       //   // console.log({ powerDown });
 
-      //   // const conversionCollateralized = await KeyChainSDK.requestConversion(
-      //   //   'keychain.tests',
-      //   //   '0.001',
-      //   //   true,
-      //   // );
-      //   // console.log({ conversionCollateralized });
+      // const conversionCollateralized = await KeyChainSDK.requestConversion(
+      //   'keychain.tests',
+      //   '0.001',
+      //   true,
+      // );
+      // console.log({ conversionCollateralized });
 
       //   // const conversion = await KeyChainSDK.requestConversion(
       //   //   'keychain.tests',
@@ -312,16 +336,37 @@ function App() {
       //   // );
       //   // console.log({ conversion });
 
-      //   // const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
-      //   //   'keychain.tests',
-      //   //   'theghost1980',
-      //   //   '0.001',
-      //   //   'HIVE',
-      //   //   'KeychainSDK rt',
-      //   //   24,
-      //   //   2,
-      //   // );
-      //   // console.log({ recurrentTransfer });
+      const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
+        {
+          0: 'recurrent_transfer',
+          1: {
+            from: 'keychain.tests',
+            to: 'theghost1980',
+            amount: new Asset(0.1, 'HIVE'),
+            memo: 'Keychain SDK tests rt',
+            recurrence: 24,
+            executions: 2,
+            extensions: [],
+          },
+        },
+        {},
+      );
+      console.log({ recurrentTransfer });
+
+      // const updateProposalVote = await KeyChainSDK.requestUpdateProposalVote(
+      //   {
+      //     0: 'update_proposal_votes',
+      //     1: {
+      //       voter: 'keychain.tests',
+      //       proposal_ids: [216],
+      //       approve: true,
+      //       extensions: [],
+      //     },
+      //   },
+      //   {},
+      // );
+      // console.log({ updateProposalVote });
+
       // }
     };
 

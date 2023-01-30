@@ -1,10 +1,23 @@
 import {
+  AccountWitnessProxyOperation,
+  AccountWitnessVoteOperation,
   Authority,
+  CreateClaimedAccountOperation,
+  CreateProposalOperation,
+  CustomJsonOperation,
   Operation,
+  RecurrentTransferOperation,
+  RemoveProposalOperation,
   Transaction,
   TransferOperation,
+  UpdateProposalVotesOperation,
+  VoteOperation,
+  WitnessUpdateOperation,
 } from '@hiveio/dhive';
-import { KeychainKeyTypes } from './interfaces/keychain.interface';
+import {
+  KeychainKeyTypes,
+  RequestCustomJSON,
+} from './interfaces/keychain.interface';
 import { Keys } from './interfaces/local-account.interface';
 import utils from './testing/src/utils/utils';
 interface KeychainOptions {
@@ -72,6 +85,7 @@ export class KeychainSDK {
     });
   };
 
+  //TODO
   login = async (
     params: {
       account: string;
@@ -126,7 +140,7 @@ export class KeychainSDK {
   //  * @param {String} message Message to be encrypted, i.e: "#To encrypt message"
   //  * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
   //  */
-  requestEncodeMessage = async (params: {
+  requestEncodeMessage = async (data: {
     username: string;
     receiver: string;
     message: string;
@@ -136,10 +150,10 @@ export class KeychainSDK {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestEncodeMessage(
-          params.username,
-          params.receiver,
-          params.message,
-          params.key,
+          data.username,
+          data.receiver,
+          data.message,
+          data.key,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -160,7 +174,7 @@ export class KeychainSDK {
    * @param {String} message Message to be decoded by the account
    * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
    */
-  requestVerifyKey = async (params: {
+  requestVerifyKey = async (data: {
     account: string;
     message: string;
     key: KeychainKeyTypes;
@@ -169,9 +183,9 @@ export class KeychainSDK {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestVerifyKey(
-          params.account,
-          params.message,
-          params.key,
+          data.account,
+          data.message,
+          data.key,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -186,6 +200,7 @@ export class KeychainSDK {
     });
   };
 
+  //TODO skipped waiting for structure for this
   /**
    * Requests a message to be signed with proper authority
    * @param {String| undefined} account Hive account to perform the request. If undefined, user can choose the account from a dropdown
@@ -194,40 +209,41 @@ export class KeychainSDK {
    * @param {String| undefined} rpc Override user's RPC settings
    * @param {String | undefined} title Override "Sign message" title
    */
-  requestSignBuffer = async (
-    params: {
-      account: string | undefined;
-      message: string;
-      key: KeychainKeyTypes;
-    },
-    options?: {
-      rpc?: string;
-      title?: string;
-    },
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestSignBuffer(
-          params.account,
-          params.message,
-          params.key,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          options?.rpc ?? this.options?.rpc,
-          options?.title,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
+  // requestSignBuffer = async (
+  //   params: {
+  //     account: string | undefined;
+  //     message: string;
+  //     key: KeychainKeyTypes;
+  //   },
+  //   options?: {
+  //     rpc?: string;
+  //     title?: string;
+  //   },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestSignBuffer(
+  //         params.account,
+  //         params.message,
+  //         params.key,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options?.rpc ?? this.options?.rpc,
+  //         options?.title,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
 
+  //TODO skipped waiting for structure for this
   /**
    * Requests to add account authority over another account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @param {String} account Hive account to perform the request
@@ -236,40 +252,41 @@ export class KeychainSDK {
    * @param {number} weight Weight of the authority
    * @param {String | undefined} rpc Override user's RPC settings
    */
-  requestAddAccountAuthority = async (
-    params: {
-      account: string;
-      authorizedUsername: string;
-      role: KeychainKeyTypes;
-      weight: number;
-    },
-    options?: {
-      rpc?: string;
-    },
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestAddAccountAuthority(
-          params.account,
-          params.authorizedUsername,
-          params.role,
-          params.weight,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          options?.rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
+  // requestAddAccountAuthority = async (
+  //   params: {
+  //     account: string;
+  //     authorizedUsername: string;
+  //     role: KeychainKeyTypes;
+  //     weight: number;
+  //   },
+  //   options?: {
+  //     rpc?: string;
+  //   },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestAddAccountAuthority(
+  //         params.account,
+  //         params.authorizedUsername,
+  //         params.role,
+  //         params.weight,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options?.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
 
+  //TODO skipped waiting for structure for this
   /**
    * Requests to remove an account authority over another account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @param {String} account Hive account to perform the request
@@ -277,38 +294,39 @@ export class KeychainSDK {
    * @param {String} role Type of authority. Can be 'Posting','Active' or 'Memo'
    * @param {String |  undefined} rpc Override user's RPC settings
    */
-  requestRemoveAccountAuthority = async (
-    params: {
-      account: string;
-      authorizedUsername: string;
-      role: KeychainKeyTypes;
-    },
-    options?: {
-      rpc?: string;
-    },
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestRemoveAccountAuthority(
-          params.account,
-          params.authorizedUsername,
-          params.role,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          options?.rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
+  // requestRemoveAccountAuthority = async (
+  //   params: {
+  //     account: string;
+  //     authorizedUsername: string;
+  //     role: KeychainKeyTypes;
+  //   },
+  //   options?: {
+  //     rpc?: string;
+  //   },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestRemoveAccountAuthority(
+  //         params.account,
+  //         params.authorizedUsername,
+  //         params.role,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options?.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
 
+  //TODO skipped waiting for structure for this
   /**
    * Requests to add a new key authority to an account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @param {String} account Hive account to perform the request
@@ -317,40 +335,39 @@ export class KeychainSDK {
    * @param {number} weight Weight of the key authority
    * @param {String} rpc Override user's RPC settings
    */
-  requestAddKeyAuthority = async (
-    params: {
-      account: string;
-      authorizedKey: string;
-      role: KeychainKeyTypes;
-      weight: Number;
-    },
-    options?: {
-      rpc?: string;
-    },
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestAddKeyAuthority(
-          params.account,
-          params.authorizedKey,
-          params.role,
-          params.weight,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          options?.rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
-
+  // requestAddKeyAuthority = async (
+  //   params: {
+  //     account: string;
+  //     authorizedKey: string;
+  //     role: KeychainKeyTypes;
+  //     weight: Number;
+  //   },
+  //   options?: {
+  //     rpc?: string;
+  //   },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestAddKeyAuthority(
+  //         params.account,
+  //         params.authorizedKey,
+  //         params.role,
+  //         params.weight,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options?.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
   /**
    * Requests to remove a key to an account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @param {String} account Hive account to perform the request
@@ -358,36 +375,35 @@ export class KeychainSDK {
    * @param {String} role Type of authority. Can be 'Posting','Active' or 'Memo'.
    * @param {String} rpc Override user's RPC settings
    */
-  requestRemoveKeyAuthority = async (
-    params: {
-      account: string;
-      authorizedKey: string;
-      role: KeychainKeyTypes;
-    },
-    options: { rpc?: string },
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestRemoveKeyAuthority(
-          params.account,
-          params.authorizedKey,
-          params.role,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          options?.rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
-
+  // requestRemoveKeyAuthority = async (
+  //   params: {
+  //     account: string;
+  //     authorizedKey: string;
+  //     role: KeychainKeyTypes;
+  //   },
+  //   options: { rpc?: string },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestRemoveKeyAuthority(
+  //         params.account,
+  //         params.authorizedKey,
+  //         params.role,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options?.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
   /**
    * Generic broadcast request
    * @param {String} account Hive account to perform the request
@@ -395,36 +411,35 @@ export class KeychainSDK {
    * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
    * @param {String} rpc Override user's RPC settings
    */
-  requestBroadcast = async (
-    params: {
-      account: string;
-      operations: Operation[];
-      key: KeychainKeyTypes;
-    },
-    options: { rpc?: string },
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestBroadcast(
-          params.account,
-          params.operations,
-          params.key,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          options?.rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
-
+  // requestBroadcast = async (
+  //   params: {
+  //     account: string;
+  //     operations: Operation[];
+  //     key: KeychainKeyTypes;
+  //   },
+  //   options: { rpc?: string },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestBroadcast(
+  //         params.account,
+  //         params.operations,
+  //         params.key,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options?.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
   /**
    * Requests to sign a transaction with a given authority
    * @param {String} account Hive account to perform the request
@@ -432,36 +447,35 @@ export class KeychainSDK {
    * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
    * @param {String} rpc Override user's RPC settings
    */
-  requestSignTx = async (
-    params: {
-      account: string;
-      tx: Transaction;
-      key: KeychainKeyTypes;
-    },
-    options?: { rpc?: string },
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestSignTx(
-          params.account,
-          params.tx,
-          params.key,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          options?.rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
-
+  // requestSignTx = async (
+  //   params: {
+  //     account: string;
+  //     tx: Transaction;
+  //     key: KeychainKeyTypes;
+  //   },
+  //   options?: { rpc?: string },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestSignTx(
+  //         params.account,
+  //         params.tx,
+  //         params.key,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options?.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
   /**
    * Requests a signed call
    * @deprecated
@@ -471,25 +485,24 @@ export class KeychainSDK {
    * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
    * @param {String} rpc Override user's RPC settings
    */
-  requestSignedCall = async (
-    params: {
-      account: string;
-      method: string;
-      params: string;
-      key: KeychainKeyTypes;
-    },
-    options?: { rpc?: string },
-  ): Promise<string> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        resolve('requestSignedCall has been deprecated.');
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
-
+  // requestSignedCall = async (
+  //   params: {
+  //     account: string;
+  //     method: string;
+  //     params: string;
+  //     key: KeychainKeyTypes;
+  //   },
+  //   options?: { rpc?: string },
+  // ): Promise<string> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       resolve('requestSignedCall has been deprecated.');
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
   /**
    * Requests to broadcast a blog post/comment
    * @param {String} account Hive account to perform the request
@@ -502,73 +515,64 @@ export class KeychainSDK {
    * @param {Object} comment_options Options attached to the blog post. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it
    * @param {String} rpc Override user's RPC settings
    */
-  requestPost = async (
-    params: {
-      account: string;
-      title: string;
-      body: string;
-      parent_perm: string;
-      parent_account: [] | undefined;
-      json_metadata: object;
-      permlink: string;
-      comment_options: object;
-    },
-    options?: {
-      rpc?: string;
-    },
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestPost(
-          params.account,
-          params.title,
-          params.body,
-          params.parent_perm,
-          params.parent_account,
-          params.json_metadata,
-          params.permlink,
-          params.comment_options,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          options?.rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
+  // requestPost = async (
+  //   params: {
+  //     account: string;
+  //     title: string;
+  //     body: string;
+  //     parent_perm: string;
+  //     parent_account: [] | undefined;
+  //     json_metadata: object;
+  //     permlink: string;
+  //     comment_options: object;
+  //   },
+  //   options?: {
+  //     rpc?: string;
+  //   },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestPost(
+  //         params.account,
+  //         params.title,
+  //         params.body,
+  //         params.parent_perm,
+  //         params.parent_account,
+  //         params.json_metadata,
+  //         params.permlink,
+  //         params.comment_options,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options?.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
 
   /**
+   * @deprecated
    * Requests a vote
-   * @param {String} account Hive account to perform the request
-   * @param {String} permlink Permlink of the blog post
-   * @param {String} author Author of the blog post
-   * @param {Number} weight Weight of the vote, comprised between -10,000 (-100%) and 10,000 (100%)
-   * @param {String} rpc Override user's RPC settings
    */
   requestVote = async (
-    params: {
-      account: string;
-      permlink: string;
-      author: string;
-      weight: number;
-    },
-    options?: { rpc?: string },
+    data: VoteOperation,
+    options: { rpc?: string },
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestVote(
-          params.account,
-          params.permlink,
-          params.author,
-          params.weight,
+          data[1].voter,
+          data[1].permlink,
+          data[1].author,
+          data[1].weight,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -576,7 +580,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          options?.rpc ?? this.options?.rpc,
+          options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -584,6 +588,7 @@ export class KeychainSDK {
     });
   };
 
+  //TODO skipped waiting for structure for this
   /**
    * Requests a custom JSON broadcast
    * @param {String} account Hive account to perform the request. If null, user can choose the account from a dropdown
@@ -593,41 +598,44 @@ export class KeychainSDK {
    * @param {String} display_msg Message to display to explain to the user what this broadcast is about
    * @param {String} rpc Override user's RPC settings
    */
-  requestCustomJson = async (
-    account: string | undefined,
-    id: string,
-    key: KeychainKeyTypes,
-    json: string,
-    display_msg: string,
-    rpc: string | undefined,
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestCustomJson(
-          account,
-          id,
-          key,
-          json,
-          display_msg,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
+  // requestCustomJson = async (
+  //   // account: string | undefined,
+  //   // id: string,
+  //   // key: KeychainKeyTypes,
+  //   // json: string,
+  //   // display_msg: string,
+  //   data: RequestCustomJSON,
+  //   options: {
+  //     rpc?: string,
+  //   }
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestCustomJson(
+  //         account: data[1].username,
+  //         id,
+  //         key,
+  //         json,
+  //         display_msg,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
 
   requestTransfer = async (
     data: TransferOperation,
-    optional?: {
+    options: {
       enforce: boolean | undefined;
       rpc: string | undefined;
     },
@@ -635,19 +643,7 @@ export class KeychainSDK {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
-        //TODO pass this to utils file
-        let amountData;
-        amountData =
-          typeof data[1].amount === 'string'
-            ? {
-                amount: utils.formatCurrencyValue(data[1].amount.split(' ')[0]),
-                currency: data[1].amount.split(' ')[1],
-              }
-            : {
-                amount: utils.formatCurrencyValue(data[1].amount.amount),
-                currency: data[1].amount.symbol,
-              };
-        //END pass this to utils file
+        const amountData = utils.checkAndFormatAmount(data[1].amount);
         this.window.hive_keychain.requestTransfer(
           data[1].from,
           data[1].to,
@@ -661,8 +657,8 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          optional?.enforce ?? false,
-          optional?.rpc ?? this.options?.rpc,
+          options.enforce ?? false,
+          options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -670,6 +666,7 @@ export class KeychainSDK {
     });
   };
 
+  //TODO skipped waiting for structure for this
   /**
    * Requests a token transfer
    * @param {String} account Hive account to perform the request
@@ -679,38 +676,43 @@ export class KeychainSDK {
    * @param {String} currency Token symbol to be sent
    * @param {String} rpc Override user's RPC settings
    */
-  requestSendToken = async (
-    account: string,
-    to: string,
-    amount: string,
-    memo: string,
-    currency: string,
-    rpc: string | undefined,
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestSendToken(
-          account,
-          to,
-          amount,
-          memo,
-          currency,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
+  // requestSendToken = async (
+  //   data: {
+  //     account: string;
+  //     to: string;
+  //     amount: string;
+  //     memo: string;
+  //     currency: string;
+  //   },
+  //   options: {
+  //     rpc?: string;
+  //   },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestSendToken(
+  //         data.account,
+  //         data.to,
+  //         data.amount,
+  //         data.memo,
+  //         data.currency,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
 
+  //TODO skipped waiting for structure for this
   /**
    * Requests a delegation broadcast
    * @param {String} username Hive account to perform the request. If null, user can choose the account from a dropdown
@@ -719,56 +721,49 @@ export class KeychainSDK {
    * @param {String} unit HP or VESTS
    * @param {String} rpc Override user's RPC settings
    */
-  requestDelegation = async (
-    username: string | undefined,
-    delegatee: string,
-    amount: string,
-    unit: string = 'HP' || 'VESTS',
-    rpc: string | undefined,
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestDelegation(
-          username,
-          delegatee,
-          amount,
-          unit,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
+  // requestDelegation = async (
+  //   data: {
+  //     username: string | undefined;
+  //     delegatee: string;
+  //     amount: string;
+  //     unit: 'HP' | 'VESTS';
+  //   },
+  //   options: { rpc?: string },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestDelegation(
+  //         data.username,
+  //         data.delegatee,
+  //         data.amount,
+  //         data.unit,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
 
-  /**
-   * Requests a witness vote broadcast
-   * @param {String} [username=null] Hive account to perform the request. If null, user can choose the account from a dropdown
-   * @param {String} witness Account to receive the witness vote
-   * @param {boolean} vote Set to true to vote for the witness, false to unvote
-   * @param {String} [rpc=null] Override user's RPC settings
-   */
   requestWitnessVote = async (
-    username: string | undefined,
-    witness: string,
-    vote: boolean,
-    rpc: string | undefined,
+    data: AccountWitnessVoteOperation,
+    options: { rpc?: string },
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestWitnessVote(
-          username,
-          witness,
-          vote,
+          data[1].account,
+          data[1].witness,
+          data[1].approve,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -776,7 +771,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc ?? this.options?.rpc,
+          options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -786,21 +781,22 @@ export class KeychainSDK {
 
   /**
    * Select an account as proxy
-   * @param {String} [username=null] Hive account to perform the request. If null, user can choose the account from a dropdown
+   * @param {String | undefined } account Hive account to perform the request. If undefined, user can choose the account from a dropdown
    * @param {String} proxy Account to become the proxy. Empty string ('') to remove a proxy
-   * @param {String} [rpc=null] Override user's RPC settings
+   * @param {String | undefined} rpc Override user's RPC settings
    */
   requestProxy = async (
-    username: string | undefined,
-    proxy: string,
-    rpc: string | undefined,
+    data: AccountWitnessProxyOperation,
+    options: {
+      rpc?: string;
+    },
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestProxy(
-          username,
-          proxy,
+          data[1].account,
+          data[1].proxy,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -808,7 +804,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc ?? this.options?.rpc,
+          options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -816,6 +812,7 @@ export class KeychainSDK {
     });
   };
 
+  //TODO skipped waiting for structure for this
   /**
    * Request a power up
    * @param {String} username Hive account to perform the request
@@ -823,65 +820,73 @@ export class KeychainSDK {
    * @param {String} hive Amount of HIVE to be powered up
    * @param {String} [rpc=null] Override user's RPC settings
    */
-  requestPowerUp = async (
-    username: string,
-    recipient: string,
-    hive: string,
-    rpc: string | undefined,
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestPowerUp(
-          username,
-          recipient,
-          hive,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
-
+  // requestPowerUp = async (
+  //   data: {
+  //     username: string;
+  //     recipient: string;
+  //     hive: string;
+  //   },
+  //   options: {
+  //     rpc?: string;
+  //   },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestPowerUp(
+  //         data.username,
+  //         data.recipient,
+  //         data.hive,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
+  //TODO skipped waiting for structure for this
   /**
    * Request a power down
    * @param {String} username Hive account to perform the request
    * @param {String} hive_power Amount of HIVE to be powered down
    * @param {String} [rpc=null] Override user's RPC settings
    */
-  requestPowerDown = async (
-    username: string,
-    hive_power: string,
-    rpc: string | undefined,
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestPowerDown(
-          username,
-          hive_power,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
+  // requestPowerDown = async (
+  //   data: {
+  //     username: string;
+  //     hive_power: string;
+  //   },
+  //   options: {
+  //     rpc?: string;
+  //   },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestPowerDown(
+  //         data.username,
+  //         data.hive_power,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
 
   /**
    * Request the creation of an account using claimed tokens
@@ -894,24 +899,21 @@ export class KeychainSDK {
    * @param {String} [rpc=null] Override user's RPC settings
    */
   requestCreateClaimedAccount = async (
-    username: string,
-    new_account: string,
-    owner: Authority,
-    active: Authority,
-    posting: Authority,
-    memo: string,
-    rpc: string | undefined,
+    data: CreateClaimedAccountOperation,
+    options: {
+      rpc?: string;
+    },
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestCreateClaimedAccount(
-          username,
-          new_account,
-          owner,
-          active,
-          posting,
-          memo,
+          data[1].creator,
+          data[1].new_account_name,
+          data[1].owner,
+          data[1].active,
+          data[1].posting,
+          data[1].memo_key,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -919,7 +921,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc ?? this.options?.rpc,
+          options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -941,28 +943,23 @@ export class KeychainSDK {
    * @param {String} [rpc=null] Override user's RPC settings
    */
   requestCreateProposal = async (
-    username: string,
-    receiver: string,
-    subject: string,
-    permlink: string,
-    daily_pay: string,
-    start: string,
-    end: string,
-    extensions: string,
-    rpc: string | undefined,
+    data: CreateProposalOperation,
+    options: {
+      rpc?: string;
+    },
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestCreateProposal(
-          username,
-          receiver,
-          subject,
-          permlink,
-          daily_pay,
-          start,
-          end,
-          extensions,
+          data[1].creator,
+          data[1].receiver,
+          data[1].start_date,
+          data[1].end_date,
+          data[1].daily_pay,
+          data[1].subject,
+          data[1].permlink,
+          data[1].extensions,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -970,7 +967,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc ?? this.options?.rpc,
+          options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -986,18 +983,18 @@ export class KeychainSDK {
    * @param {String} [rpc=null] Override user's RPC settings
    */
   requestRemoveProposal = async (
-    username: string,
-    proposal_ids: string,
-    extensions: string,
-    rpc: string | undefined,
+    data: RemoveProposalOperation,
+    options: {
+      rpc?: string;
+    },
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestRemoveProposal(
-          username,
-          proposal_ids,
-          extensions,
+          data[1].proposal_owner,
+          data[1].proposal_ids,
+          data[1].extensions,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -1005,7 +1002,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc ?? this.options?.rpc,
+          options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -1022,20 +1019,19 @@ export class KeychainSDK {
    * @param {String} [rpc=null] Override user's RPC settings
    */
   requestUpdateProposalVote = async (
-    username: string,
-    proposal_ids: string,
-    approve: boolean,
-    extensions: string,
-    rpc: string | undefined,
+    data: UpdateProposalVotesOperation,
+    options: {
+      rpc?: string;
+    },
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestUpdateProposalVote(
-          username,
-          proposal_ids,
-          approve,
-          extensions,
+          data[1].voter,
+          data[1].proposal_ids,
+          data[1].approve,
+          data[1].extensions,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -1043,7 +1039,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc ?? this.options?.rpc,
+          options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -1056,16 +1052,16 @@ export class KeychainSDK {
    * @param {String} username username of the account to be added
    * @param {Object} keys private keys of the account : {active:'...',posting:'...',memo:'...'}. At least one must be specified.
    */
-  requestAddAccount = async (
-    username: string,
-    keys: Keys,
-  ): Promise<KeychainRequestResponse> => {
+  requestAddAccount = async (data: {
+    username: string;
+    keys: Keys;
+  }): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestAddAccount(
-          username,
-          keys,
+          data.username,
+          data.keys,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -1080,39 +1076,44 @@ export class KeychainSDK {
     });
   };
 
+  //TODO skipped waiting for structure for this
   /**
    * @param {String} username Hive account to perform the request
    * @param {String} amount amount to be converted.
    * @param {Boolean} collaterized true to convert HIVE to HBD. false to convert HBD to HIVE.
    * @param {String | undefined} rpc  Override user's RPC settings
    */
-  requestConversion = async (
-    username: string,
-    amount: string,
-    collaterized: boolean,
-    rpc: string | undefined,
-  ): Promise<KeychainRequestResponse> => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestConversion(
-          username,
-          amount,
-          collaterized,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          rpc ?? this.options?.rpc,
-        );
-      } catch (error) {
-        throw error;
-      }
-    });
-  };
+  // requestConversion = async (
+  //   data: {
+  //     username: string;
+  //     amount: string;
+  //     collaterized: boolean;
+  //   },
+  //   options: {
+  //     rpc?: string;
+  //   },
+  // ): Promise<KeychainRequestResponse> => {
+  //   return new Promise(async (resolve, reject) => {
+  //     try {
+  //       await this.isKeyChainInstalled();
+  //       this.window.hive_keychain.requestConversion(
+  //         data.username,
+  //         data.amount,
+  //         data.collaterized,
+  //         (response: KeychainRequestResponse) => {
+  //           if (response.error) {
+  //             reject(response);
+  //           } else {
+  //             resolve(response);
+  //           }
+  //         },
+  //         options.rpc ?? this.options?.rpc,
+  //       );
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   });
+  // };
 
   /**
    * @param {String| undefined} username Hive account to perform the request
@@ -1125,26 +1126,23 @@ export class KeychainSDK {
    * @param {String| undefined} rpc Override user's RPC settings
    */
   requestRecurrentTransfer = async (
-    username: string | undefined,
-    to: string,
-    amount: string,
-    currency: string,
-    memo: string,
-    recurrence: number,
-    executions: number,
-    rpc: string | undefined,
+    data: RecurrentTransferOperation,
+    options: {
+      rpc?: string;
+    },
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
+        const amountData = utils.checkAndFormatAmount(data[1].amount);
         this.window.hive_keychain.requestRecurrentTransfer(
-          username,
-          to,
-          amount,
-          currency,
-          memo,
-          recurrence,
-          executions,
+          data[1].from,
+          data[1].to,
+          amountData.amount,
+          amountData.currency,
+          data[1].memo,
+          data[1].recurrence,
+          data[1].executions,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -1152,7 +1150,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          rpc ?? this.options?.rpc,
+          options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
