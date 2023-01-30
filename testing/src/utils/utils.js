@@ -21,4 +21,21 @@ const generateRandomString = () => {
         .map((char) => dictionary[char])
         .join('');
 };
-exports.default = { generateRandomString };
+const withCommas = (nb, decimals = 3) => {
+    const currency = nb.split(' ')[1];
+    const value = parseFloat(nb).toFixed(decimals);
+    var parts = value.split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    let finalNumber = parts.join('.');
+    if (currency) {
+        finalNumber = finalNumber + ' ' + currency;
+    }
+    return finalNumber;
+};
+const formatCurrencyValue = (value, digits = 3) => {
+    if (value === undefined || value === null) {
+        return '...';
+    }
+    return withCommas(value.toString().replace('HBD', '').replace('HIVE', '').trim(), digits);
+};
+exports.default = { generateRandomString, formatCurrencyValue };

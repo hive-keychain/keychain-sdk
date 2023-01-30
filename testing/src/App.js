@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
+import { Asset } from '@hiveio/dhive';
 
 // const generateRandomString = (size) => {
 //   const randomString = Math.random() + 1;
@@ -78,13 +79,13 @@ function App() {
       //   // const isKeyChainInstalled = await KeyChainSDK.isKeyChainInstalled();
       //   // console.log({ isKeyChainInstalled });
 
-      //   // const encodeMessage = await KeyChainSDK.requestEncodeMessage(
-      //   //   'keychain.tests',
-      //   //   'theghost1980',
-      //   //   '#Hi there man!',
-      //   //   'memo',
-      //   // );
-      //   // console.log({ encodeMessage });
+      // const encodeMessage = await KeyChainSDK.requestEncodeMessage(
+      //   'keychain.tests',
+      //   'theghost1980',
+      //   '#Hi there man!',
+      //   'memo',
+      // );
+      // console.log({ encodeMessage });
 
       //   // const verifyKey = await KeyChainSDK.requestVerifyKey(
       //   //   'keychain.tests',
@@ -93,14 +94,14 @@ function App() {
       //   // );
       //   // console.log({ verifyKey });
 
-      const signBuffer = await KeyChainSDK.requestSignBuffer(
-        'keychain.tests',
-        'message!!',
-        'active',
-        undefined,
-        'Login in Into Saturnoman.com\nProceed?',
-      );
-      console.log({ signBuffer });
+      // const signBuffer = await KeyChainSDK.requestSignBuffer(
+      //   'keychain.tests',
+      //   'message!!',
+      //   'active',
+      //   undefined,
+      //   'Login in Into Saturnoman.com\nProceed?',
+      // );
+      // console.log({ signBuffer });
 
       //   // const login = await KeyChainSDK.login(
       //   //   'keychain.tests',
@@ -245,14 +246,17 @@ function App() {
       //   // );
       //   // console.log({ custom_json });
 
-      //   // const transfer = await KeyChainSDK.requestTransfer(
-      //   //   'keychain.tests',
-      //   //   'theghost1980',
-      //   //   '0.001',
-      //   //   'pa los frescos',
-      //   //   'HIVE',
-      //   // );
-      //   // console.log({ transfer });
+      const transfer = await KeyChainSDK.requestTransfer({
+        0: 'transfer',
+        1: {
+          from: 'keychain.tests',
+          // amount: '10 HIVE',
+          amount: new Asset(10, 'HIVE'),
+          to: 'theghost1980',
+          memo: 'Test Keychain SDK transfer',
+        },
+      });
+      console.log({ transfer });
 
       //   // const sendToken = await KeyChainSDK.requestSendToken(
       //   //   'keychain.tests',
