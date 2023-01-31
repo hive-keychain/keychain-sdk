@@ -95,135 +95,170 @@ function App() {
       //   // console.log({ verifyKey });
 
       // const signBuffer = await KeyChainSDK.requestSignBuffer(
-      //   'keychain.tests',
-      //   'message!!',
-      //   'active',
-      //   undefined,
-      //   'Login in Into Saturnoman.com\nProceed?',
+      //   {
+      //     account: undefined,
+      //     message: 'message!!',
+      //     key: 'active',
+      //   },
+      //   {
+      //     rpc: undefined,
+      //     title: 'Login in Into Saturnoman.com\nProceed?',
+      //   },
       // );
       // console.log({ signBuffer });
 
-      //   // const login = await KeyChainSDK.login(
-      //   //   'keychain.tests',
-      //   //   undefined,
-      //   //   'posting',
-      //   //   undefined,
-      //   //   'Saturnoman.com',
-      //   // );
-      //   // console.log({ login });
+      // const login = await KeyChainSDK.login(
+      //   {
+      //     account: undefined,
+      //     message: undefined,
+      //     key: 'posting',
+      //   },
+      //   {
+      //     rpc: undefined,
+      //     title: 'Saturnoman.com',
+      //   },
+      // );
+      // console.log({ login });
 
-      // const addAccountAuthority =
-      //   await KeyChainSDK.requestAddAccountAuthority(
-      //     'keychain.tests',
-      //     'sexosentido',
-      //     'posting',
-      //     1,
-      //   );
+      // const addAccountAuthority = await KeyChainSDK.requestAddAccountAuthority(
+      //   {
+      //     account: 'keychain.tests',
+      //     authorizedUsername: 'sexosentido',
+      //     role: 'posting',
+      //     weight: 1,
+      //   },
+      //   {},
+      // );
       // console.log({ addAccountAuthority });
 
-      //   // const removeAccountAuthority =
-      //   //   await KeyChainSDK.requestRemoveAccountAuthority(
-      //   //     'keychain.tests',
-      //   //     'sexosentido',
-      //   //     'posting',
-      //   //   );
-      //   // console.log({ removeAccountAuthority });
+      // const removeAccountAuthority =
+      //   await KeyChainSDK.requestRemoveAccountAuthority(
+      //     {
+      //       account: 'keychain.tests',
+      //       authorizedUsername: 'sexosentido',
+      //       role: 'posting',
+      //     },
+      //     {},
+      //   );
+      // console.log({ removeAccountAuthority });
 
-      //   // const addKeyAuthority = await KeyChainSDK.requestAddKeyAuthority(
-      //   //   'keychain.tests',
-      //   //   'STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF',
-      //   //   'posting',
-      //   //   1,
-      //   // );
-      //   // console.log({ addKeyAuthority });
+      // const addKeyAuthority = await KeyChainSDK.requestAddKeyAuthority(
+      //   {
+      //     account: 'keychain.tests',
+      //     authorizedKey:
+      //       'STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF',
+      //     role: 'posting',
+      //     weight: 1,
+      //   },
+      //   {},
+      // );
+      // console.log({ addKeyAuthority });
 
-      //   // const removeKeyAuthority = await KeyChainSDK.requestRemoveKeyAuthority(
-      //   //   'keychain.tests',
-      //   //   'STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF',
-      //   //   'posting',
-      //   // );
-      //   // console.log({ removeKeyAuthority });
+      // const removeKeyAuthority = await KeyChainSDK.requestRemoveKeyAuthority(
+      //   {
+      //     account: 'keychain.tests',
+      //     authorizedKey:
+      //       'STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF',
+      //     role: 'posting',
+      //   },
+      //   {},
+      // );
+      // console.log({ removeKeyAuthority });
 
-      //   // const broadcast = await KeyChainSDK.requestBroadcast(
-      //   //   'keychain.tests',
-      //   //   [
-      //   //     [
-      //   //       'transfer',
-      //   //       {
-      //   //         from: 'keychain.tests',
-      //   //         to: 'theghost1980',
-      //   //         amount: '0.001 HIVE',
-      //   //         memo: 'testing keychain SDK - requestBroadcast',
-      //   //       },
-      //   //     ],
-      //   //   ],
-      //   //   'active',
-      //   // );
-      //   // console.log({ broadcast });
+      // const broadcast = await KeyChainSDK.requestBroadcast(
+      //   {
+      //     account: 'keychain.tests',
+      //     operations: [
+      //       [
+      //         'transfer',
+      //         {
+      //           from: 'keychain.tests',
+      //           to: 'theghost1980',
+      //           amount: '0.001 HIVE',
+      //           memo: 'testing keychain SDK - requestBroadcast',
+      //         },
+      //       ],
+      //     ],
+      //     key: 'active',
+      //   },
+      //   {},
+      // );
+      // console.log({ broadcast });
 
-      //   // const signTx = await KeyChainSDK.requestSignTx(
-      //   //   'keychain.tests',
-      //   //   {
-      //   //     ref_block_num: 11000,
-      //   //     ref_block_prefix: 112233,
-      //   //     expiration: new Date().toISOString(),
-      //   //     extensions: [],
-      //   //     operations: [
-      //   //       [
-      //   //         'transfer',
-      //   //         {
-      //   //           from: 'keychain.tests',
-      //   //           to: 'theghost1980',
-      //   //           amount: '0.001 HIVE',
-      //   //           memo: 'testing keychain SDK - requestBroadcast',
-      //   //         },
-      //   //       ],
-      //   //     ],
-      //   //   },
-      //   //   'active',
-      //   // );
-      //   // console.log({ signTx });
+      // const signTx = await KeyChainSDK.requestSignTx(
+      //   {
+      //     account: 'keychain.tests',
+      //     tx: {
+      //       ref_block_num: 11000,
+      //       ref_block_prefix: 112233,
+      //       expiration: new Date().toISOString(),
+      //       extensions: [],
+      //       operations: [
+      //         [
+      //           'transfer',
+      //           {
+      //             from: 'keychain.tests',
+      //             to: 'theghost1980',
+      //             amount: '0.001 HIVE',
+      //             memo: 'testing keychain SDK - requestBroadcast',
+      //           },
+      //         ],
+      //       ],
+      //     },
+      //     key: 'active',
+      //   },
+      //   {},
+      // );
+      // console.log({ signTx });
 
-      //   // const signedCall = await KeyChainSDK.requestSignedCall(
-      //   //   'keychain.tests',
-      //   //   'method',
-      //   //   'params',
-      //   //   'active',
-      //   // );
-      //   // console.log({ signedCall });
+      // const signedCall = await KeyChainSDK.requestSignedCall(
+      //   {
+      //     account: 'keychain.tests',
+      //     method: 'method',
+      //     params: 'params',
+      //     key: 'active',
+      //   },
+      //   {},
+      // );
+      // console.log({ signedCall });
 
       //   //TODO this one need to be completed & tested
-      //   //       const post = await KeyChainSDK.requestPost(
-      //   //         'stoodkev',
-      //   //         'Hello World!',
-      //   //         '## This is a blog post \
-      //   //  * \
-      //   //  * And this is some text',
-      //   //         'Blog',
-      //   //         [],
-      //   //         { format: 'markdown', description: 'A blog post', tags: ['Blog'] },
-      //   //         'hello-world',
-      //   //         {
-      //   //           author: 'stoodkev',
-      //   //           permlink: 'hi-there',
-      //   //           max_accepted_payout: '100000.000 SBD',
-      //   //           percent_steem_dollars: 10000,
-      //   //           allow_votes: true,
-      //   //           allow_curation_rewards: true,
-      //   //           extensions: [
-      //   //             [
-      //   //               0,
-      //   //               {
-      //   //                 beneficiaries: [
-      //   //                   { account: 'yabapmatt', weight: 1000 },
-      //   //                   { account: 'steemplus-pay', weight: 500 },
-      //   //                 ],
-      //   //               },
-      //   //             ],
-      //   //           ],
-      //   //         },
-      //   //       );
-      //   //       console.log({ post });
+      const post = await KeyChainSDK.requestPost(
+        {
+          account: 'stoodkev',
+          title: 'Hello World!',
+          body: '## This is a blog post n And this is some text',
+          parent_perm: 'Blog',
+          parent_account: [],
+          json_metadata: {
+            format: 'markdown',
+            description: 'A blog post',
+            tags: ['Blog'],
+          },
+          permlink: 'hello-world',
+          comment_options: {
+            author: 'stoodkev',
+            permlink: 'hi-there',
+            max_accepted_payout: '100000.000 SBD',
+            percent_steem_dollars: 10000,
+            allow_votes: true,
+            allow_curation_rewards: true,
+            extensions: [
+              [
+                0,
+                {
+                  beneficiaries: [
+                    { account: 'yabapmatt', weight: 1000 },
+                    { account: 'steemplus-pay', weight: 500 },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        {},
+      );
+      console.log({ post });
 
       // const vote = await KeyChainSDK.requestVote(
       //   {
@@ -240,15 +275,21 @@ function App() {
       // console.log({ vote });
 
       // const custom_json = await KeyChainSDK.requestCustomJson(
-      //   undefined,
-      //   'sm_market_rent',
-      //   'Active',
-      //   JSON.stringify({
-      //     items: ['9292cd44ccaef8b73a607949cc787f1679ede10b-93'],
-      //     currency: 'DEC',
-      //     days: 1,
-      //   }),
-      //   'Rent 1 card on Splinterlands',
+      //   {
+      //     0: 'custom_json',
+      //     1: {
+      //       id: '1',
+      //       json: JSON.stringify({
+      //         items: ['9292cd44ccaef8b73a607949cc787f1679ede10b-93'],
+      //         currency: 'DEC',
+      //         days: 1,
+      //       }),
+      //       account: undefined,
+      //       key: 'Posting',
+      //       display_msg: 'rent a card man!',
+      //     },
+      //   },
+      //   {},
       // );
       // console.log({ custom_json });
 
@@ -276,19 +317,24 @@ function App() {
       //   // );
       //   // console.log({ sendToken });
 
-      //   // const delegation = await KeyChainSDK.requestDelegation(
-      //   //   'keychain.tests',
-      //   //   'theghost1980',
-      //   //   '1.000',
-      //   //   'HP',
-      //   // );
-      //   // console.log({ delegation });
+      // const delegation = await KeyChainSDK.requestDelegation(
+      //   {
+      //     account: undefined,
+      //     delegatee: 'theghost1980',
+      //     // amount: '1.000',
+      //     // amount: '1 HP',
+      //     amount: new Asset(1, 'HP'),
+      //     unit: 'HP',
+      //   },
+      //   {},
+      // );
+      // console.log({ delegation });
 
       // const witnessVote2 = await KeyChainSDK.requestWitnessVote(
       //   {
       //     0: 'account_witness_vote',
       //     1: {
-      //       account: 'sexosentido',
+      //       account: 'keychain.tests',
       //       witness: 'stoodkev',
       //       approve: false,
       //     },
@@ -336,22 +382,22 @@ function App() {
       //   // );
       //   // console.log({ conversion });
 
-      const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
-        {
-          0: 'recurrent_transfer',
-          1: {
-            from: 'keychain.tests',
-            to: 'theghost1980',
-            amount: new Asset(0.1, 'HIVE'),
-            memo: 'Keychain SDK tests rt',
-            recurrence: 24,
-            executions: 2,
-            extensions: [],
-          },
-        },
-        {},
-      );
-      console.log({ recurrentTransfer });
+      // const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
+      //   {
+      //     0: 'recurrent_transfer',
+      //     1: {
+      //       from: 'keychain.tests',
+      //       to: 'theghost1980',
+      //       amount: new Asset(0.1, 'HIVE'),
+      //       memo: 'Keychain SDK tests rt',
+      //       recurrence: 24,
+      //       executions: 2,
+      //       extensions: [],
+      //     },
+      //   },
+      //   {},
+      // );
+      // console.log({ recurrentTransfer });
 
       // const updateProposalVote = await KeyChainSDK.requestUpdateProposalVote(
       //   {

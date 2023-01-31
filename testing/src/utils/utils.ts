@@ -45,14 +45,14 @@ const formatCurrencyValue = (value: string | Asset | number, digits = 3) => {
   );
 };
 
-const checkAndFormatAmount = (amount: string | Asset) => {
+const checkAndFormatAmount = (amount: string | Asset, digits?: number) => {
   return typeof amount === 'string'
     ? {
-        amount: formatCurrencyValue(amount.split(' ')[0]),
+        amount: formatCurrencyValue(amount.split(' ')[0], digits),
         currency: amount.split(' ')[1],
       }
     : {
-        amount: formatCurrencyValue(amount.amount),
+        amount: formatCurrencyValue(amount.amount, digits),
         currency: amount.symbol,
       };
 };
