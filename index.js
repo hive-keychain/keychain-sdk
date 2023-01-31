@@ -318,14 +318,14 @@ class KeychainSDK {
         });
         /**
          * Requests to broadcast a blog post/comment
-         * @param {String} data.account Hive account to perform the request
-         * @param {String} data.title Title of the blog post
-         * @param {String} data.body Content of the blog post
-         * @param {String} data.parent_perm Permlink of the parent post. Main tag for a root post
-         * @param {String} data.parent_account Author of the parent post. Pass null for root post
-         * @param {Object} data.json_metadata Parameters of the call
-         * @param {String} data.permlink Permlink of the blog post
-         * @param {Object} data.comment_options Options attached to the blog post. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it
+         * @param {String} data.comment[1].account Hive account to perform the request
+         * @param {String} data.comment[1].title Title of the blog post
+         * @param {String} data.comment[1].body Content of the blog post
+         * @param {String} data.comment[1].parent_perm Permlink of the parent post. Main tag for a root post
+         * @param {String} data.comment[1].parent_account Author of the parent post. Pass null for root post
+         * @param {Object} data.comment[1].json_metadata Parameters of the call, will be automatically stringyfied.
+         * @param {String} data.comment[1].permlink Permlink of the blog post. Note, must be same as in comment_options if is a HIVE Post.
+         * @param {CommentOptionsOperation} data.comment_options Options attached to the blog post. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it. Note: Must be the same as data.permlink if is a Post.
          * @param {String} options.rpc Override user's RPC settings
          */
         this.requestPost = (data, options) => __awaiter(this, void 0, void 0, function* () {
@@ -333,7 +333,7 @@ class KeychainSDK {
                 var _t, _u;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestPost(data.account, data.title, data.body, data.parent_perm, data.parent_account, data.json_metadata, data.permlink, data.comment_options, (response) => {
+                    this.window.hive_keychain.requestPost(data.comment[1].author, data.comment[1].title, data.comment[1].body, data.comment[1].parent_permlink, data.comment[1].parent_author, data.comment[1].json_metadata, data.comment[1].permlink, JSON.stringify(data.comment_options[1]), (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -418,69 +418,21 @@ class KeychainSDK {
                 }
             }));
         });
-        //TODO skipped waiting for structure for this
         /**
          * Requests a token transfer
-         * @param {String} account Hive account to perform the request
-         * @param {String} to Hive account to receive the transfer
-         * @param {String} amount Amount to be transferred. Requires 3 decimals.
-         * @param {String} memo Memo attached to the transfer
-         * @param {String} currency Token symbol to be sent
-         * @param {String} rpc Override user's RPC settings
+         * @param {String} data.account Hive account to perform the request
+         * @param {String} data.to Hive account to receive the transfer
+         * @param {String} data.amount Amount to be transferred. Requires 3 decimals.
+         * @param {String} data.memo Memo attached to the transfer
+         * @param {String} data.currency Token symbol to be sent
+         * @param {String} options.rpc Override user's RPC settings
          */
-        // requestSendToken = async (
-        //   data: {
-        //     account: string;
-        //     to: string;
-        //     amount: string;
-        //     memo: string;
-        //     currency: string;
-        //   },
-        //   options: {
-        //     rpc?: string;
-        //   },
-        // ): Promise<KeychainRequestResponse> => {
-        //   return new Promise(async (resolve, reject) => {
-        //     try {
-        //       await this.isKeyChainInstalled();
-        //       this.window.hive_keychain.requestSendToken(
-        //         data.account,
-        //         data.to,
-        //         data.amount,
-        //         data.memo,
-        //         data.currency,
-        //         (response: KeychainRequestResponse) => {
-        //           if (response.error) {
-        //             reject(response);
-        //           } else {
-        //             resolve(response);
-        //           }
-        //         },
-        //         options.rpc ?? this.options?.rpc,
-        //       );
-        //     } catch (error) {
-        //       throw error;
-        //     }
-        //   });
-        // };
-        //TODO skipped waiting for structure for this
-        /**
-         * Requests a delegation broadcast
-         * @param {String} username Hive account to perform the request. If undefined, user can choose the account from a dropdown
-         * @param {String} delegatee Account to receive the delegation
-         * @param {String} amount Amount to be transfered. Requires 3 decimals for HP, 6 for VESTS.
-         * @param {String} unit HP or VESTS
-         * @param {String} rpc Override user's RPC settings
-         */
-        this.requestDelegation = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.requestSendToken = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _2, _3;
                 try {
                     yield this.isKeyChainInstalled();
-                    const amountData = data.unit === keychain_enums_1.DelegationUnit.VESTS
-                        ? utils_1.default.checkAndFormatAmount(data.amount, 6)
-                        : utils_1.default.checkAndFormatAmount(data.amount);
-                    this.window.hive_keychain.requestDelegation(data.account, data.delegatee, amountData.amount, data.unit, (response) => {
+                    this.window.hive_keychain.requestSendToken(data.account, data.to, data.amount, data.memo, data.currency, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -488,6 +440,46 @@ class KeychainSDK {
                             resolve(response);
                         }
                     }, (_2 = options.rpc) !== null && _2 !== void 0 ? _2 : (_3 = this.options) === null || _3 === void 0 ? void 0 : _3.rpc);
+                }
+                catch (error) {
+                    throw error;
+                }
+            }));
+        });
+        //TODO delete this comments after finish.
+        // {
+        //   account: string | undefined;
+        //   delegatee: string;
+        //   amount: string | Asset;
+        //   unit: DelegationUnit.HP | DelegationUnit.VESTS;
+        // }
+        //end delete
+        /**
+         * Requests a delegation broadcast
+         * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
+         * @param {String} data.delegatee Account to receive the delegation
+         * @param {String} data.amount Amount to be transfered. Requires 3 decimals for HP, 6 for VESTS.
+         * @param {String} data.unit HP or VESTS
+         * @param {String} options.rpc Override user's RPC settings
+         */
+        this.requestDelegation = (data, options) => __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
+                var _4, _5;
+                try {
+                    yield this.isKeyChainInstalled();
+                    //TODO here:
+                    //  add a tweek for the checkANdFormar just for VESTS,
+                    //  as it needs to pass without commas as 1000000.000000 just 6 decimal places.
+                    this.window.hive_keychain.requestDelegation(data[1].delegator, data[1].delegatee, utils_1.default.checkAndFormatAmount(data[1].vesting_shares, 6).amount, 
+                    // data[1].vesting_shares,
+                    keychain_enums_1.DelegationUnit.VESTS, (response) => {
+                        if (response.error) {
+                            reject(response);
+                        }
+                        else {
+                            resolve(response);
+                        }
+                    }, (_4 = options.rpc) !== null && _4 !== void 0 ? _4 : (_5 = this.options) === null || _5 === void 0 ? void 0 : _5.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -503,7 +495,7 @@ class KeychainSDK {
          */
         this.requestWitnessVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _4, _5;
+                var _6, _7;
                 try {
                     yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestWitnessVote(data[1].account, data[1].witness, data[1].approve, (response) => {
@@ -513,7 +505,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_4 = options.rpc) !== null && _4 !== void 0 ? _4 : (_5 = this.options) === null || _5 === void 0 ? void 0 : _5.rpc);
+                    }, (_6 = options.rpc) !== null && _6 !== void 0 ? _6 : (_7 = this.options) === null || _7 === void 0 ? void 0 : _7.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -528,7 +520,7 @@ class KeychainSDK {
          */
         this.requestProxy = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _6, _7;
+                var _8, _9;
                 try {
                     yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestProxy(data[1].account, data[1].proxy, (response) => {
@@ -538,7 +530,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_6 = options.rpc) !== null && _6 !== void 0 ? _6 : (_7 = this.options) === null || _7 === void 0 ? void 0 : _7.rpc);
+                    }, (_8 = options.rpc) !== null && _8 !== void 0 ? _8 : (_9 = this.options) === null || _9 === void 0 ? void 0 : _9.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -632,7 +624,7 @@ class KeychainSDK {
          */
         this.requestCreateClaimedAccount = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _8, _9;
+                var _10, _11;
                 try {
                     yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestCreateClaimedAccount(data[1].creator, data[1].new_account_name, data[1].owner, data[1].active, data[1].posting, data[1].memo_key, (response) => {
@@ -642,7 +634,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_8 = options.rpc) !== null && _8 !== void 0 ? _8 : (_9 = this.options) === null || _9 === void 0 ? void 0 : _9.rpc);
+                    }, (_10 = options.rpc) !== null && _10 !== void 0 ? _10 : (_11 = this.options) === null || _11 === void 0 ? void 0 : _11.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -664,7 +656,7 @@ class KeychainSDK {
          */
         this.requestCreateProposal = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _10, _11;
+                var _12, _13;
                 try {
                     yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestCreateProposal(data[1].creator, data[1].receiver, data[1].start_date, data[1].end_date, data[1].daily_pay, data[1].subject, data[1].permlink, data[1].extensions, (response) => {
@@ -674,7 +666,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_10 = options.rpc) !== null && _10 !== void 0 ? _10 : (_11 = this.options) === null || _11 === void 0 ? void 0 : _11.rpc);
+                    }, (_12 = options.rpc) !== null && _12 !== void 0 ? _12 : (_13 = this.options) === null || _13 === void 0 ? void 0 : _13.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -690,7 +682,7 @@ class KeychainSDK {
          */
         this.requestRemoveProposal = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _12, _13;
+                var _14, _15;
                 try {
                     yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestRemoveProposal(data[1].proposal_owner, data[1].proposal_ids, data[1].extensions, (response) => {
@@ -700,7 +692,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_12 = options.rpc) !== null && _12 !== void 0 ? _12 : (_13 = this.options) === null || _13 === void 0 ? void 0 : _13.rpc);
+                    }, (_14 = options.rpc) !== null && _14 !== void 0 ? _14 : (_15 = this.options) === null || _15 === void 0 ? void 0 : _15.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -717,7 +709,7 @@ class KeychainSDK {
          */
         this.requestUpdateProposalVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _14, _15;
+                var _16, _17;
                 try {
                     yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestUpdateProposalVote(data[1].voter, data[1].proposal_ids, data[1].approve, data[1].extensions, (response) => {
@@ -727,7 +719,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_14 = options.rpc) !== null && _14 !== void 0 ? _14 : (_15 = this.options) === null || _15 === void 0 ? void 0 : _15.rpc);
+                    }, (_16 = options.rpc) !== null && _16 !== void 0 ? _16 : (_17 = this.options) === null || _17 === void 0 ? void 0 : _17.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -807,7 +799,7 @@ class KeychainSDK {
          */
         this.requestRecurrentTransfer = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _16, _17;
+                var _18, _19;
                 try {
                     yield this.isKeyChainInstalled();
                     const amountData = utils_1.default.checkAndFormatAmount(data[1].amount);
@@ -818,7 +810,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_16 = options.rpc) !== null && _16 !== void 0 ? _16 : (_17 = this.options) === null || _17 === void 0 ? void 0 : _17.rpc);
+                    }, (_18 = options.rpc) !== null && _18 !== void 0 ? _18 : (_19 = this.options) === null || _19 === void 0 ? void 0 : _19.rpc);
                 }
                 catch (error) {
                     throw error;

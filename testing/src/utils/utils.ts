@@ -1,4 +1,4 @@
-import { Asset } from '@hiveio/dhive';
+import { Asset, DynamicGlobalProperties } from '@hiveio/dhive';
 
 const generateRandomString = () => {
   const randomString = Math.random() + 1;
@@ -40,7 +40,12 @@ const formatCurrencyValue = (value: string | Asset | number, digits = 3) => {
     return '...';
   }
   return withCommas(
-    value.toString().replace('HBD', '').replace('HIVE', '').trim(),
+    value
+      .toString()
+      .replace('HBD', '')
+      .replace('HIVE', '')
+      .replace('VESTS', '')
+      .trim(),
     digits,
   );
 };
@@ -57,8 +62,15 @@ const checkAndFormatAmount = (amount: string | Asset, digits?: number) => {
       };
 };
 
+const toHP = (vests: string, props?: DynamicGlobalProperties) =>
+  props
+    ? (parseFloat(vests) * parseFloat(props.total_vesting_fund_hive + '')) /
+      parseFloat(props.total_vesting_shares + '')
+    : 0;
+
 export default {
   generateRandomString,
   formatCurrencyValue,
   checkAndFormatAmount,
+  toHP,
 };

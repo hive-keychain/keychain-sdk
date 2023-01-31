@@ -36,7 +36,12 @@ const formatCurrencyValue = (value, digits = 3) => {
     if (value === undefined || value === null) {
         return '...';
     }
-    return withCommas(value.toString().replace('HBD', '').replace('HIVE', '').trim(), digits);
+    return withCommas(value
+        .toString()
+        .replace('HBD', '')
+        .replace('HIVE', '')
+        .replace('VESTS', '')
+        .trim(), digits);
 };
 const checkAndFormatAmount = (amount, digits) => {
     return typeof amount === 'string'
@@ -49,8 +54,13 @@ const checkAndFormatAmount = (amount, digits) => {
             currency: amount.symbol,
         };
 };
+const toHP = (vests, props) => props
+    ? (parseFloat(vests) * parseFloat(props.total_vesting_fund_hive + '')) /
+        parseFloat(props.total_vesting_shares + '')
+    : 0;
 exports.default = {
     generateRandomString,
     formatCurrencyValue,
     checkAndFormatAmount,
+    toHP,
 };

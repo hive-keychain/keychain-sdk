@@ -222,43 +222,40 @@ function App() {
       // );
       // console.log({ signedCall });
 
-      //   //TODO this one need to be completed & tested
-      const post = await KeyChainSDK.requestPost(
-        {
-          account: 'stoodkev',
-          title: 'Hello World!',
-          body: '## This is a blog post n And this is some text',
-          parent_perm: 'Blog',
-          parent_account: [],
-          json_metadata: {
-            format: 'markdown',
-            description: 'A blog post',
-            tags: ['Blog'],
-          },
-          permlink: 'hello-world',
-          comment_options: {
-            author: 'stoodkev',
-            permlink: 'hi-there',
-            max_accepted_payout: '100000.000 SBD',
-            percent_steem_dollars: 10000,
-            allow_votes: true,
-            allow_curation_rewards: true,
-            extensions: [
-              [
-                0,
-                {
-                  beneficiaries: [
-                    { account: 'yabapmatt', weight: 1000 },
-                    { account: 'steemplus-pay', weight: 500 },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        {},
-      );
-      console.log({ post });
+      // const postDHiveTypes = await KeyChainSDK.requestPost(
+      // {
+      //   comment: {
+      //     0: 'comment',
+      //     1: {
+      //       parent_author: '',
+      //       parent_permlink: 'blog',
+      //       author: 'keychain.tests',
+      //       permlink: 'a-post-by-keychaintests-second-part',
+      //       title: 'Hello World 2!',
+      //       body: '## This is a blog post n And this is some text',
+      //       json_metadata: JSON.stringify({
+      //         format: 'markdown',
+      //         description: 'A blog post',
+      //         tags: ['Blog'],
+      //       }),
+      //     },
+      //   },
+      //   comment_options: {
+      //     0: 'comment_options',
+      //     1: {
+      //       author: 'keychain.tests',
+      //       permlink: 'a-post-by-keychaintests-second-part',
+      //       max_accepted_payout: '10000.000 SBD',
+      //       allow_votes: true,
+      //       allow_curation_rewards: true,
+      //       extensions: [],
+      //       percent_hbd: 63,
+      //     },
+      //   },
+      // },
+      // {},
+      // );
+      // console.log({ postDHiveTypes });
 
       // const vote = await KeyChainSDK.requestVote(
       //   {
@@ -317,18 +314,24 @@ function App() {
       //   // );
       //   // console.log({ sendToken });
 
-      // const delegation = await KeyChainSDK.requestDelegation(
-      //   {
-      //     account: undefined,
+      // account: undefined,
       //     delegatee: 'theghost1980',
       //     // amount: '1.000',
       //     // amount: '1 HP',
       //     amount: new Asset(1, 'HP'),
       //     unit: 'HP',
-      //   },
-      //   {},
-      // );
-      // console.log({ delegation });
+      const delegation = await KeyChainSDK.requestDelegation(
+        {
+          0: 'delegate_vesting_shares',
+          1: {
+            delegator: 'keychain.tests',
+            delegatee: 'theghost1980',
+            vesting_shares: '1792365331.000000 VESTS',
+          },
+        },
+        {},
+      );
+      console.log({ delegation });
 
       // const witnessVote2 = await KeyChainSDK.requestWitnessVote(
       //   {

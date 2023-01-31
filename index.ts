@@ -3,10 +3,14 @@ import {
   AccountWitnessVoteOperation,
   Asset,
   Authority,
+  Comment,
+  CommentOperation,
+  CommentOptionsOperation,
   CreateClaimedAccountOperation,
   CreateProposalOperation,
   CustomJsonOperation,
   CustomOperation,
+  DelegateVestingSharesOperation,
   Operation,
   RecurrentTransferOperation,
   RemoveProposalOperation,
@@ -508,26 +512,20 @@ export class KeychainSDK {
 
   /**
    * Requests to broadcast a blog post/comment
-   * @param {String} data.account Hive account to perform the request
-   * @param {String} data.title Title of the blog post
-   * @param {String} data.body Content of the blog post
-   * @param {String} data.parent_perm Permlink of the parent post. Main tag for a root post
-   * @param {String} data.parent_account Author of the parent post. Pass null for root post
-   * @param {Object} data.json_metadata Parameters of the call
-   * @param {String} data.permlink Permlink of the blog post
-   * @param {Object} data.comment_options Options attached to the blog post. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it
+   * @param {String} data.comment[1].account Hive account to perform the request
+   * @param {String} data.comment[1].title Title of the blog post
+   * @param {String} data.comment[1].body Content of the blog post
+   * @param {String} data.comment[1].parent_perm Permlink of the parent post. Main tag for a root post
+   * @param {String} data.comment[1].parent_account Author of the parent post. Pass null for root post
+   * @param {Object} data.comment[1].json_metadata Parameters of the call, will be automatically stringyfied.
+   * @param {String} data.comment[1].permlink Permlink of the blog post. Note, must be same as in comment_options if is a HIVE Post.
+   * @param {CommentOptionsOperation} data.comment_options Options attached to the blog post. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it. Note: Must be the same as data.permlink if is a Post.
    * @param {String} options.rpc Override user's RPC settings
    */
   requestPost = async (
     data: {
-      account: string;
-      title: string;
-      body: string;
-      parent_perm: string;
-      parent_account: [] | undefined;
-      json_metadata: object;
-      permlink: string;
-      comment_options: object;
+      comment: CommentOperation;
+      comment_options: CommentOptionsOperation;
     },
     options: {
       rpc?: string;
@@ -537,14 +535,14 @@ export class KeychainSDK {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestPost(
-          data.account,
-          data.title,
-          data.body,
-          data.parent_perm,
-          data.parent_account,
-          data.json_metadata,
-          data.permlink,
-          data.comment_options,
+          data.comment[1].author,
+          data.comment[1].title,
+          data.comment[1].body,
+          data.comment[1].parent_permlink,
+          data.comment[1].parent_author,
+          data.comment[1].json_metadata,
+          data.comment[1].permlink,
+          JSON.stringify(data.comment_options[1]),
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -663,82 +661,83 @@ export class KeychainSDK {
     });
   };
 
-  //TODO skipped waiting for structure for this
   /**
    * Requests a token transfer
-   * @param {String} account Hive account to perform the request
-   * @param {String} to Hive account to receive the transfer
-   * @param {String} amount Amount to be transferred. Requires 3 decimals.
-   * @param {String} memo Memo attached to the transfer
-   * @param {String} currency Token symbol to be sent
-   * @param {String} rpc Override user's RPC settings
+   * @param {String} data.account Hive account to perform the request
+   * @param {String} data.to Hive account to receive the transfer
+   * @param {String} data.amount Amount to be transferred. Requires 3 decimals.
+   * @param {String} data.memo Memo attached to the transfer
+   * @param {String} data.currency Token symbol to be sent
+   * @param {String} options.rpc Override user's RPC settings
    */
-  // requestSendToken = async (
-  //   data: {
-  //     account: string;
-  //     to: string;
-  //     amount: string;
-  //     memo: string;
-  //     currency: string;
-  //   },
-  //   options: {
-  //     rpc?: string;
-  //   },
-  // ): Promise<KeychainRequestResponse> => {
-  //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       await this.isKeyChainInstalled();
-  //       this.window.hive_keychain.requestSendToken(
-  //         data.account,
-  //         data.to,
-  //         data.amount,
-  //         data.memo,
-  //         data.currency,
-  //         (response: KeychainRequestResponse) => {
-  //           if (response.error) {
-  //             reject(response);
-  //           } else {
-  //             resolve(response);
-  //           }
-  //         },
-  //         options.rpc ?? this.options?.rpc,
-  //       );
-  //     } catch (error) {
-  //       throw error;
-  //     }
-  //   });
-  // };
+  requestSendToken = async (
+    data: {
+      account: string;
+      to: string;
+      amount: string;
+      memo: string;
+      currency: string;
+    },
+    options: {
+      rpc?: string;
+    },
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestSendToken(
+          data.account,
+          data.to,
+          data.amount,
+          data.memo,
+          data.currency,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          options.rpc ?? this.options?.rpc,
+        );
+      } catch (error) {
+        throw error;
+      }
+    });
+  };
 
-  //TODO skipped waiting for structure for this
+  //TODO delete this comments after finish.
+  // {
+  //   account: string | undefined;
+  //   delegatee: string;
+  //   amount: string | Asset;
+  //   unit: DelegationUnit.HP | DelegationUnit.VESTS;
+  // }
+  //end delete
   /**
    * Requests a delegation broadcast
-   * @param {String} username Hive account to perform the request. If undefined, user can choose the account from a dropdown
-   * @param {String} delegatee Account to receive the delegation
-   * @param {String} amount Amount to be transfered. Requires 3 decimals for HP, 6 for VESTS.
-   * @param {String} unit HP or VESTS
-   * @param {String} rpc Override user's RPC settings
+   * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
+   * @param {String} data.delegatee Account to receive the delegation
+   * @param {String} data.amount Amount to be transfered. Requires 3 decimals for HP, 6 for VESTS.
+   * @param {String} data.unit HP or VESTS
+   * @param {String} options.rpc Override user's RPC settings
    */
   requestDelegation = async (
-    data: {
-      account: string | undefined;
-      delegatee: string;
-      amount: string | Asset;
-      unit: DelegationUnit.HP | DelegationUnit.VESTS;
-    },
+    data: DelegateVestingSharesOperation,
     options: { rpc?: string },
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
-        const amountData =
-          data.unit === DelegationUnit.VESTS
-            ? utils.checkAndFormatAmount(data.amount, 6)
-            : utils.checkAndFormatAmount(data.amount);
+        //TODO here:
+        //  add a tweek for the checkANdFormar just for VESTS,
+        //  as it needs to pass without commas as 1000000.000000 just 6 decimal places.
         this.window.hive_keychain.requestDelegation(
-          data.account,
-          data.delegatee,
-          amountData.amount,
-          data.unit,
+          data[1].delegator,
+          data[1].delegatee,
+          utils.checkAndFormatAmount(data[1].vesting_shares, 6).amount,
+          // data[1].vesting_shares,
+          DelegationUnit.VESTS,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
