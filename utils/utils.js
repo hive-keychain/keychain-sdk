@@ -21,18 +21,20 @@ const generateRandomString = () => {
         .map((char) => dictionary[char])
         .join('');
 };
-const withCommas = (nb, decimals = 3) => {
+const withCommas = (nb, decimals = 3, noCommas = false) => {
     const currency = nb.split(' ')[1];
     const value = parseFloat(nb).toFixed(decimals);
     var parts = value.split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (!noCommas) {
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
     let finalNumber = parts.join('.');
     if (currency) {
         finalNumber = finalNumber + ' ' + currency;
     }
     return finalNumber;
 };
-const formatCurrencyValue = (value, digits = 3) => {
+const formatCurrencyValue = (value, digits = 3, noCommas = false) => {
     if (value === undefined || value === null) {
         return '...';
     }
@@ -41,26 +43,21 @@ const formatCurrencyValue = (value, digits = 3) => {
         .replace('HBD', '')
         .replace('HIVE', '')
         .replace('VESTS', '')
-        .trim(), digits);
+        .trim(), digits, noCommas);
 };
-const checkAndFormatAmount = (amount, digits) => {
+const checkAndFormatAmount = (amount, digits, noCommas) => {
     return typeof amount === 'string'
         ? {
-            amount: formatCurrencyValue(amount.split(' ')[0], digits),
+            amount: formatCurrencyValue(amount.split(' ')[0], digits, noCommas),
             currency: amount.split(' ')[1],
         }
         : {
-            amount: formatCurrencyValue(amount.amount, digits),
+            amount: formatCurrencyValue(amount.amount, digits, noCommas),
             currency: amount.symbol,
         };
 };
-const toHP = (vests, props) => props
-    ? (parseFloat(vests) * parseFloat(props.total_vesting_fund_hive + '')) /
-        parseFloat(props.total_vesting_shares + '')
-    : 0;
 exports.default = {
     generateRandomString,
     formatCurrencyValue,
     checkAndFormatAmount,
-    toHP,
 };
