@@ -45,42 +45,36 @@ class KeychainSDK {
          * try {
          *     const login = await KeyChainSDK.login(
          *       {
-         *         account: undefined,
-         *         message: undefined,
-         *         key: 'posting',
-         *       },
-         *       {
-         *         rpc: undefined,
+         *         username: undefined,
+         *         message: 'Log into my website',
+         *         method: 'posting',
          *         title: 'Saturnoman.com',
          *       },
+         *       {},
          *     );
          *     console.log({ login });
          *   } catch (error) {
          *     console.log({ error });
          *   }
-         * @param {String | undefined} data.account Hive account to perform the login, if undefined, Keychain extension will show a dropdown to choose an account.
+         * @param {String | undefined} data.username Hive account to perform the login, if undefined, Keychain extension will show a dropdown to choose an account.
          * @param {String | undefined} data.message Message to sign, if undefined, random message will be generated.
-         * @param {KeychainKeyTypes} data.key Type of key. Can be 'Posting','Active' or 'Memo'
+         * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
+         * @param {String | undefined} data.title Title to be shown on popup
          * @param {String | undefined} options.rpc Override user's RPC settings
-         * @param {String | undefined} options.title Title to be shown on popup
          */
         this.login = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b, _c;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestSignBuffer(data.account, (_a = data.message) !== null && _a !== void 0 ? _a : utils_1.default.generateRandomString(), data.key, (response) => {
+                    this.window.hive_keychain.requestSignBuffer(data.username, (_a = data.message) !== null && _a !== void 0 ? _a : utils_1.default.generateRandomString(), data.method, (response) => {
                         if (response.error) {
-                            reject(Object.assign(Object.assign({}, response), { success: false, result: options.title
-                                    ? `Cannot login into: ${options.title}`
-                                    : null }));
+                            reject(Object.assign(Object.assign({}, response), { success: false, result: data.title ? `Cannot login into: ${data.title}` : null }));
                         }
                         else {
-                            resolve(Object.assign(Object.assign({}, response), { success: true, result: options.title
-                                    ? `Login successful: ${options.title}`
-                                    : null }));
+                            resolve(Object.assign(Object.assign({}, response), { success: true, result: data.title ? `Login successful: ${data.title}` : null }));
                         }
-                    }, (_b = options.rpc) !== null && _b !== void 0 ? _b : (_c = this.options) === null || _c === void 0 ? void 0 : _c.rpc, options.title);
+                    }, (_b = options.rpc) !== null && _b !== void 0 ? _b : (_c = this.options) === null || _c === void 0 ? void 0 : _c.rpc, data.title);
                 }
                 catch (error) {
                     throw error;
@@ -92,12 +86,12 @@ class KeychainSDK {
          * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
          * @example
          * try {
-         *     const encodeMessage = await KeyChainSDK.requestEncodeMessage(
-         *       'keychain.tests',
-         *       'theghost1980',
-         *       '#Hi there man!',
-         *       'memo',
-         *     );
+         *     const encodeMessage = await KeyChainSDK.requestEncodeMessage({
+         *       username: 'keychain.tests',
+         *       receiver: 'theghost1980',
+         *       message: '#Hi there man!',
+         *       method: 'Memo',
+         *     });
          *     console.log({ encodeMessage });
          *   } catch (error) {
          *     console.log({ error });
@@ -105,13 +99,13 @@ class KeychainSDK {
          * @param {String} data.username Hive account to perform the request
          * @param {String} data.receiver Account that will decode the string
          * @param {String} data.message Message to be encrypted, i.e: "#To encrypt message"
-         * @param {String} data.key Type of key. Can be 'Posting','Active' or 'Memo'
+         * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
          */
         this.requestEncodeMessage = (data) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestEncodeMessage(data.username, data.receiver, data.message, data.key, (response) => {
+                    this.window.hive_keychain.requestEncodeMessage(data.username, data.receiver, data.message, data.method, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -129,24 +123,25 @@ class KeychainSDK {
          * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
          * @example
          *try {
-         *     const verifyKey = await KeyChainSDK.requestVerifyKey(
-         *       'keychain.tests',
-         *       '#JnyQbbpLdRBT8ev7SALsNru6c4bftPCf4c6AkTN42YTc52aDvcRqKVqK6yMhRAGhW8fbasR8xz14ofs63WXLP6nxDndKsBMkmg7UsAS9ucTDrKFoZkuJFCyvLmksyCYgD',
-         *       'memo',
-         *     );
+         *     const verifyKey = await KeyChainSDK.requestVerifyKey({
+         *       username: 'keychain.tests',
+         *       message:
+         *         '#JnyQbbpLdRBT8ev7SALsNru6c4bftPCf4c6AkTN42YTc52aDvcRqKVqK6yMhRAGhW8fbasR8xz14ofs63WXLP6nxDndKsBMkmg7UsAS9ucTDrKFoZkuJFCyvLmksyCYgD',
+         *       method: 'memo',
+         *     });
          *     console.log({ verifyKey });
          *   } catch (error) {
          *     console.log({ error });
          *   }
-         * @param {String} data.account Hive account to perform the request
+         * @param {String} data.username Hive account to perform the request
          * @param {String} data.message Message to be decoded by the account
-         * @param {String} data.key Type of key. Can be 'Posting','Active' or 'Memo'
+         * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
          */
         this.requestVerifyKey = (data) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestVerifyKey(data.account, data.message, data.key, (response) => {
+                    this.window.hive_keychain.requestVerifyKey(data.username, data.message, data.method, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -166,38 +161,36 @@ class KeychainSDK {
          * try {
          *     const signBuffer = await KeyChainSDK.requestSignBuffer(
          *       {
-         *         account: undefined,
+         *         username: undefined,
          *         message: 'message!!',
-         *         key: 'active',
-         *       },
-         *       {
-         *         rpc: undefined,
+         *         method: 'Active',
          *         title: 'Login in Into Saturnoman.com\nProceed?',
          *       },
+         *       {},
          *     );
          *     console.log({ signBuffer });
          *   } catch (error) {
          *     console.log({ error });
          *   }
-         * @param {String| undefined} account Hive account to perform the request. If undefined, user can choose the account from a dropdown
-         * @param {String} message Message to be signed by the account
-         * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
-         * @param {String| undefined} rpc Override user's RPC settings
-         * @param {String | undefined} title Override "Sign message" title
+         * @param {String| undefined} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
+         * @param {String} data.message Message to be signed by the account
+         * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
+         * @param {String | undefined} data.title Override "Sign message" title
+         * @param {String| undefined} options.rpc Override user's RPC settings
          */
         this.requestSignBuffer = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _d, _e;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestSignBuffer(data.account, data.message, data.key, (response) => {
+                    this.window.hive_keychain.requestSignBuffer(data.username, data.message, data.method, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_d = options.rpc) !== null && _d !== void 0 ? _d : (_e = this.options) === null || _e === void 0 ? void 0 : _e.rpc, options.title);
+                    }, (_d = options.rpc) !== null && _d !== void 0 ? _d : (_e = this.options) === null || _e === void 0 ? void 0 : _e.rpc, data.title);
                 }
                 catch (error) {
                     throw error;
@@ -210,7 +203,7 @@ class KeychainSDK {
          * try {
          *     const addAccountAuthority = await KeyChainSDK.requestAddAccountAuthority(
          *       {
-         *         account: 'keychain.tests',
+         *         username: 'keychain.tests',
          *         authorizedUsername: 'sexosentido',
          *         role: 'posting',
          *         weight: 1,
@@ -222,7 +215,7 @@ class KeychainSDK {
          *     console.log({ error });
          *
          *   }
-         * @param {String} data.account Hive account to perform the request
+         * @param {String} data.username Hive account to perform the request
          * @param {String} data.authorizedUsername Authorized account
          * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'
          * @param {number} data.weight Weight of the authority
@@ -233,7 +226,7 @@ class KeychainSDK {
                 var _f, _g;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestAddAccountAuthority(data.account, data.authorizedUsername, data.role, data.weight, (response) => {
+                    this.window.hive_keychain.requestAddAccountAuthority(data.username, data.authorizedUsername, data.role, data.weight, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -254,7 +247,7 @@ class KeychainSDK {
          *     const removeAccountAuthority =
          *       await KeyChainSDK.requestRemoveAccountAuthority(
          *         {
-         *           account: 'keychain.tests',
+         *           username: 'keychain.tests',
          *           authorizedUsername: 'sexosentido',
          *           role: 'posting',
          *         },
@@ -264,7 +257,7 @@ class KeychainSDK {
          *   } catch (error) {
          *     console.log({ error });
          *   }
-         * @param {String} data.account Hive account to perform the request
+         * @param {String} data.username Hive account to perform the request
          * @param {String} data.authorizedUsername Account to lose authority
          * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'
          * @param {String |  undefined} options.rpc Override user's RPC settings
@@ -274,7 +267,7 @@ class KeychainSDK {
                 var _h, _j;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestRemoveAccountAuthority(data.account, data.authorizedUsername, data.role, (response) => {
+                    this.window.hive_keychain.requestRemoveAccountAuthority(data.username, data.authorizedUsername, data.role, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -294,7 +287,7 @@ class KeychainSDK {
          * try {
          *     const addKeyAuthority = await KeyChainSDK.requestAddKeyAuthority(
          *       {
-         *         account: 'keychain.tests',
+         *         username: 'keychain.tests',
          *         authorizedKey:
          *           'STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF',
          *         role: 'posting',
@@ -306,7 +299,7 @@ class KeychainSDK {
          *   } catch (error) {
          *     console.log({ error });
          *   }
-         * @param {String} data.account Hive account to perform the request
+         * @param {String} data.username Hive account to perform the request
          * @param {String} data.authorizedKey New public key to be associated with the account
          * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'
          * @param {number} data.weight Weight of the key authority
@@ -317,7 +310,7 @@ class KeychainSDK {
                 var _k, _l;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestAddKeyAuthority(data.account, data.authorizedKey, data.role, data.weight, (response) => {
+                    this.window.hive_keychain.requestAddKeyAuthority(data.username, data.authorizedKey, data.role, data.weight, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -337,7 +330,7 @@ class KeychainSDK {
          *   try {
          *     const removeKeyAuthority = await KeyChainSDK.requestRemoveKeyAuthority(
          *       {
-         *         account: 'keychain.tests',
+         *         username: 'keychain.tests',
          *         authorizedKey:
          *           'STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF',
          *         role: 'posting',
@@ -348,7 +341,7 @@ class KeychainSDK {
          *   } catch (error) {
          *     console.log({ error });
          *   }
-         * @param {String} data.account Hive account to perform the request
+         * @param {String} data.username Hive account to perform the request
          * @param {String} data.authorizedKey Key to be removed (public key).
          * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'.
          * @param {String} options.rpc Override user's RPC settings
@@ -358,7 +351,7 @@ class KeychainSDK {
                 var _m, _o;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestRemoveKeyAuthority(data.account, data.authorizedKey, data.role, (response) => {
+                    this.window.hive_keychain.requestRemoveKeyAuthority(data.username, data.authorizedKey, data.role, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -378,7 +371,7 @@ class KeychainSDK {
          * try {
          *     const broadcast = await KeyChainSDK.requestBroadcast(
          *       {
-         *         account: 'keychain.tests',
+         *         username: 'keychain.tests',
          *         operations: [
          *           [
          *             'transfer',
@@ -390,7 +383,7 @@ class KeychainSDK {
          *             },
          *           ],
          *         ],
-         *         key: 'active',
+         *         method: 'active',
          *       },
          *       {},
          *     );
@@ -398,9 +391,9 @@ class KeychainSDK {
          *   } catch (error) {
          *     console.log({ error });
          *   }
-         * @param {String} data.account Hive account to perform the request
+         * @param {String} data.username Hive account to perform the request
          * @param {Array} data.operations Array of operations to be broadcasted
-         * @param {String} data.key Type of key. Can be 'Posting','Active' or 'Memo'
+         * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
          * @param {String} options.rpc Override user's RPC settings
          */
         this.requestBroadcast = (data, options) => __awaiter(this, void 0, void 0, function* () {
@@ -408,7 +401,7 @@ class KeychainSDK {
                 var _p, _q;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestBroadcast(data.account, data.operations, data.key, (response) => {
+                    this.window.hive_keychain.requestBroadcast(data.username, data.operations, data.method, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -428,7 +421,7 @@ class KeychainSDK {
          *  try {
          *     const signTx = await KeyChainSDK.requestSignTx(
          *       {
-         *         account: 'keychain.tests',
+         *         username: 'keychain.tests',
          *         tx: {
          *           ref_block_num: 11000,
          *           ref_block_prefix: 112233,
@@ -441,12 +434,12 @@ class KeychainSDK {
          *                 from: 'keychain.tests',
          *                 to: 'theghost1980',
          *                 amount: '0.001 HIVE',
-         *                 memo: 'testing keychain SDK - requestBroadcast',
+         *                 memo: 'testing keychain SDK - requestSignTx',
          *               },
          *             ],
          *           ],
          *         },
-         *         key: 'active',
+         *         method: 'active',
          *       },
          *       {},
          *     );
@@ -454,9 +447,9 @@ class KeychainSDK {
          *   } catch (error) {
          *     console.log({ error });
          *   }
-         * @param {String} data.account Hive account to perform the request
+         * @param {String} data.username Hive account to perform the request
          * @param {Object} data.tx Unsigned transaction
-         * @param {String} data.key Type of key. Can be 'Posting','Active' or 'Memo'
+         * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
          * @param {String} options.rpc Override user's RPC settings
          */
         this.requestSignTx = (data, options) => __awaiter(this, void 0, void 0, function* () {
@@ -464,8 +457,9 @@ class KeychainSDK {
                 var _r, _s;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestSignTx(data.account, data.tx, data.key, (response) => {
+                    this.window.hive_keychain.requestSignTx(data.username, data.tx, data.method, (response) => {
                         if (response.error) {
+                            console.log({ response }); //TODO to remove
                             reject(response);
                         }
                         else {
