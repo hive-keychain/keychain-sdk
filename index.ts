@@ -1,46 +1,34 @@
-import {
-  AccountWitnessProxyOperation,
-  AccountWitnessVoteOperation,
-  Asset,
-  Authority,
-  Comment,
-  CommentOperation,
-  CommentOptionsOperation,
-  ConvertOperation,
-  CreateClaimedAccountOperation,
-  CreateProposalOperation,
-  CustomJsonOperation,
-  CustomOperation,
-  DelegateVestingSharesOperation,
-  Operation,
-  RecurrentTransferOperation,
-  RemoveProposalOperation,
-  Transaction,
-  TransferOperation,
-  TransferToVestingOperation,
-  UpdateProposalVotesOperation,
-  VoteOperation,
-  WithdrawVestingOperation,
-  WitnessUpdateOperation,
-} from '@hiveio/dhive';
 import { ExcludeCommonParams } from 'hive-keychain-commons';
 import {
+  RequestAddAccount,
   RequestAddAccountAuthority,
   RequestAddKeyAuthority,
   RequestBroadcast,
+  RequestConvert,
+  RequestCreateClaimedAccount,
+  RequestCreateProposal,
+  RequestCustomJSON,
   RequestDecode,
+  RequestDelegation,
   RequestEncode,
+  RequestPost,
+  RequestPowerDown,
+  RequestPowerUp,
+  RequestProxy,
+  RequestRecurrentTransfer,
   RequestRemoveAccountAuthority,
   RequestRemoveKeyAuthority,
+  RequestRemoveProposal,
+  RequestSendToken,
   RequestSignBuffer,
+  RequestSignedCall,
   RequestSignTx,
+  RequestTransfer,
+  RequestUpdateProposalVote,
+  RequestVote,
+  RequestWitnessVote,
 } from 'hive-keychain-commons/lib/interfaces/keychain';
-import {
-  KeychainKeyTypes,
-  RequestCustomJSON,
-} from './interfaces/keychain.interface';
-import { Keys } from './interfaces/local-account.interface';
-import { DelegationUnit } from './reference-data/keychain.enums';
+
 import utils from './utils/utils';
 
 interface KeychainOptions {
@@ -61,10 +49,6 @@ interface KeychainRequestResponse {
   };
   message: string;
   request_id: number;
-}
-interface KeychainRequestError {
-  keychainError: string;
-  type: string;
 }
 declare global {
   interface Window {
@@ -568,28 +552,27 @@ export class KeychainSDK {
   /**
    * Requests to sign a transaction with a given authority
    * @example
+   *
+   * //This example would be done much easier with requestBroadcast
+   *
+   * import dhive from '@hiveio/dhive';
+   * const client = new dhive.Client(['https://api.hive.blog', 'https://anyx.io', 'https://api.openhive.network']);
+   * const props = await client.database.getDynamicGlobalProperties();
+   * const headBlockNumber = props.head_block_number;
+   * const headBlockId = props.head_block_id;\
+   * const expireTime = 600000;
+   * const op = {
+   *  ref_block_num: headBlockNumber & 0xffff,
+   *  ref_block_prefix: Buffer.from(headBlockId, 'hex').readUInt32LE(4),
+   *  expiration: new Date(Date.now() + expireTime).toISOString(),
+   *  operations: [...] // Add operations here
+   * };
    *  try {
    *     const signTx = await KeyChainSDK.requestSignTx(
    *       {
    *         username: 'keychain.tests',
-   *         tx: {
-   *           ref_block_num: 11000,
-   *           ref_block_prefix: 112233,
-   *           expiration: new Date().toISOString(),
-   *           extensions: [],
-   *           operations: [
-   *             [
-   *               'transfer',
-   *               {
-   *                 from: 'keychain.tests',
-   *                 to: 'theghost1980',
-   *                 amount: '0.001 HIVE',
-   *                 memo: 'testing keychain SDK - requestSignTx',
-   *               },
-   *             ],
-   *           ],
-   *         },
-   *         method: 'active',
+   *         tx: op,
+   *         method: 'Posting',
    *       },
    *       {},
    *     );
@@ -615,7 +598,6 @@ export class KeychainSDK {
           data.method,
           (response: KeychainRequestResponse) => {
             if (response.error) {
-              console.log({ response }); //TODO to remove
               reject(response);
             } else {
               resolve(response);
@@ -639,13 +621,8 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   requestSignedCall = async (
-    data: {
-      account: string;
-      method: string;
-      params: string;
-      key: KeychainKeyTypes;
-    },
-    options: { rpc?: string },
+    data: ExcludeCommonParams<RequestSignedCall>,
+    options: KeychainOptions,
   ): Promise<string> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -663,28 +640,26 @@ export class KeychainSDK {
    * try {
    *     const post = await KeyChainSDK.requestPost(
    *       {
-   *         comment: {
-   *           parent_author: '',
-   *           parent_permlink: 'blog',
+   *         username: 'keychain.tests',
+   *         title: 'Keychain SDK 2!',
+   *         body: '## This is a blog post n And this is some text. Testing the brand new Keychain SDK v1.0',
+   *         parent_perm: 'blog',
+   *         parent_username: '',
+   *         json_metadata: JSON.stringify({
+   *           format: 'markdown',
+   *           description: 'A blog post',
+   *           tags: ['Blog'],
+   *         }),
+   *         permlink: 'a-post-by-keychaintests-fourth-part-post',
+   *         comment_options: JSON.stringify({
    *           author: 'keychain.tests',
-   *           permlink: 'a-post-by-keychaintests-second-part-post-lude',
-   *           title: 'Keychain SDK 1!',
-   *           body: '## This is a blog post n And this is some text. Testing the brand new Keychain SDK v1.0',
-   *           json_metadata: JSON.stringify({
-   *             format: 'markdown',
-   *             description: 'A blog post',
-   *             tags: ['Blog'],
-   *           }),
-   *         },
-   *         comment_options: {
-   *           author: 'keychain.tests',
-   *           permlink: 'a-post-by-keychaintests-second-part-post-lude',
+   *           permlink: 'a-post-by-keychaintests-fourth-part-post',
    *           max_accepted_payout: '10000.000 SBD',
    *           allow_votes: true,
    *           allow_curation_rewards: true,
    *           extensions: [],
    *           percent_hbd: 63,
-   *         },
+   *         }),
    *       },
    *       {},
    *     );
@@ -692,39 +667,32 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.comment.account Hive account to perform the request
-   * @param {String} data.comment.title Title of the blog post
-   * @param {String} data.comment.body Content of the blog post
-   * @param {String} data.comment.parent_perm Permlink of the parent post. Main tag for a root post
-   * @param {String} data.comment.parent_account Author of the parent post. Pass null for root post
-   * @param {Object} data.comment.json_metadata Parameters of the call, will be automatically stringyfied.
-   * @param {String} data.comment.permlink Permlink of the blog post. Note: must be same as in comment_options if is a HIVE Post.
-   * @param {CommentOptionsOperation | undefined} data.comment_options Options attached to the blog post. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it. Note: Must be the same as data.permlink if is a Post.
+   * @param {String} data.username Hive account to perform the request
+   * @param {String} data.title Title of the blog post
+   * @param {String} data.body Content of the blog post
+   * @param {String} data.parent_perm Permlink of the parent post. Main tag for a root post
+   * @param {String} data.parent_username Author of the parent post. Pass null for root post
+   * @param {String} data.json_metadata Parameters of the call, must pass stringyfied.
+   * @param {String} data.permlink Permlink of the blog post. Note: must be same as in comment_options if is a HIVE Post.
+   * @param {String} data.comment_options Options attached to the blog post, must be stringyfied. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it. Note: Must be the same as data.permlink if is a Post.
    * @param {String} options.rpc Override user's RPC settings
    */
   requestPost = async (
-    data: {
-      comment: CommentOperation[1];
-      comment_options?: CommentOptionsOperation[1];
-    },
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestPost>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestPost(
-          data.comment.author,
-          data.comment.title,
-          data.comment.body,
-          data.comment.parent_permlink,
-          data.comment.parent_author,
-          data.comment.json_metadata,
-          data.comment.permlink,
-          data.comment_options
-            ? JSON.stringify(data.comment_options)
-            : undefined,
+          data.username,
+          data.title,
+          data.body,
+          data.parent_perm,
+          data.parent_username,
+          data.json_metadata,
+          data.permlink,
+          data.comment_options,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -746,9 +714,9 @@ export class KeychainSDK {
    *   try {
    *     const vote = await KeyChainSDK.requestVote(
    *       {
-   *         voter: 'keychain.tests',
-   *         author: 'missdeli',
-   *         permlink: 'family-of-three-some-of-our-food-this-week-week-4',
+   *         username: 'keychain.tests',
+   *         author: 'keychain.tests',
+   *         permlink: 'a-post-by-keychaintests-fifth-part-post',
    *         weight: 10000,
    *       },
    *       {},
@@ -757,21 +725,21 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.voter Hive account to perform the request
-   * @param {String} data.permlink Permlink of the blog post
+   * @param {String} data.username Hive account to perform the request
    * @param {String} data.author Author of the blog post
+   * @param {String} data.permlink Permlink of the blog post
    * @param {Number} data.weight Weight of the vote, comprised between -10,000 (-100%) and 10,000 (100%)
    * @param {String} options.rpc Override user's RPC settings
    */
   requestVote = async (
-    data: VoteOperation[1],
-    options: { rpc?: string },
+    data: ExcludeCommonParams<RequestVote>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestVote(
-          data.voter,
+          data.username,
           data.permlink,
           data.author,
           data.weight,
@@ -796,9 +764,9 @@ export class KeychainSDK {
    *    try {
    *     const custom_json = await KeyChainSDK.requestCustomJson(
    *       {
-   *         account: undefined,
+   *         username: undefined,
    *         id: '1',
-   *         key: 'Posting',
+   *         method: 'Posting',
    *         json: JSON.stringify({
    *           items: ['9292cd44ccaef8b73a607949cc787f1679ede10b-93'],
    *           currency: 'DEC',
@@ -812,30 +780,24 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log('error custom_json: ', error);
    *   }
-   * @param {String} data.account Hive account to perform the request. If undefined, user can choose the account from a dropdown
+   * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
    * @param {String} data.id Type of custom_json to be broadcasted
-   * @param {String} data.key Type of key. Can be 'Posting','Active' or 'Memo'
+   * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
    * @param {String} data.json Stringified custom json
    * @param {String} data.display_msg Message to display to explain to the user what this broadcast is about
    * @param {String} options.rpc Override user's RPC settings
    */
   requestCustomJson = async (
-    data: CustomJsonOperation[1] & {
-      account: string | undefined;
-      key: KeychainKeyTypes;
-      display_msg: string;
-    },
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestCustomJSON>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestCustomJson(
-          data.account,
+          data.username,
           data.id,
-          data.key,
+          data.method,
           data.json,
           data.display_msg,
           (response: KeychainRequestResponse) => {
@@ -857,42 +819,43 @@ export class KeychainSDK {
    * Requests a transfer
    * @example
    * try {
-   *   const transfer = await KeyChainSDK.requestTransfer({
-   *         from: 'keychain.tests',
-   *         amount: new Asset(10, 'HBD'),
-   *         to: 'theghost1980',
-   *         memo: 'Test Keychain SDK transfer',
+   *   const transfer = await KeyChainSDK.requestTransfer(
+   *       {
+   *          username: 'theghost1980',
+   *          to: 'keychain.tests',
+   *          amount: '1.000',
+   *          memo: 'Test Keychain SDK transfer',
+   *          enforce: false,
+   *          currency: 'HIVE',
    *       },
-   *    {});
+   *       {}
+   *   );
    *  console.log({ transfer });
    * } catch (error) {
    *  console.log('error transfer: ', error);
    * }
    *
-   * @param {String} data.account Hive account to perform the request
+   * @param {String} data.username Hive account to perform the request
    * @param {String} data.to Hive account to receive the transfer
-   * @param {String} data.amount Amount to be transfered. Requires 3 decimals. Can be Asset or string. i.e: '1 HIVE' or new Asset(1, 'HIVE).
+   * @param {String} data.amount Amount to be transfered. Requires 3 decimals i.e: '1.000', '10.000'.
    * @param {String} data.memo The memo will be automatically encrypted if starting by '#' and the memo key is available on Keychain. It will also overrule the account to be enforced, regardless of the 'enforce' parameter
-   * @param {boolean} options.enforce If set to true, user cannot chose to make the transfer from another account
+   * @param {boolean} data.enforce If set to true, user cannot chose to make the transfer from another account
+   * @param {String} data.currency Asset's symbol to transfer i.e: 'HIVE', 'HBD'.
    * @param {String} options.rpc Override user's RPC settings
    */
   requestTransfer = async (
-    data: TransferOperation[1],
-    options: {
-      enforce: boolean | undefined;
-      rpc: string | undefined;
-    },
+    data: ExcludeCommonParams<RequestTransfer>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
-        const amountData = utils.checkAndFormatAmount(data.amount);
         this.window.hive_keychain.requestTransfer(
-          data.from,
+          data.username,
           data.to,
-          amountData.amount,
+          data.amount,
           data.memo,
-          amountData.currency,
+          data.currency,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -900,7 +863,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          options.enforce ?? false,
+          data.enforce,
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
@@ -911,30 +874,38 @@ export class KeychainSDK {
 
   /**
    * Requests a token transfer
+   * @example
+   *   try {
+   *     const sendToken = await KeyChainSDK.requestSendToken(
+   *       {
+   *         username: 'keychain.tests',
+   *         to: 'theghost1980',
+   *         amount: '0.001',
+   *         memo: 'frescos',
+   *         currency: 'LEO',
+   *       },
+   *       {},
+   *     );
+   *     console.log({ sendToken });
+   *   } catch (error) {
+   *     console.log({ error });
+   *   }
    * @param {String} data.account Hive account to perform the request
    * @param {String} data.to Hive account to receive the transfer
    * @param {String} data.amount Amount to be transferred. Requires 3 decimals.
    * @param {String} data.memo Memo attached to the transfer
-   * @param {String} data.currency Token symbol to be sent
+   * @param {String} data.currency Token symbol to be sent, i.e: 'LEO'.
    * @param {String} options.rpc Override user's RPC settings
    */
   requestSendToken = async (
-    data: {
-      account: string;
-      to: string;
-      amount: string;
-      memo: string;
-      currency: string;
-    },
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestSendToken>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestSendToken(
-          data.account,
+          data.username,
           data.to,
           data.amount,
           data.memo,
@@ -956,38 +927,39 @@ export class KeychainSDK {
 
   /**
    * Requests a delegation broadcast
-   * @param {String} data.delegation.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
-   * @param {String} data.delegation.delegatee Account to receive the delegation
-   * @param {String} data.delegation.vesting_shares Use when passing vesting_power.(VESTS)
-   * @param {String} data.delegation.hp Use when passing hive power.(HP)
+   * @example
+   *   try {
+   *     const delegation = await KeyChainSDK.requestDelegation(
+   *       {
+   *         username: undefined,
+   *         delegatee: 'keychain.tests',
+   *         amount: '1.000',
+   *         unit: 'HP',
+   *       },
+   *       {},
+   *     );
+   *     console.log({ delegation });
+   *   } catch (error) {
+   *     console.log({ error });
+   *   }
+   * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
+   * @param {String} data.delegatee Account to receive the delegation
+   * @param {String} data.amount Requires 3 decimals, i.e: '1.000'.
+   * @param {String} data.unit HP or VESTS. (For VESTS must be greater than minimum).
    * @param {String} options.rpc Override user's RPC settings
    */
   requestDelegation = async (
-    data: {
-      delegation: DelegateVestingSharesOperation[1] & {
-        vesting_shares?: string;
-        hp?: string;
-      };
-    },
-    options: { rpc?: string },
+    data: ExcludeCommonParams<RequestDelegation>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
-        let unit: DelegationUnit;
-        if (data.delegation.vesting_shares) {
-          unit = DelegationUnit.VESTS;
-        } else if (data.delegation.hp) {
-          unit = DelegationUnit.HP;
-        } else throw Error('Please define hp or vesting_shares');
-
         this.window.hive_keychain.requestDelegation(
-          data.delegation.delegator,
-          data.delegation.delegatee,
-          unit === DelegationUnit.HP
-            ? data.delegation.hp
-            : data.delegation.vesting_shares,
-          unit,
+          data.username,
+          data.delegatee,
+          data.amount,
+          data.unit,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -1005,22 +977,36 @@ export class KeychainSDK {
 
   /**
    * Requests a delegation broadcast
+   * @example
+   *  try {
+   *     const witnessVote = await KeyChainSDK.requestWitnessVote(
+   *       {
+   *         username: 'keychain.tests',
+   *         witness: 'stoodkev',
+   *         vote: true,
+   *       },
+   *       {},
+   *     );
+   *     console.log({ witnessVote });
+   *   } catch (error) {
+   *     console.log({ error });
+   *   }
    * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
    * @param {String} data.witness Account to receive the witness vote
-   * @param {boolean} data.approve Set to true to vote for the witness, false to unvote
+   * @param {boolean} data.vote Set to true to vote for the witness, false to unvote
    * @param {String} options.rpc Override user's RPC settings
    */
   requestWitnessVote = async (
-    data: AccountWitnessVoteOperation[1],
-    options: { rpc?: string },
+    data: ExcludeCommonParams<RequestWitnessVote>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestWitnessVote(
-          data.account,
+          data.username,
           data.witness,
-          data.approve,
+          data.vote,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -1038,21 +1024,32 @@ export class KeychainSDK {
 
   /**
    * Select an account as proxy
-   * @param {String | undefined } data.account Hive account to perform the request. If undefined, user can choose the account from a dropdown
+   * @example
+   *  try {
+   *     const proxy = await KeyChainSDK.requestProxy(
+   *       {
+   *         username: 'keychain.tests',
+   *         proxy: 'stoodkev',
+   *       },
+   *       {},
+   *     );
+   *     console.log({ proxy });
+   *   } catch (error) {
+   *     console.log({ error });
+   *   }
+   * @param {String | undefined } data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
    * @param {String} data.proxy Account to become the proxy. Empty string ('') to remove a proxy
    * @param {String | undefined} options.rpc Override user's RPC settings
    */
   requestProxy = async (
-    data: AccountWitnessProxyOperation[1],
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestProxy>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestProxy(
-          data.account,
+          data.username,
           data.proxy,
           (response: KeychainRequestResponse) => {
             if (response.error) {
@@ -1071,24 +1068,36 @@ export class KeychainSDK {
 
   /**
    * Request a power up
-   * @param {String} data[1].from Hive account to perform the request
-   * @param {String} data[1].to Account to receive the power up
-   * @param {String | Asset} data[1].amount Amount of HIVE to be powered up. string or Asset.
+   * @example
+   *  try {
+   *     const powerUp = await KeyChainSDK.requestPowerUp(
+   *       {
+   *         username: 'keychain.tests',
+   *         recipient: 'keychain.tests',
+   *         hive: '0.001',
+   *       },
+   *       {},
+   *     );
+   *     console.log({ powerUp });
+   *   } catch (error) {
+   *     console.log({ error });
+   *   }
+   * @param {String} data.username Hive account to perform the request
+   * @param {String} data.recipient Account to receive the power up
+   * @param {String} data.hive Amount of HIVE to be powered up, requires 3 decimals, i.e: '1.000'.
    * @param {String} options.rpc Override user's RPC settings
    */
   requestPowerUp = async (
-    data: TransferToVestingOperation[1],
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestPowerUp>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestPowerUp(
-          data.from,
-          data.to,
-          data.amount,
+          data.username,
+          data.recipient,
+          data.hive,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -1106,21 +1115,32 @@ export class KeychainSDK {
 
   /**
    * Request a power down
-   * @param {String} data.account Hive account to perform the request
-   * @param {String} data.hive_power Amount of HIVE to be powered down
+   * @example
+   *  try {
+   *     const powerDown = await KeyChainSDK.requestPowerDown(
+   *       {
+   *         username: 'keychain.tests',
+   *         hive_power: '0.001',
+   *       },
+   *       {},
+   *     );
+   *     console.log({ powerDown });
+   *   } catch (error) {
+   *     console.log({ error });
+   *   }
+   * @param {String} data.username Hive account to perform the request
+   * @param {String} data.hive_power Amount of HP(hive power), to be powered down
    * @param {String} options.rpc Override user's RPC settings
    */
   requestPowerDown = async (
-    data: WithdrawVestingOperation[1] & { hive_power: string },
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestPowerDown>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestPowerDown(
-          data.account,
+          data.username,
           data.hive_power,
           (response: KeychainRequestResponse) => {
             if (response.error) {
@@ -1139,30 +1159,28 @@ export class KeychainSDK {
 
   /**
    * Request the creation of an account using claimed tokens
-   * @param {String} username Hive account to perform the request
-   * @param {String} new_account New account to be created
-   * @param {object} owner owner authority object
-   * @param {object} active active authority object
-   * @param {object} posting posting authority object
-   * @param {String} memo public memo key
-   * @param {String} [rpc=null] Override user's RPC settings
+   * @param {String} data.username Hive account to perform the request
+   * @param {String} data.new_account New account to be created
+   * @param {object} data.owner owner authority object
+   * @param {object} data.active active authority object
+   * @param {object} data.posting posting authority object
+   * @param {String} data.memo public memo key
+   * @param {String | undefined} options.rpc Override user's RPC settings
    */
   requestCreateClaimedAccount = async (
-    data: CreateClaimedAccountOperation[1],
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestCreateClaimedAccount>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestCreateClaimedAccount(
-          data.creator,
-          data.new_account_name,
+          data.username,
+          data.new_account,
           data.owner,
           data.active,
           data.posting,
-          data.memo_key,
+          data.memo,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -1192,22 +1210,20 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   requestCreateProposal = async (
-    data: CreateProposalOperation[1],
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestCreateProposal>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestCreateProposal(
-          data.creator,
+          data.username,
           data.receiver,
-          data.start_date,
-          data.end_date,
-          data.daily_pay,
           data.subject,
           data.permlink,
+          data.start,
+          data.end,
+          data.daily_pay,
           data.extensions,
           (response: KeychainRequestResponse) => {
             if (response.error) {
@@ -1232,16 +1248,14 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   requestRemoveProposal = async (
-    data: RemoveProposalOperation[1],
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestRemoveProposal>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestRemoveProposal(
-          data.proposal_owner,
+          data.username,
           data.proposal_ids,
           data.extensions,
           (response: KeychainRequestResponse) => {
@@ -1268,16 +1282,14 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   requestUpdateProposalVote = async (
-    data: UpdateProposalVotesOperation[1],
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestUpdateProposalVote>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestUpdateProposalVote(
-          data.voter,
+          data.username,
           data.proposal_ids,
           data.approve,
           data.extensions,
@@ -1298,13 +1310,29 @@ export class KeychainSDK {
 
   /**
    * Add a new account to Keychain
+   * @example
+   *  try {
+   *     const addAccount = await KeyChainSDK.requestAddAccount(
+   *       {
+   *         username: 'keychain.tests',
+   *         keys: {
+   *           active: '5d...',
+   *           posting: '5fg...',
+   *           memo: '5rfD...',
+   *         },
+   *       },
+   *       {},
+   *     );
+   *     console.log({ addAccount });
+   *   } catch (error) {
+   *     console.log({ error });
+   *   }
    * @param {String} data.username username of the account to be added
    * @param {Object} data.keys private keys of the account : {active:'...',posting:'...',memo:'...'}. At least one must be specified.
    */
-  requestAddAccount = async (data: {
-    username: string;
-    keys: Keys;
-  }): Promise<KeychainRequestResponse> => {
+  requestAddAccount = async (
+    data: ExcludeCommonParams<RequestAddAccount>,
+  ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -1327,24 +1355,36 @@ export class KeychainSDK {
 
   /**
    * Request currency conversion
-   * @param {String} data.owner Hive account to perform the request
-   * @param {String | Asset} data.amount amount to be converted. Collateralized: '1 HIVE'(will convert to  HBD). Non Collateralized: '1 HBD'(will convert to HIVE).
+   * @example
+   *  try {
+   *     const conversionCollateralized = await KeyChainSDK.requestConversion(
+   *       {
+   *         username: 'keychain.tests',
+   *         amount: '1.000',
+   *         collaterized: true,
+   *       },
+   *       {},
+   *     );
+   *     console.log({ conversionCollateralized });
+   *   } catch (error) {
+   *     console.log({ error });
+   *   }
+   * @param {String} data.username Hive account to perform the request
+   * @param {String} data.amount amount to be converted. Requires 3 decimals, i.e: '1.000'.
+   * @param {Boolean} data.collaterized true to convert HIVE to HBD. false to convert HBD to HIVE.
    * @param {String | undefined} optins.rpc  Override user's RPC settings
    */
   requestConversion = async (
-    data: ConvertOperation[1],
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestConvert>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
-        const amountData = utils.checkAndFormatAmount(data.amount);
         this.window.hive_keychain.requestConversion(
-          data.owner,
-          amountData.amount,
-          amountData.currency === 'HIVE' ? true : false,
+          data.username,
+          data.amount,
+          data.collaterized,
           (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
@@ -1363,24 +1403,27 @@ export class KeychainSDK {
   /**
    * Request recurrent transfer
    * @example
-   * try {
-   *   const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
-   *    {
-   *      from: 'keychain.tests',
-   *      to: 'theghost1980',
-   *      amount: new Asset(0.1, 'HIVE'),
-   *      memo: 'Keychain SDK tests rt',
-   *      recurrence: 24,
-   *      executions: 2,
-   *      extensions: [],
-   *    },{});
-   *   console.log({ recurrentTransfer });
-   *    } catch (error) {
-   *   console.log('error, recurrentTransfer: ', error);
-   * }
-   * @param {String| undefined} data.from Hive account to perform the request
+   *  try {
+   *     const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
+   *       {
+   *         username: 'keychain.tests',
+   *         to: 'theghost1980',
+   *         amount: '1.000',
+   *         currency: 'HIVE',
+   *         memo: 'Keychain SDK tests rt',
+   *         recurrence: 24,
+   *         executions: 2,
+   *         extensions: [],
+   *       },
+   *       {},
+   *     );
+   *     console.log({ recurrentTransfer });
+   *   } catch (error) {
+   *     console.log({ error});
+   *   }
+   * @param {String| undefined} data.username Hive account to perform the request
    * @param {String} data.to Hive account receiving the transfers.
-   * @param {String} data.amount amount to be sent on each execution. Will be automatically formatted to 3 decimals.
+   * @param {String} data.amount amount to be sent on each execution. Requires 3 decimals, i.e: '1.000'.
    * @param {String} data.currency HIVE or HBD on mainnet.
    * @param {String} data.memo transfer memo
    * @param {Number} data.recurrence How often will the payment be triggered (in hours) - minimum 24.
@@ -1388,20 +1431,17 @@ export class KeychainSDK {
    * @param {String| undefined} options.rpc Override user's RPC settings
    */
   requestRecurrentTransfer = async (
-    data: RecurrentTransferOperation[1],
-    options: {
-      rpc?: string;
-    },
+    data: ExcludeCommonParams<RequestRecurrentTransfer>,
+    options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
-        const amountData = utils.checkAndFormatAmount(data.amount);
         this.window.hive_keychain.requestRecurrentTransfer(
-          data.from,
+          data.username,
           data.to,
-          amountData.amount,
-          amountData.currency,
+          data.amount,
+          data.currency,
           data.memo,
           data.recurrence,
           data.executions,

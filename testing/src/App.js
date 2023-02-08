@@ -97,6 +97,23 @@ function App() {
       // }
 
       // try {
+      //   const addAccount = await KeyChainSDK.requestAddAccount(
+      //     {
+      //       username: 'keychain.tests',
+      //       keys: {
+      //         active: '5d...',
+      //         posting: '5fg...',
+      //         memo: '5rfD...',
+      //       },
+      //     },
+      //     {},
+      //   );
+      //   console.log({ addAccount });
+      // } catch (error) {
+      //   console.log({ error });
+      // }
+
+      // try {
       //   const verifyKey = await KeyChainSDK.requestVerifyKey({
       //     username: 'keychain.tests',
       //     message:
@@ -224,35 +241,36 @@ function App() {
       //   console.log({ error });
       // }
 
-      try {
-        const signTx = await KeyChainSDK.requestSignTx(
-          {
-            username: 'keychain.tests',
-            tx: {
-              ref_block_num: 11001,
-              ref_block_prefix: 112234,
-              expiration: new Date().toISOString(),
-              extensions: [],
-              operations: [
-                [
-                  'transfer',
-                  {
-                    from: 'keychain.tests',
-                    to: 'theghost1980',
-                    amount: '0.001 HIVE',
-                    memo: 'testing keychain SDK - requestSignTx',
-                  },
-                ],
-              ],
-            },
-            method: 'active',
-          },
-          {},
-        );
-        console.log({ signTx });
-      } catch (error) {
-        console.log({ error });
-      }
+      // try {
+      //   const signTx = await KeyChainSDK.requestSignTx(
+      //     {
+      //       username: 'keychain.tests',
+      //       tx: {
+      //         // ref_block_num: 11001,
+      //         // ref_block_prefix: 112234,
+      //         // expiration: new Date().toISOString(),
+      //         // extensions: [],
+      //         // operations: [
+      //         //   [
+      //         //     'vote',
+      //         //     {
+      //         //       voter: 'keychain.tests',
+      //         //       author: 'missdeli',
+      //         //       permlink:
+      //         //         'family-of-three-some-of-our-food-this-week-week-4',
+      //         //       weight: 10000,
+      //         //     },
+      //         //   ],
+      //         // ],
+      //       },
+      //       method: 'active',
+      //     },
+      //     {},
+      //   );
+      //   console.log({ signTx });
+      // } catch (error) {
+      //   console.log({ error });
+      // }
 
       // const signedCall = await KeyChainSDK.requestSignedCall(
       //   {
@@ -268,28 +286,26 @@ function App() {
       // try {
       //   const post = await KeyChainSDK.requestPost(
       //     {
-      //       comment: {
-      //         parent_author: '',
-      //         parent_permlink: 'blog',
+      //       username: 'keychain.tests',
+      //       title: 'Keychain SDK 3!',
+      //       body: '## This is a blog post n And this is some text. Testing the brand new Keychain SDK v1.0',
+      //       parent_perm: 'blog',
+      //       parent_username: '',
+      //       json_metadata: JSON.stringify({
+      //         format: 'markdown',
+      //         description: 'A blog post',
+      //         tags: ['Blog'],
+      //       }),
+      //       permlink: 'a-post-by-keychaintests-fifth-part-post',
+      //       comment_options: JSON.stringify({
       //         author: 'keychain.tests',
-      //         permlink: 'a-post-by-keychaintests-second-part-post-lude',
-      //         title: 'Keychain SDK 1!',
-      //         body: '## This is a blog post n And this is some text. Testing the brand new Keychain SDK v1.0',
-      //         json_metadata: JSON.stringify({
-      //           format: 'markdown',
-      //           description: 'A blog post',
-      //           tags: ['Blog'],
-      //         }),
-      //       },
-      //       comment_options: {
-      //         author: 'keychain.tests',
-      //         permlink: 'a-post-by-keychaintests-second-part-post-lude',
+      //         permlink: 'a-post-by-keychaintests-fifth-part-post',
       //         max_accepted_payout: '10000.000 SBD',
       //         allow_votes: true,
       //         allow_curation_rewards: true,
       //         extensions: [],
       //         percent_hbd: 63,
-      //       },
+      //       }),
       //     },
       //     {},
       //   );
@@ -301,9 +317,9 @@ function App() {
       // try {
       //   const vote = await KeyChainSDK.requestVote(
       //     {
-      //       voter: 'keychain.tests',
-      //       author: 'missdeli',
-      //       permlink: 'family-of-three-some-of-our-food-this-week-week-4',
+      //       username: 'keychain.tests',
+      //       author: 'keychain.tests',
+      //       permlink: 'a-post-by-keychaintests-fifth-part-post',
       //       weight: 10000,
       //     },
       //     {},
@@ -316,9 +332,9 @@ function App() {
       // try {
       //   const custom_json = await KeyChainSDK.requestCustomJson(
       //     {
-      //       account: undefined,
+      //       username: undefined,
       //       id: '1',
-      //       key: 'Posting',
+      //       method: 'Posting',
       //       json: JSON.stringify({
       //         items: ['9292cd44ccaef8b73a607949cc787f1679ede10b-93'],
       //         currency: 'DEC',
@@ -336,10 +352,12 @@ function App() {
       // try {
       //   const transfer = await KeyChainSDK.requestTransfer(
       //     {
-      //       from: 'keychain.tests',
-      //       amount: new Asset(10, 'HBD'),
-      //       to: 'theghost1980',
+      //       username: 'theghost1980',
+      //       to: 'keychain.tests',
+      //       amount: '1.000',
       //       memo: 'Test Keychain SDK transfer',
+      //       enforce: false,
+      //       currency: 'HIVE',
       //     },
       //     {},
       //   );
@@ -348,106 +366,122 @@ function App() {
       //   console.log('error transfer: ', error);
       // }
 
-      //   // const sendToken = await KeyChainSDK.requestSendToken(
-      //   //   'keychain.tests',
-      //   //   'theghost1980',
-      //   //   '0.001',
-      //   //   'frescos',
-      //   //   'LEO',
-      //   // );
-      //   // console.log({ sendToken });
-
-      // const delegation = await KeyChainSDK.requestDelegation(
-      //   {
-      //     delegation: {
-      //       delegator: undefined,
-      //       delegatee: 'theghost1980',
-      //       vesting_shares: '11000.000000',
-      //       // hp: '1.000',
+      // try {
+      //   const sendToken = await KeyChainSDK.requestSendToken(
+      //     {
+      //       username: 'keychain.tests',
+      //       to: 'theghost1980',
+      //       amount: '0.001',
+      //       memo: 'frescos',
+      //       currency: 'LEO',
       //     },
-      //   },
-      //   {},
-      // );
-      // console.log({ delegation });
+      //     {},
+      //   );
+      //   console.log({ sendToken });
+      // } catch (error) {
+      //   console.log({ error });
+      // }
 
-      // const witnessVote2 = await KeyChainSDK.requestWitnessVote(
-      //   {
-      //     0: 'account_witness_vote',
-      //     1: {
-      //       account: 'keychain.tests',
+      // try {
+      //   const delegation = await KeyChainSDK.requestDelegation(
+      //     {
+      //       username: undefined,
+      //       delegatee: 'keychain.tests',
+      //       amount: '1.000',
+      //       unit: 'HP',
+      //     },
+      //     {},
+      //   );
+      //   console.log({ delegation });
+      // } catch (error) {
+      //   console.log({ error });
+      // }
+
+      // try {
+      //   const witnessVote = await KeyChainSDK.requestWitnessVote(
+      //     {
+      //       username: 'keychain.tests',
       //       witness: 'stoodkev',
-      //       approve: false,
+      //       vote: true,
       //     },
-      //   },
-      //   {},
-      // );
-      // console.log({ witnessVote2 });
+      //     {},
+      //   );
+      //   console.log({ witnessVote });
+      // } catch (error) {
+      //   console.log({ error });
+      // }
 
-      // const proxy = await KeyChainSDK.requestProxy(
-      //   {
-      //     0: 'account_witness_proxy',
-      //     1: {
-      //       account: 'keychain.tests',
+      // try {
+      //   const proxy = await KeyChainSDK.requestProxy(
+      //     {
+      //       username: 'keychain.tests',
       //       proxy: 'stoodkev',
       //     },
-      //   },
-      //   'stoodkev',
-      // );
-      // console.log({ proxy });
+      //     {},
+      //   );
+      //   console.log({ proxy });
+      // } catch (error) {
+      //   console.log({ error });
+      // }
 
-      // const powerUp = await KeyChainSDK.requestPowerUp(
-      //   {
-      //     from: 'keychain.tests',
-      //     to: 'keychain.tests',
-      //     amount: '0.001',
-      //   },
-      //   {},
-      // );
-      // console.log({ powerUp });
+      // try {
+      //   const powerUp = await KeyChainSDK.requestPowerUp(
+      //     {
+      //       username: 'keychain.tests',
+      //       recipient: 'keychain.tests',
+      //       hive: '0.001',
+      //     },
+      //     {},
+      //   );
+      //   console.log({ powerUp });
+      // } catch (error) {
+      //   console.log({ error });
+      // }
 
-      // const powerDown = await KeyChainSDK.requestPowerDown(
-      //   {
-      //     account: 'keychain.tests',
-      //     hive_power: '0.001',
-      //   },
-      //   {},
-      // );
-      // console.log({ powerDown });
+      // try {
+      //   const powerDown = await KeyChainSDK.requestPowerDown(
+      //     {
+      //       username: 'keychain.tests',
+      //       hive_power: '0.001',
+      //     },
+      //     {},
+      //   );
+      //   console.log({ powerDown });
+      // } catch (error) {
+      //   console.log({ error });
+      // }
 
-      // const conversionCollateralized = await KeyChainSDK.requestConversion(
-      //   {
-      //     owner: 'keychain.tests',
-      //     amount: '1 HIVE',
-      //   },
-      //   {},
-      // );
-      // console.log({ conversionCollateralized });
-
-      // const conversionNonCollateralized = await KeyChainSDK.requestConversion(
-      //   {
-      //     owner: 'keychain.tests',
-      //     amount: '1 HBD',
-      //   },
-      //   {},
-      // );
-      // console.log({ conversionNonCollateralized });
+      // try {
+      //   const conversionCollateralized = await KeyChainSDK.requestConversion(
+      //     {
+      //       username: 'keychain.tests',
+      //       amount: '1.000',
+      //       collaterized: true,
+      //     },
+      //     {},
+      //   );
+      //   console.log({ conversionCollateralized });
+      // } catch (error) {
+      //   console.log({ error });
+      // }
 
       // try {
       //   const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
       //     {
-      //         from: 'keychain.tests',
-      //         to: 'theghost1980',
-      //         amount: new Asset(0.1, 'HIVE'),
-      //         memo: 'Keychain SDK tests rt',
-      //         recurrence: 24,
-      //         executions: 2,
-      //         extensions: [],
-      //       },
+      //       username: 'keychain.tests',
+      //       to: 'theghost1980',
+      //       amount: '1.000',
+      //       currency: 'HIVE',
+      //       memo: 'Keychain SDK tests rt',
+      //       recurrence: 24,
+      //       executions: 2,
+      //       extensions: [],
+      //     },
       //     {},
       //   );
       //   console.log({ recurrentTransfer });
       // } catch (error) {
-      //   console.log('error, recurrentTransfer: ', error);
+      //   console.log({ error});
       // }
 
       // const updateProposalVote = await KeyChainSDK.requestUpdateProposalVote(

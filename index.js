@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KeychainSDK = void 0;
-const keychain_enums_1 = require("./reference-data/keychain.enums");
 const utils_1 = __importDefault(require("./utils/utils"));
 class KeychainSDK {
     constructor(window, options) {
@@ -418,28 +417,27 @@ class KeychainSDK {
         /**
          * Requests to sign a transaction with a given authority
          * @example
+         *
+         * //This example would be done much easier with requestBroadcast
+         *
+         * import dhive from '@hiveio/dhive';
+         * const client = new dhive.Client(['https://api.hive.blog', 'https://anyx.io', 'https://api.openhive.network']);
+         * const props = await client.database.getDynamicGlobalProperties();
+         * const headBlockNumber = props.head_block_number;
+         * const headBlockId = props.head_block_id;\
+         * const expireTime = 600000;
+         * const op = {
+         *  ref_block_num: headBlockNumber & 0xffff,
+         *  ref_block_prefix: Buffer.from(headBlockId, 'hex').readUInt32LE(4),
+         *  expiration: new Date(Date.now() + expireTime).toISOString(),
+         *  operations: [...] // Add operations here
+         * };
          *  try {
          *     const signTx = await KeyChainSDK.requestSignTx(
          *       {
          *         username: 'keychain.tests',
-         *         tx: {
-         *           ref_block_num: 11000,
-         *           ref_block_prefix: 112233,
-         *           expiration: new Date().toISOString(),
-         *           extensions: [],
-         *           operations: [
-         *             [
-         *               'transfer',
-         *               {
-         *                 from: 'keychain.tests',
-         *                 to: 'theghost1980',
-         *                 amount: '0.001 HIVE',
-         *                 memo: 'testing keychain SDK - requestSignTx',
-         *               },
-         *             ],
-         *           ],
-         *         },
-         *         method: 'active',
+         *         tx: op,
+         *         method: 'Posting',
          *       },
          *       {},
          *     );
@@ -459,7 +457,6 @@ class KeychainSDK {
                     yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestSignTx(data.username, data.tx, data.method, (response) => {
                         if (response.error) {
-                            console.log({ response }); //TODO to remove
                             reject(response);
                         }
                         else {
@@ -498,28 +495,26 @@ class KeychainSDK {
          * try {
          *     const post = await KeyChainSDK.requestPost(
          *       {
-         *         comment: {
-         *           parent_author: '',
-         *           parent_permlink: 'blog',
+         *         username: 'keychain.tests',
+         *         title: 'Keychain SDK 2!',
+         *         body: '## This is a blog post n And this is some text. Testing the brand new Keychain SDK v1.0',
+         *         parent_perm: 'blog',
+         *         parent_username: '',
+         *         json_metadata: JSON.stringify({
+         *           format: 'markdown',
+         *           description: 'A blog post',
+         *           tags: ['Blog'],
+         *         }),
+         *         permlink: 'a-post-by-keychaintests-fourth-part-post',
+         *         comment_options: JSON.stringify({
          *           author: 'keychain.tests',
-         *           permlink: 'a-post-by-keychaintests-second-part-post-lude',
-         *           title: 'Keychain SDK 1!',
-         *           body: '## This is a blog post n And this is some text. Testing the brand new Keychain SDK v1.0',
-         *           json_metadata: JSON.stringify({
-         *             format: 'markdown',
-         *             description: 'A blog post',
-         *             tags: ['Blog'],
-         *           }),
-         *         },
-         *         comment_options: {
-         *           author: 'keychain.tests',
-         *           permlink: 'a-post-by-keychaintests-second-part-post-lude',
+         *           permlink: 'a-post-by-keychaintests-fourth-part-post',
          *           max_accepted_payout: '10000.000 SBD',
          *           allow_votes: true,
          *           allow_curation_rewards: true,
          *           extensions: [],
          *           percent_hbd: 63,
-         *         },
+         *         }),
          *       },
          *       {},
          *     );
@@ -527,14 +522,14 @@ class KeychainSDK {
          *   } catch (error) {
          *     console.log({ error });
          *   }
-         * @param {String} data.comment.account Hive account to perform the request
-         * @param {String} data.comment.title Title of the blog post
-         * @param {String} data.comment.body Content of the blog post
-         * @param {String} data.comment.parent_perm Permlink of the parent post. Main tag for a root post
-         * @param {String} data.comment.parent_account Author of the parent post. Pass null for root post
-         * @param {Object} data.comment.json_metadata Parameters of the call, will be automatically stringyfied.
-         * @param {String} data.comment.permlink Permlink of the blog post. Note: must be same as in comment_options if is a HIVE Post.
-         * @param {CommentOptionsOperation | undefined} data.comment_options Options attached to the blog post. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it. Note: Must be the same as data.permlink if is a Post.
+         * @param {String} data.username Hive account to perform the request
+         * @param {String} data.title Title of the blog post
+         * @param {String} data.body Content of the blog post
+         * @param {String} data.parent_perm Permlink of the parent post. Main tag for a root post
+         * @param {String} data.parent_username Author of the parent post. Pass null for root post
+         * @param {String} data.json_metadata Parameters of the call, must pass stringyfied.
+         * @param {String} data.permlink Permlink of the blog post. Note: must be same as in comment_options if is a HIVE Post.
+         * @param {String} data.comment_options Options attached to the blog post, must be stringyfied. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it. Note: Must be the same as data.permlink if is a Post.
          * @param {String} options.rpc Override user's RPC settings
          */
         this.requestPost = (data, options) => __awaiter(this, void 0, void 0, function* () {
@@ -542,9 +537,7 @@ class KeychainSDK {
                 var _t, _u;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestPost(data.comment.author, data.comment.title, data.comment.body, data.comment.parent_permlink, data.comment.parent_author, data.comment.json_metadata, data.comment.permlink, data.comment_options
-                        ? JSON.stringify(data.comment_options)
-                        : undefined, (response) => {
+                    this.window.hive_keychain.requestPost(data.username, data.title, data.body, data.parent_perm, data.parent_username, data.json_metadata, data.permlink, data.comment_options, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -564,9 +557,9 @@ class KeychainSDK {
          *   try {
          *     const vote = await KeyChainSDK.requestVote(
          *       {
-         *         voter: 'keychain.tests',
-         *         author: 'missdeli',
-         *         permlink: 'family-of-three-some-of-our-food-this-week-week-4',
+         *         username: 'keychain.tests',
+         *         author: 'keychain.tests',
+         *         permlink: 'a-post-by-keychaintests-fifth-part-post',
          *         weight: 10000,
          *       },
          *       {},
@@ -575,9 +568,9 @@ class KeychainSDK {
          *   } catch (error) {
          *     console.log({ error });
          *   }
-         * @param {String} data.voter Hive account to perform the request
-         * @param {String} data.permlink Permlink of the blog post
+         * @param {String} data.username Hive account to perform the request
          * @param {String} data.author Author of the blog post
+         * @param {String} data.permlink Permlink of the blog post
          * @param {Number} data.weight Weight of the vote, comprised between -10,000 (-100%) and 10,000 (100%)
          * @param {String} options.rpc Override user's RPC settings
          */
@@ -586,7 +579,7 @@ class KeychainSDK {
                 var _v, _w;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestVote(data.voter, data.permlink, data.author, data.weight, (response) => {
+                    this.window.hive_keychain.requestVote(data.username, data.permlink, data.author, data.weight, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -606,9 +599,9 @@ class KeychainSDK {
          *    try {
          *     const custom_json = await KeyChainSDK.requestCustomJson(
          *       {
-         *         account: undefined,
+         *         username: undefined,
          *         id: '1',
-         *         key: 'Posting',
+         *         method: 'Posting',
          *         json: JSON.stringify({
          *           items: ['9292cd44ccaef8b73a607949cc787f1679ede10b-93'],
          *           currency: 'DEC',
@@ -622,9 +615,9 @@ class KeychainSDK {
          *   } catch (error) {
          *     console.log('error custom_json: ', error);
          *   }
-         * @param {String} data.account Hive account to perform the request. If undefined, user can choose the account from a dropdown
+         * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
          * @param {String} data.id Type of custom_json to be broadcasted
-         * @param {String} data.key Type of key. Can be 'Posting','Active' or 'Memo'
+         * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
          * @param {String} data.json Stringified custom json
          * @param {String} data.display_msg Message to display to explain to the user what this broadcast is about
          * @param {String} options.rpc Override user's RPC settings
@@ -634,7 +627,7 @@ class KeychainSDK {
                 var _x, _y;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestCustomJson(data.account, data.id, data.key, data.json, data.display_msg, (response) => {
+                    this.window.hive_keychain.requestCustomJson(data.username, data.id, data.method, data.json, data.display_msg, (response) => {
                         if (response.error) {
                             reject(response);
                         }
@@ -652,39 +645,43 @@ class KeychainSDK {
          * Requests a transfer
          * @example
          * try {
-         *   const transfer = await KeyChainSDK.requestTransfer({
-         *         from: 'keychain.tests',
-         *         amount: new Asset(10, 'HBD'),
-         *         to: 'theghost1980',
-         *         memo: 'Test Keychain SDK transfer',
+         *   const transfer = await KeyChainSDK.requestTransfer(
+         *       {
+         *          username: 'theghost1980',
+         *          to: 'keychain.tests',
+         *          amount: '1.000',
+         *          memo: 'Test Keychain SDK transfer',
+         *          enforce: false,
+         *          currency: 'HIVE',
          *       },
-         *    {});
+         *       {}
+         *   );
          *  console.log({ transfer });
          * } catch (error) {
          *  console.log('error transfer: ', error);
          * }
          *
-         * @param {String} data.account Hive account to perform the request
+         * @param {String} data.username Hive account to perform the request
          * @param {String} data.to Hive account to receive the transfer
-         * @param {String} data.amount Amount to be transfered. Requires 3 decimals. Can be Asset or string. i.e: '1 HIVE' or new Asset(1, 'HIVE).
+         * @param {String} data.amount Amount to be transfered. Requires 3 decimals i.e: '1.000', '10.000'.
          * @param {String} data.memo The memo will be automatically encrypted if starting by '#' and the memo key is available on Keychain. It will also overrule the account to be enforced, regardless of the 'enforce' parameter
-         * @param {boolean} options.enforce If set to true, user cannot chose to make the transfer from another account
+         * @param {boolean} data.enforce If set to true, user cannot chose to make the transfer from another account
+         * @param {String} data.currency Asset's symbol to transfer i.e: 'HIVE', 'HBD'.
          * @param {String} options.rpc Override user's RPC settings
          */
         this.requestTransfer = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _z, _0, _1;
+                var _z, _0;
                 try {
                     yield this.isKeyChainInstalled();
-                    const amountData = utils_1.default.checkAndFormatAmount(data.amount);
-                    this.window.hive_keychain.requestTransfer(data.from, data.to, amountData.amount, data.memo, amountData.currency, (response) => {
+                    this.window.hive_keychain.requestTransfer(data.username, data.to, data.amount, data.memo, data.currency, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_z = options.enforce) !== null && _z !== void 0 ? _z : false, (_0 = options.rpc) !== null && _0 !== void 0 ? _0 : (_1 = this.options) === null || _1 === void 0 ? void 0 : _1.rpc);
+                    }, data.enforce, (_z = options.rpc) !== null && _z !== void 0 ? _z : (_0 = this.options) === null || _0 === void 0 ? void 0 : _0.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -693,26 +690,42 @@ class KeychainSDK {
         });
         /**
          * Requests a token transfer
+         * @example
+         *   try {
+         *     const sendToken = await KeyChainSDK.requestSendToken(
+         *       {
+         *         username: 'keychain.tests',
+         *         to: 'theghost1980',
+         *         amount: '0.001',
+         *         memo: 'frescos',
+         *         currency: 'LEO',
+         *       },
+         *       {},
+         *     );
+         *     console.log({ sendToken });
+         *   } catch (error) {
+         *     console.log({ error });
+         *   }
          * @param {String} data.account Hive account to perform the request
          * @param {String} data.to Hive account to receive the transfer
          * @param {String} data.amount Amount to be transferred. Requires 3 decimals.
          * @param {String} data.memo Memo attached to the transfer
-         * @param {String} data.currency Token symbol to be sent
+         * @param {String} data.currency Token symbol to be sent, i.e: 'LEO'.
          * @param {String} options.rpc Override user's RPC settings
          */
         this.requestSendToken = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _2, _3;
+                var _1, _2;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestSendToken(data.account, data.to, data.amount, data.memo, data.currency, (response) => {
+                    this.window.hive_keychain.requestSendToken(data.username, data.to, data.amount, data.memo, data.currency, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_2 = options.rpc) !== null && _2 !== void 0 ? _2 : (_3 = this.options) === null || _3 === void 0 ? void 0 : _3.rpc);
+                    }, (_1 = options.rpc) !== null && _1 !== void 0 ? _1 : (_2 = this.options) === null || _2 === void 0 ? void 0 : _2.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -721,36 +734,40 @@ class KeychainSDK {
         });
         /**
          * Requests a delegation broadcast
-         * @param {String} data.delegation.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
-         * @param {String} data.delegation.delegatee Account to receive the delegation
-         * @param {String} data.delegation.vesting_shares Use when passing vesting_power.(VESTS)
-         * @param {String} data.delegation.hp Use when passing hive power.(HP)
+         * @example
+         *   try {
+         *     const delegation = await KeyChainSDK.requestDelegation(
+         *       {
+         *         username: undefined,
+         *         delegatee: 'keychain.tests',
+         *         amount: '1.000',
+         *         unit: 'HP',
+         *       },
+         *       {},
+         *     );
+         *     console.log({ delegation });
+         *   } catch (error) {
+         *     console.log({ error });
+         *   }
+         * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
+         * @param {String} data.delegatee Account to receive the delegation
+         * @param {String} data.amount Requires 3 decimals, i.e: '1.000'.
+         * @param {String} data.unit HP or VESTS. (For VESTS must be greater than minimum).
          * @param {String} options.rpc Override user's RPC settings
          */
         this.requestDelegation = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _4, _5;
+                var _3, _4;
                 try {
                     yield this.isKeyChainInstalled();
-                    let unit;
-                    if (data.delegation.vesting_shares) {
-                        unit = keychain_enums_1.DelegationUnit.VESTS;
-                    }
-                    else if (data.delegation.hp) {
-                        unit = keychain_enums_1.DelegationUnit.HP;
-                    }
-                    else
-                        throw Error('Please define hp or vesting_shares');
-                    this.window.hive_keychain.requestDelegation(data.delegation.delegator, data.delegation.delegatee, unit === keychain_enums_1.DelegationUnit.HP
-                        ? data.delegation.hp
-                        : data.delegation.vesting_shares, unit, (response) => {
+                    this.window.hive_keychain.requestDelegation(data.username, data.delegatee, data.amount, data.unit, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_4 = options.rpc) !== null && _4 !== void 0 ? _4 : (_5 = this.options) === null || _5 === void 0 ? void 0 : _5.rpc);
+                    }, (_3 = options.rpc) !== null && _3 !== void 0 ? _3 : (_4 = this.options) === null || _4 === void 0 ? void 0 : _4.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -759,24 +776,38 @@ class KeychainSDK {
         });
         /**
          * Requests a delegation broadcast
+         * @example
+         *  try {
+         *     const witnessVote = await KeyChainSDK.requestWitnessVote(
+         *       {
+         *         username: 'keychain.tests',
+         *         witness: 'stoodkev',
+         *         vote: true,
+         *       },
+         *       {},
+         *     );
+         *     console.log({ witnessVote });
+         *   } catch (error) {
+         *     console.log({ error });
+         *   }
          * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
          * @param {String} data.witness Account to receive the witness vote
-         * @param {boolean} data.approve Set to true to vote for the witness, false to unvote
+         * @param {boolean} data.vote Set to true to vote for the witness, false to unvote
          * @param {String} options.rpc Override user's RPC settings
          */
         this.requestWitnessVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _6, _7;
+                var _5, _6;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestWitnessVote(data.account, data.witness, data.approve, (response) => {
+                    this.window.hive_keychain.requestWitnessVote(data.username, data.witness, data.vote, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_6 = options.rpc) !== null && _6 !== void 0 ? _6 : (_7 = this.options) === null || _7 === void 0 ? void 0 : _7.rpc);
+                    }, (_5 = options.rpc) !== null && _5 !== void 0 ? _5 : (_6 = this.options) === null || _6 === void 0 ? void 0 : _6.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -785,23 +816,36 @@ class KeychainSDK {
         });
         /**
          * Select an account as proxy
-         * @param {String | undefined } data.account Hive account to perform the request. If undefined, user can choose the account from a dropdown
+         * @example
+         *  try {
+         *     const proxy = await KeyChainSDK.requestProxy(
+         *       {
+         *         username: 'keychain.tests',
+         *         proxy: 'stoodkev',
+         *       },
+         *       {},
+         *     );
+         *     console.log({ proxy });
+         *   } catch (error) {
+         *     console.log({ error });
+         *   }
+         * @param {String | undefined } data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
          * @param {String} data.proxy Account to become the proxy. Empty string ('') to remove a proxy
          * @param {String | undefined} options.rpc Override user's RPC settings
          */
         this.requestProxy = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _8, _9;
+                var _7, _8;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestProxy(data.account, data.proxy, (response) => {
+                    this.window.hive_keychain.requestProxy(data.username, data.proxy, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_8 = options.rpc) !== null && _8 !== void 0 ? _8 : (_9 = this.options) === null || _9 === void 0 ? void 0 : _9.rpc);
+                    }, (_7 = options.rpc) !== null && _7 !== void 0 ? _7 : (_8 = this.options) === null || _8 === void 0 ? void 0 : _8.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -810,24 +854,38 @@ class KeychainSDK {
         });
         /**
          * Request a power up
-         * @param {String} data[1].from Hive account to perform the request
-         * @param {String} data[1].to Account to receive the power up
-         * @param {String | Asset} data[1].amount Amount of HIVE to be powered up. string or Asset.
+         * @example
+         *  try {
+         *     const powerUp = await KeyChainSDK.requestPowerUp(
+         *       {
+         *         username: 'keychain.tests',
+         *         recipient: 'keychain.tests',
+         *         hive: '0.001',
+         *       },
+         *       {},
+         *     );
+         *     console.log({ powerUp });
+         *   } catch (error) {
+         *     console.log({ error });
+         *   }
+         * @param {String} data.username Hive account to perform the request
+         * @param {String} data.recipient Account to receive the power up
+         * @param {String} data.hive Amount of HIVE to be powered up, requires 3 decimals, i.e: '1.000'.
          * @param {String} options.rpc Override user's RPC settings
          */
         this.requestPowerUp = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _10, _11;
+                var _9, _10;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestPowerUp(data.from, data.to, data.amount, (response) => {
+                    this.window.hive_keychain.requestPowerUp(data.username, data.recipient, data.hive, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_10 = options.rpc) !== null && _10 !== void 0 ? _10 : (_11 = this.options) === null || _11 === void 0 ? void 0 : _11.rpc);
+                    }, (_9 = options.rpc) !== null && _9 !== void 0 ? _9 : (_10 = this.options) === null || _10 === void 0 ? void 0 : _10.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -836,23 +894,36 @@ class KeychainSDK {
         });
         /**
          * Request a power down
-         * @param {String} data.account Hive account to perform the request
-         * @param {String} data.hive_power Amount of HIVE to be powered down
+         * @example
+         *  try {
+         *     const powerDown = await KeyChainSDK.requestPowerDown(
+         *       {
+         *         username: 'keychain.tests',
+         *         hive_power: '0.001',
+         *       },
+         *       {},
+         *     );
+         *     console.log({ powerDown });
+         *   } catch (error) {
+         *     console.log({ error });
+         *   }
+         * @param {String} data.username Hive account to perform the request
+         * @param {String} data.hive_power Amount of HP(hive power), to be powered down
          * @param {String} options.rpc Override user's RPC settings
          */
         this.requestPowerDown = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _12, _13;
+                var _11, _12;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestPowerDown(data.account, data.hive_power, (response) => {
+                    this.window.hive_keychain.requestPowerDown(data.username, data.hive_power, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_12 = options.rpc) !== null && _12 !== void 0 ? _12 : (_13 = this.options) === null || _13 === void 0 ? void 0 : _13.rpc);
+                    }, (_11 = options.rpc) !== null && _11 !== void 0 ? _11 : (_12 = this.options) === null || _12 === void 0 ? void 0 : _12.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -861,27 +932,27 @@ class KeychainSDK {
         });
         /**
          * Request the creation of an account using claimed tokens
-         * @param {String} username Hive account to perform the request
-         * @param {String} new_account New account to be created
-         * @param {object} owner owner authority object
-         * @param {object} active active authority object
-         * @param {object} posting posting authority object
-         * @param {String} memo public memo key
-         * @param {String} [rpc=null] Override user's RPC settings
+         * @param {String} data.username Hive account to perform the request
+         * @param {String} data.new_account New account to be created
+         * @param {object} data.owner owner authority object
+         * @param {object} data.active active authority object
+         * @param {object} data.posting posting authority object
+         * @param {String} data.memo public memo key
+         * @param {String | undefined} options.rpc Override user's RPC settings
          */
         this.requestCreateClaimedAccount = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _14, _15;
+                var _13, _14;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestCreateClaimedAccount(data.creator, data.new_account_name, data.owner, data.active, data.posting, data.memo_key, (response) => {
+                    this.window.hive_keychain.requestCreateClaimedAccount(data.username, data.new_account, data.owner, data.active, data.posting, data.memo, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_14 = options.rpc) !== null && _14 !== void 0 ? _14 : (_15 = this.options) === null || _15 === void 0 ? void 0 : _15.rpc);
+                    }, (_13 = options.rpc) !== null && _13 !== void 0 ? _13 : (_14 = this.options) === null || _14 === void 0 ? void 0 : _14.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -903,17 +974,17 @@ class KeychainSDK {
          */
         this.requestCreateProposal = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _16, _17;
+                var _15, _16;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestCreateProposal(data.creator, data.receiver, data.start_date, data.end_date, data.daily_pay, data.subject, data.permlink, data.extensions, (response) => {
+                    this.window.hive_keychain.requestCreateProposal(data.username, data.receiver, data.subject, data.permlink, data.start, data.end, data.daily_pay, data.extensions, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_16 = options.rpc) !== null && _16 !== void 0 ? _16 : (_17 = this.options) === null || _17 === void 0 ? void 0 : _17.rpc);
+                    }, (_15 = options.rpc) !== null && _15 !== void 0 ? _15 : (_16 = this.options) === null || _16 === void 0 ? void 0 : _16.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -929,17 +1000,17 @@ class KeychainSDK {
          */
         this.requestRemoveProposal = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _18, _19;
+                var _17, _18;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestRemoveProposal(data.proposal_owner, data.proposal_ids, data.extensions, (response) => {
+                    this.window.hive_keychain.requestRemoveProposal(data.username, data.proposal_ids, data.extensions, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_18 = options.rpc) !== null && _18 !== void 0 ? _18 : (_19 = this.options) === null || _19 === void 0 ? void 0 : _19.rpc);
+                    }, (_17 = options.rpc) !== null && _17 !== void 0 ? _17 : (_18 = this.options) === null || _18 === void 0 ? void 0 : _18.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -956,17 +1027,17 @@ class KeychainSDK {
          */
         this.requestUpdateProposalVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _20, _21;
+                var _19, _20;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestUpdateProposalVote(data.voter, data.proposal_ids, data.approve, data.extensions, (response) => {
+                    this.window.hive_keychain.requestUpdateProposalVote(data.username, data.proposal_ids, data.approve, data.extensions, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_20 = options.rpc) !== null && _20 !== void 0 ? _20 : (_21 = this.options) === null || _21 === void 0 ? void 0 : _21.rpc);
+                    }, (_19 = options.rpc) !== null && _19 !== void 0 ? _19 : (_20 = this.options) === null || _20 === void 0 ? void 0 : _20.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -975,6 +1046,23 @@ class KeychainSDK {
         });
         /**
          * Add a new account to Keychain
+         * @example
+         *  try {
+         *     const addAccount = await KeyChainSDK.requestAddAccount(
+         *       {
+         *         username: 'keychain.tests',
+         *         keys: {
+         *           active: '5d...',
+         *           posting: '5fg...',
+         *           memo: '5rfD...',
+         *         },
+         *       },
+         *       {},
+         *     );
+         *     console.log({ addAccount });
+         *   } catch (error) {
+         *     console.log({ error });
+         *   }
          * @param {String} data.username username of the account to be added
          * @param {Object} data.keys private keys of the account : {active:'...',posting:'...',memo:'...'}. At least one must be specified.
          */
@@ -998,24 +1086,38 @@ class KeychainSDK {
         });
         /**
          * Request currency conversion
-         * @param {String} data.owner Hive account to perform the request
-         * @param {String | Asset} data.amount amount to be converted. Collateralized: '1 HIVE'(will convert to  HBD). Non Collateralized: '1 HBD'(will convert to HIVE).
+         * @example
+         *  try {
+         *     const conversionCollateralized = await KeyChainSDK.requestConversion(
+         *       {
+         *         username: 'keychain.tests',
+         *         amount: '1.000',
+         *         collaterized: true,
+         *       },
+         *       {},
+         *     );
+         *     console.log({ conversionCollateralized });
+         *   } catch (error) {
+         *     console.log({ error });
+         *   }
+         * @param {String} data.username Hive account to perform the request
+         * @param {String} data.amount amount to be converted. Requires 3 decimals, i.e: '1.000'.
+         * @param {Boolean} data.collaterized true to convert HIVE to HBD. false to convert HBD to HIVE.
          * @param {String | undefined} optins.rpc  Override user's RPC settings
          */
         this.requestConversion = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _22, _23;
+                var _21, _22;
                 try {
                     yield this.isKeyChainInstalled();
-                    const amountData = utils_1.default.checkAndFormatAmount(data.amount);
-                    this.window.hive_keychain.requestConversion(data.owner, amountData.amount, amountData.currency === 'HIVE' ? true : false, (response) => {
+                    this.window.hive_keychain.requestConversion(data.username, data.amount, data.collaterized, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_22 = options.rpc) !== null && _22 !== void 0 ? _22 : (_23 = this.options) === null || _23 === void 0 ? void 0 : _23.rpc);
+                    }, (_21 = options.rpc) !== null && _21 !== void 0 ? _21 : (_22 = this.options) === null || _22 === void 0 ? void 0 : _22.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -1025,24 +1127,27 @@ class KeychainSDK {
         /**
          * Request recurrent transfer
          * @example
-         * try {
-         *   const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
-         *    {
-         *      from: 'keychain.tests',
-         *      to: 'theghost1980',
-         *      amount: new Asset(0.1, 'HIVE'),
-         *      memo: 'Keychain SDK tests rt',
-         *      recurrence: 24,
-         *      executions: 2,
-         *      extensions: [],
-         *    },{});
-         *   console.log({ recurrentTransfer });
-         *    } catch (error) {
-         *   console.log('error, recurrentTransfer: ', error);
-         * }
-         * @param {String| undefined} data.from Hive account to perform the request
+         *  try {
+         *     const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
+         *       {
+         *         username: 'keychain.tests',
+         *         to: 'theghost1980',
+         *         amount: '1.000',
+         *         currency: 'HIVE',
+         *         memo: 'Keychain SDK tests rt',
+         *         recurrence: 24,
+         *         executions: 2,
+         *         extensions: [],
+         *       },
+         *       {},
+         *     );
+         *     console.log({ recurrentTransfer });
+         *   } catch (error) {
+         *     console.log({ error});
+         *   }
+         * @param {String| undefined} data.username Hive account to perform the request
          * @param {String} data.to Hive account receiving the transfers.
-         * @param {String} data.amount amount to be sent on each execution. Will be automatically formatted to 3 decimals.
+         * @param {String} data.amount amount to be sent on each execution. Requires 3 decimals, i.e: '1.000'.
          * @param {String} data.currency HIVE or HBD on mainnet.
          * @param {String} data.memo transfer memo
          * @param {Number} data.recurrence How often will the payment be triggered (in hours) - minimum 24.
@@ -1051,18 +1156,17 @@ class KeychainSDK {
          */
         this.requestRecurrentTransfer = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _24, _25;
+                var _23, _24;
                 try {
                     yield this.isKeyChainInstalled();
-                    const amountData = utils_1.default.checkAndFormatAmount(data.amount);
-                    this.window.hive_keychain.requestRecurrentTransfer(data.from, data.to, amountData.amount, amountData.currency, data.memo, data.recurrence, data.executions, (response) => {
+                    this.window.hive_keychain.requestRecurrentTransfer(data.username, data.to, data.amount, data.currency, data.memo, data.recurrence, data.executions, (response) => {
                         if (response.error) {
                             reject(response);
                         }
                         else {
                             resolve(response);
                         }
-                    }, (_24 = options.rpc) !== null && _24 !== void 0 ? _24 : (_25 = this.options) === null || _25 === void 0 ? void 0 : _25.rpc);
+                    }, (_23 = options.rpc) !== null && _23 !== void 0 ? _23 : (_24 = this.options) === null || _24 === void 0 ? void 0 : _24.rpc);
                 }
                 catch (error) {
                     throw error;
