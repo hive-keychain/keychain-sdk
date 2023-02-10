@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Utils = void 0;
 const generateRandomString = () => {
     const randomString = Math.random() + 1;
     const dictionary = {
@@ -21,6 +22,6 @@ const generateRandomString = () => {
         .map((char) => dictionary[char])
         .join('');
 };
-exports.default = {
+exports.Utils = {
     generateRandomString,
 };

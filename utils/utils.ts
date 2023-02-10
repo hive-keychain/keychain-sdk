@@ -20,6 +20,6 @@ const generateRandomString = () => {
     .join('');
 };
 
-export default {
+export const Utils = {
   generateRandomString,
 };

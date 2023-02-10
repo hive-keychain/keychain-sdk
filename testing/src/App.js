@@ -30,33 +30,33 @@ import { KeychainSDK } from 'keychain-sdk';
 
 function App() {
   //using DEFAULT RPC.
-  // const KeyChainSDK = new KeychainSDK(window, { rpc: 'DEFAULT' });
+  // const KeychainSDK = new KeychainSDK(window, { rpc: 'DEFAULT' });
 
   // no RPC
-  const KeyChainSDK = new KeychainSDK(window);
+  const sdk = new KeychainSDK(window);
 
   // console.log(generateRandomString());
-  //tests on requestHandshake
-  // useEffect(() => {
-  //   const onLoadHandler = async () => {
-  //     console.log('Fully loaded!');
-  //     if (window.hive_keychain) {
-  //       console.log('It should has it!!');
-  //       const cbPromise = function () {
-  //         return new Promise((resolve, rejects) => {
-  //           console.log('Waited and resolved!');
-  //           resolve(true);
-  //         });
-  //       };
-  //       window.hive_keychain.requestHandshake(
-  //         cbPromise().then((value) => {
-  //           console.log({ value });
-  //         }),
-  //       );
-  //     }
-  //   };
-  //   window.addEventListener('load', onLoadHandler);
-  // });
+  // tests on requestHandshake
+  useEffect(() => {
+    const onLoadHandler = async () => {
+      console.log('Fully loaded!');
+      if (window.hive_keychain) {
+        console.log('It should has it!!');
+        const cbPromise = function () {
+          return new Promise((resolve, rejects) => {
+            console.log('Waited and resolved!');
+            resolve(true);
+          });
+        };
+        window.hive_keychain.requestHandshake(
+          cbPromise().then((value) => {
+            console.log({ value });
+          }),
+        );
+      }
+    };
+    window.addEventListener('load', onLoadHandler);
+  });
 
   //end tests
 
@@ -68,7 +68,7 @@ function App() {
       console.log('Fully loaded!');
 
       // try {
-      //   const encodeMessage = await KeyChainSDK.requestEncodeMessage({
+      //   const encodeMessage = await KeychainSDK.requestEncodeMessage({
       //     username: 'keychain.tests',
       //     receiver: 'theghost1980',
       //     message: '#Hi there man!',
@@ -81,11 +81,11 @@ function App() {
 
       // if (window.hive_keychain) {
       //   console.log('It should has it!!');
-      //   // const isKeyChainInstalled = await KeyChainSDK.isKeyChainInstalled();
+      //   // const isKeyChainInstalled = await KeychainSDK.isKeyChainInstalled();
       //   // console.log({ isKeyChainInstalled });
 
       // try {
-      //   const encodeMessage = await KeyChainSDK.requestEncodeMessage({
+      //   const encodeMessage = await KeychainSDK.requestEncodeMessage({
       //     username: 'keychain.tests',
       //     receiver: 'theghost1980',
       //     message: '#Hi there man!',
@@ -97,7 +97,7 @@ function App() {
       // }
 
       // try {
-      //   const addAccount = await KeyChainSDK.requestAddAccount(
+      //   const addAccount = await KeychainSDK.requestAddAccount(
       //     {
       //       username: 'keychain.tests',
       //       keys: {
@@ -114,7 +114,7 @@ function App() {
       // }
 
       // try {
-      //   const verifyKey = await KeyChainSDK.requestVerifyKey({
+      //   const verifyKey = await KeychainSDK.requestVerifyKey({
       //     username: 'keychain.tests',
       //     message:
       //       '#JnyQbbpLdRBT8ev7SALsNru6c4bftPCf4c6AkTN42YTc52aDvcRqKVqK6yMhRAGhW8fbasR8xz14ofs63WXLP6nxDndKsBMkmg7UsAS9ucTDrKFoZkuJFCyvLmksyCYgD',
@@ -126,7 +126,7 @@ function App() {
       // }
 
       // try {
-      //   const signBuffer = await KeyChainSDK.requestSignBuffer(
+      //   const signBuffer = await KeychainSDK.requestSignBuffer(
       //     {
       //       username: undefined,
       //       message: 'message!!',
@@ -141,7 +141,7 @@ function App() {
       // }
 
       // try {
-      //   const login = await KeyChainSDK.login(
+      //   const login = await KeychainSDK.login(
       //     {
       //       username: undefined,
       //       message: 'Log into my website',
@@ -157,7 +157,7 @@ function App() {
 
       // try {
       //   const addAccountAuthority =
-      //     await KeyChainSDK.requestAddAccountAuthority(
+      //     await KeychainSDK.requestAddAccountAuthority(
       //       {
       //         username: 'keychain.tests',
       //         authorizedUsername: 'sexosentido',
@@ -173,7 +173,7 @@ function App() {
 
       // try {
       //   const removeAccountAuthority =
-      //     await KeyChainSDK.requestRemoveAccountAuthority(
+      //     await KeychainSDK.requestRemoveAccountAuthority(
       //       {
       //         username: 'keychain.tests',
       //         authorizedUsername: 'sexosentido',
@@ -187,7 +187,7 @@ function App() {
       // }
 
       // try {
-      //   const addKeyAuthority = await KeyChainSDK.requestAddKeyAuthority(
+      //   const addKeyAuthority = await KeychainSDK.requestAddKeyAuthority(
       //     {
       //       username: 'keychain.tests',
       //       authorizedKey:
@@ -203,7 +203,7 @@ function App() {
       // }
 
       // try {
-      //   const removeKeyAuthority = await KeyChainSDK.requestRemoveKeyAuthority(
+      //   const removeKeyAuthority = await KeychainSDK.requestRemoveKeyAuthority(
       //     {
       //       username: 'keychain.tests',
       //       authorizedKey:
@@ -218,7 +218,7 @@ function App() {
       // }
 
       // try {
-      //   const broadcast = await KeyChainSDK.requestBroadcast(
+      //   const broadcast = await KeychainSDK.requestBroadcast(
       //     {
       //       username: 'keychain.tests',
       //       operations: [
@@ -242,7 +242,7 @@ function App() {
       // }
 
       // try {
-      //   const signTx = await KeyChainSDK.requestSignTx(
+      //   const signTx = await KeychainSDK.requestSignTx(
       //     {
       //       username: 'keychain.tests',
       //       tx: {
@@ -272,7 +272,7 @@ function App() {
       //   console.log({ error });
       // }
 
-      // const signedCall = await KeyChainSDK.requestSignedCall(
+      // const signedCall = await KeychainSDK.requestSignedCall(
       //   {
       //     account: 'keychain.tests',
       //     method: 'method',
@@ -284,7 +284,7 @@ function App() {
       // console.log({ signedCall });
 
       // try {
-      //   const post = await KeyChainSDK.requestPost(
+      //   const post = await KeychainSDK.requestPost(
       //     {
       //       username: 'keychain.tests',
       //       title: 'Keychain SDK 3!',
@@ -315,7 +315,7 @@ function App() {
       // }
 
       // try {
-      //   const vote = await KeyChainSDK.requestVote(
+      //   const vote = await KeychainSDK.requestVote(
       //     {
       //       username: 'keychain.tests',
       //       author: 'keychain.tests',
@@ -330,7 +330,7 @@ function App() {
       // }
 
       // try {
-      //   const custom_json = await KeyChainSDK.requestCustomJson(
+      //   const custom_json = await KeychainSDK.requestCustomJson(
       //     {
       //       username: undefined,
       //       id: '1',
@@ -350,7 +350,7 @@ function App() {
       // }
 
       // try {
-      //   const transfer = await KeyChainSDK.requestTransfer(
+      //   const transfer = await KeychainSDK.requestTransfer(
       //     {
       //       username: 'theghost1980',
       //       to: 'keychain.tests',
@@ -367,7 +367,7 @@ function App() {
       // }
 
       // try {
-      //   const sendToken = await KeyChainSDK.requestSendToken(
+      //   const sendToken = await KeychainSDK.requestSendToken(
       //     {
       //       username: 'keychain.tests',
       //       to: 'theghost1980',
@@ -383,7 +383,7 @@ function App() {
       // }
 
       // try {
-      //   const delegation = await KeyChainSDK.requestDelegation(
+      //   const delegation = await KeychainSDK.requestDelegation(
       //     {
       //       username: undefined,
       //       delegatee: 'keychain.tests',
@@ -398,7 +398,7 @@ function App() {
       // }
 
       // try {
-      //   const witnessVote = await KeyChainSDK.requestWitnessVote(
+      //   const witnessVote = await KeychainSDK.requestWitnessVote(
       //     {
       //       username: 'keychain.tests',
       //       witness: 'stoodkev',
@@ -412,7 +412,7 @@ function App() {
       // }
 
       // try {
-      //   const proxy = await KeyChainSDK.requestProxy(
+      //   const proxy = await KeychainSDK.requestProxy(
       //     {
       //       username: 'keychain.tests',
       //       proxy: 'stoodkev',
@@ -425,7 +425,7 @@ function App() {
       // }
 
       // try {
-      //   const powerUp = await KeyChainSDK.requestPowerUp(
+      //   const powerUp = await KeychainSDK.requestPowerUp(
       //     {
       //       username: 'keychain.tests',
       //       recipient: 'keychain.tests',
@@ -439,7 +439,7 @@ function App() {
       // }
 
       // try {
-      //   const powerDown = await KeyChainSDK.requestPowerDown(
+      //   const powerDown = await KeychainSDK.requestPowerDown(
       //     {
       //       username: 'keychain.tests',
       //       hive_power: '0.001',
@@ -452,7 +452,7 @@ function App() {
       // }
 
       // try {
-      //   const conversionCollateralized = await KeyChainSDK.requestConversion(
+      //   const conversionCollateralized = await KeychainSDK.requestConversion(
       //     {
       //       username: 'keychain.tests',
       //       amount: '1.000',
@@ -466,7 +466,7 @@ function App() {
       // }
 
       // try {
-      //   const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
+      //   const recurrentTransfer = await KeychainSDK.requestRecurrentTransfer(
       //     {
       //       username: 'keychain.tests',
       //       to: 'theghost1980',
@@ -484,7 +484,7 @@ function App() {
       //   console.log({ error});
       // }
 
-      // const updateProposalVote = await KeyChainSDK.requestUpdateProposalVote(
+      // const updateProposalVote = await KeychainSDK.requestUpdateProposalVote(
       //   {
       //     0: 'update_proposal_votes',
       //     1: {
@@ -511,12 +511,12 @@ function App() {
   //end useful hook.
 
   // const init = async () => {
-  //   // const isEnabled = await KeyChainSDK.isKeychainEnabled();
+  //   // const isEnabled = await KeychainSDK.isKeychainEnabled();
   //   // console.log({ isEnabled });
-  //   // console.log(await KeyChainSDK.readLocalStorage());
+  //   // console.log(await KeychainSDK.readLocalStorage());
 
   //   //storage tests
-  //   const hS = await KeyChainSDK.isKeyChainInstalled();
+  //   const hS = await KeychainSDK.isKeyChainInstalled();
   //   console.log({ hS });
   //   // chrome.storage.local.get(['key']).then((result) => {
   //   //   console.log('Value currently is ' + result.key);
