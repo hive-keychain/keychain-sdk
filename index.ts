@@ -47,6 +47,7 @@ interface KeychainRequestResponse {
   };
   message: string;
   request_id: number;
+  publicKey?: string;
 }
 declare global {
   interface Window {
@@ -87,7 +88,6 @@ export class KeychainSDK {
             resolve(true);
           });
         } catch (error) {
-          console.log('error here???');
           throw error;
         }
       } else {
@@ -132,9 +132,34 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
+        //sample response signBuffer:
+        //   {
+        //     "signBuffer": {
+        //         "success": true,
+        //         "error": null,
+        //         "result": "1f063f670ab689292a826fa845205d681e04f4651755e3bf21ddafc7fd2c244b9871895576c6b9f1b6bea16125193e05e8ebca4da3335873b6f8f3ba036df0d452",
+        //         "data": {
+        //             "type": "signBuffer",
+        //             "message": "message!!",
+        //             "method": "Active",
+        //             "title": "Login in Into Saturnoman.com\nProceed?",
+        //             "username": "theghost1980"
+        //         },
+        //         "message": "Message signed succesfully.",
+        //         "request_id": 2,
+        //         "publicKey": "STM8RET8exknjBbc76n45iEk1sZd5dS7FEhrs3pKuVg4sUKezozg8"
+        //     }
+        // }
         //reusing class method
-        const buffer = await this.requestSignBuffer(data, options);
-
+        const response = await this.requestSignBuffer(data, options);
+        if (response.publicKey && response.result) {
+          const verification = await this.requestVerifyKey({
+            username: response.data.username,
+            message: `#${response.result}`,
+            method: data.method,
+          });
+          resolve(verification);
+        }
         //await this.isKeyChainInstalled();
         // this.window.hive_keychain.requestSignBuffer(
         //   data.username,
