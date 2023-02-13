@@ -2,31 +2,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
-import { Asset } from '@hiveio/dhive';
 import { KeychainSDK } from 'keychain-sdk';
-
-// const generateRandomString = (size) => {
-//   const randomString = Math.random() + 1;
-//   const dictionary = {
-//     0: 'A',
-//     1: 'K-',
-//     2: 'x',
-//     3: 'E',
-//     4: 'S',
-//     5: 's',
-//     6: 'l',
-//     7: '#',
-//     8: 'P',
-//     9: '&',
-//   };
-//   return (
-//     randomString
-//       .toString()
-//       .split('')
-//       .map((char) => dictionary[char])
-//       .join('') + ' Keychain SDK Login'
-//   );
-// };
 
 function App() {
   //using DEFAULT RPC.
@@ -35,28 +11,27 @@ function App() {
   // no RPC
   const sdk = new KeychainSDK(window);
 
-  // console.log(generateRandomString());
   // tests on requestHandshake
-  useEffect(() => {
-    const onLoadHandler = async () => {
-      console.log('Fully loaded!');
-      if (window.hive_keychain) {
-        console.log('It should has it!!');
-        const cbPromise = function () {
-          return new Promise((resolve, rejects) => {
-            console.log('Waited and resolved!');
-            resolve(true);
-          });
-        };
-        window.hive_keychain.requestHandshake(
-          cbPromise().then((value) => {
-            console.log({ value });
-          }),
-        );
-      }
-    };
-    window.addEventListener('load', onLoadHandler);
-  });
+  // useEffect(() => {
+  //   const onLoadHandler = async () => {
+  //     console.log('Fully loaded!');
+  //     if (window.hive_keychain) {
+  //       console.log('It should has it!!');
+  //       const cbPromise = function () {
+  //         return new Promise((resolve, rejects) => {
+  //           console.log('Waited and resolved!');
+  //           resolve(true);
+  //         });
+  //       };
+  //       window.hive_keychain.requestHandshake(
+  //         cbPromise().then((value) => {
+  //           console.log({ value });
+  //         }),
+  //       );
+  //     }
+  //   };
+  //   window.addEventListener('load', onLoadHandler);
+  // });
 
   //end tests
 
@@ -66,9 +41,15 @@ function App() {
   useEffect(() => {
     const onLoadHandler = async () => {
       console.log('Fully loaded!');
+      try {
+        const isKeyChainInstalled = await sdk.isKeyChainInstalled();
+        console.log({ isKeyChainInstalled });
+      } catch (error) {
+        console.log({ error });
+      }
 
       // try {
-      //   const encodeMessage = await KeychainSDK.requestEncodeMessage({
+      //   const encodeMessage = await sdk.requestEncodeMessage({
       //     username: 'keychain.tests',
       //     receiver: 'theghost1980',
       //     message: '#Hi there man!',
@@ -509,23 +490,6 @@ function App() {
   });
 
   //end useful hook.
-
-  // const init = async () => {
-  //   // const isEnabled = await KeychainSDK.isKeychainEnabled();
-  //   // console.log({ isEnabled });
-  //   // console.log(await KeychainSDK.readLocalStorage());
-
-  //   //storage tests
-  //   const hS = await KeychainSDK.isKeyChainInstalled();
-  //   console.log({ hS });
-  //   // chrome.storage.local.get(['key']).then((result) => {
-  //   //   console.log('Value currently is ' + result.key);
-  //   // });
-
-  //   // window.hive_keychain.requestHandshake(function (some) {
-  //   //   console.log('Handshake received! ', { some });
-  //   // });
-  // };
 
   return (
     <div className="App">
