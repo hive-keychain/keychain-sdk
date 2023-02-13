@@ -10,25 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KeychainSDK = void 0;
-const utils_1 = require("./utils/utils");
 class KeychainSDK {
     constructor(window, options) {
-        //////utils////////
-        /**
-         *
-         * Note: Will return actual configuration of windows object.
-         */
-        this.getConfig = () => {
-            return {
-                window: this.window,
-                options: this.options,
-            };
-        };
         /**
          *
          * Note: will check if window object set + keychain extension detected!
          */
-        this.isKeychainInstalled = () => __awaiter(this, void 0, void 0, function* () {
+        this.isKeyChainInstalled = () => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
                 if (this.window.hive_keychain) {
                     try {
@@ -37,6 +25,7 @@ class KeychainSDK {
                         });
                     }
                     catch (error) {
+                        console.log('error here???');
                         throw error;
                     }
                 }
@@ -45,12 +34,17 @@ class KeychainSDK {
                 }
             });
         });
+        //TODO remove help comments
+        // Once receiving the signed buffer, it needs to verify the signature in two steps:
+        // 1) Verify that the publicKey returned in the response belongs to the user and
+        // 2) Verified that the signed buffer corresponds to that key.
+        //end to remove
         /**
          * Keychain SDK utils functions.
          * Call this function to perform an easy login function by trying to sign a message.
          * @example
          * try {
-         *     const login = await KeychainSDK.login(
+         *     const login = await KeyChainSDK.login(
          *       {
          *         username: undefined,
          *         message: 'Log into my website',
@@ -71,16 +65,32 @@ class KeychainSDK {
          */
         this.login = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _a, _b, _c;
                 try {
-                    this.window.hive_keychain.requestSignBuffer(data.username, (_a = data.message) !== null && _a !== void 0 ? _a : utils_1.Utils.generateRandomString(), data.method, (response) => {
-                        if (response.error) {
-                            reject(Object.assign(Object.assign({}, response), { success: false, result: data.title ? `Cannot login into: ${data.title}` : null }));
-                        }
-                        else {
-                            resolve(Object.assign(Object.assign({}, response), { success: true, result: data.title ? `Login successful: ${data.title}` : null }));
-                        }
-                    }, (_b = options.rpc) !== null && _b !== void 0 ? _b : (_c = this.options) === null || _c === void 0 ? void 0 : _c.rpc, data.title);
+                    //reusing class method
+                    const buffer = yield this.requestSignBuffer(data, options);
+                    //await this.isKeyChainInstalled();
+                    // this.window.hive_keychain.requestSignBuffer(
+                    //   data.username,
+                    //   data.message ?? utils.generateRandomString(),
+                    //   data.method,
+                    //   (response: KeychainRequestResponse) => {
+                    //     if (response.error) {
+                    //       reject({
+                    //         ...response,
+                    //         success: false,
+                    //         result: data.title ? `Cannot login into: ${data.title}` : null,
+                    //       });
+                    //     } else {
+                    //       resolve({
+                    //         ...response,
+                    //         success: true,
+                    //         result: data.title ? `Login successful: ${data.title}` : null,
+                    //       });
+                    //     }
+                    //   },
+                    //   options.rpc ?? this.options?.rpc,
+                    //   data.title,
+                    // );
                 }
                 catch (error) {
                     throw error;
@@ -92,7 +102,7 @@ class KeychainSDK {
          * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
          * @example
          * try {
-         *     const encodeMessage = await KeychainSDK.requestEncodeMessage({
+         *     const encodeMessage = await KeyChainSDK.requestEncodeMessage({
          *       username: 'keychain.tests',
          *       receiver: 'theghost1980',
          *       message: '#Hi there man!',
@@ -110,6 +120,7 @@ class KeychainSDK {
         this.requestEncodeMessage = (data) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestEncodeMessage(data.username, data.receiver, data.message, data.method, (response) => {
                         if (response.error) {
                             reject(response);
@@ -128,7 +139,7 @@ class KeychainSDK {
          * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
          * @example
          *try {
-         *     const verifyKey = await KeychainSDK.requestVerifyKey({
+         *     const verifyKey = await KeyChainSDK.requestVerifyKey({
          *       username: 'keychain.tests',
          *       message:
          *         '#JnyQbbpLdRBT8ev7SALsNru6c4bftPCf4c6AkTN42YTc52aDvcRqKVqK6yMhRAGhW8fbasR8xz14ofs63WXLP6nxDndKsBMkmg7UsAS9ucTDrKFoZkuJFCyvLmksyCYgD',
@@ -145,6 +156,7 @@ class KeychainSDK {
         this.requestVerifyKey = (data) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestVerifyKey(data.username, data.message, data.method, (response) => {
                         if (response.error) {
                             reject(response);
@@ -163,7 +175,7 @@ class KeychainSDK {
          * Requests a message to be signed with proper authority
          * @example
          * try {
-         *     const signBuffer = await KeychainSDK.requestSignBuffer(
+         *     const signBuffer = await KeyChainSDK.requestSignBuffer(
          *       {
          *         username: undefined,
          *         message: 'message!!',
@@ -184,8 +196,9 @@ class KeychainSDK {
          */
         this.requestSignBuffer = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _d, _e;
+                var _a, _b;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestSignBuffer(data.username, data.message, data.method, (response) => {
                         if (response.error) {
                             reject(response);
@@ -193,7 +206,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_d = options.rpc) !== null && _d !== void 0 ? _d : (_e = this.options) === null || _e === void 0 ? void 0 : _e.rpc, data.title);
+                    }, (_a = options.rpc) !== null && _a !== void 0 ? _a : (_b = this.options) === null || _b === void 0 ? void 0 : _b.rpc, data.title);
                 }
                 catch (error) {
                     throw error;
@@ -204,7 +217,7 @@ class KeychainSDK {
          * Requests to add account authority over another account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
          * @example
          * try {
-         *     const addAccountAuthority = await KeychainSDK.requestAddAccountAuthority(
+         *     const addAccountAuthority = await KeyChainSDK.requestAddAccountAuthority(
          *       {
          *         username: 'keychain.tests',
          *         authorizedUsername: 'sexosentido',
@@ -226,8 +239,9 @@ class KeychainSDK {
          */
         this.requestAddAccountAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _f, _g;
+                var _c, _d;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestAddAccountAuthority(data.username, data.authorizedUsername, data.role, data.weight, (response) => {
                         if (response.error) {
                             reject(response);
@@ -235,7 +249,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_f = options.rpc) !== null && _f !== void 0 ? _f : (_g = this.options) === null || _g === void 0 ? void 0 : _g.rpc);
+                    }, (_c = options.rpc) !== null && _c !== void 0 ? _c : (_d = this.options) === null || _d === void 0 ? void 0 : _d.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -247,7 +261,7 @@ class KeychainSDK {
          * @example
          * try {
          *     const removeAccountAuthority =
-         *       await KeychainSDK.requestRemoveAccountAuthority(
+         *       await KeyChainSDK.requestRemoveAccountAuthority(
          *         {
          *           username: 'keychain.tests',
          *           authorizedUsername: 'sexosentido',
@@ -266,8 +280,9 @@ class KeychainSDK {
          */
         this.requestRemoveAccountAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _h, _j;
+                var _e, _f;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestRemoveAccountAuthority(data.username, data.authorizedUsername, data.role, (response) => {
                         if (response.error) {
                             reject(response);
@@ -275,7 +290,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_h = options.rpc) !== null && _h !== void 0 ? _h : (_j = this.options) === null || _j === void 0 ? void 0 : _j.rpc);
+                    }, (_e = options.rpc) !== null && _e !== void 0 ? _e : (_f = this.options) === null || _f === void 0 ? void 0 : _f.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -286,7 +301,7 @@ class KeychainSDK {
          * Requests to add a new key authority to an account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
          * @example
          * try {
-         *     const addKeyAuthority = await KeychainSDK.requestAddKeyAuthority(
+         *     const addKeyAuthority = await KeyChainSDK.requestAddKeyAuthority(
          *       {
          *         username: 'keychain.tests',
          *         authorizedKey:
@@ -308,8 +323,9 @@ class KeychainSDK {
          */
         this.requestAddKeyAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _k, _l;
+                var _g, _h;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestAddKeyAuthority(data.username, data.authorizedKey, data.role, data.weight, (response) => {
                         if (response.error) {
                             reject(response);
@@ -317,7 +333,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_k = options.rpc) !== null && _k !== void 0 ? _k : (_l = this.options) === null || _l === void 0 ? void 0 : _l.rpc);
+                    }, (_g = options.rpc) !== null && _g !== void 0 ? _g : (_h = this.options) === null || _h === void 0 ? void 0 : _h.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -328,7 +344,7 @@ class KeychainSDK {
          * Requests to remove a key to an account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
          * @example
          *   try {
-         *     const removeKeyAuthority = await KeychainSDK.requestRemoveKeyAuthority(
+         *     const removeKeyAuthority = await KeyChainSDK.requestRemoveKeyAuthority(
          *       {
          *         username: 'keychain.tests',
          *         authorizedKey:
@@ -348,8 +364,9 @@ class KeychainSDK {
          */
         this.requestRemoveKeyAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _m, _o;
+                var _j, _k;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestRemoveKeyAuthority(data.username, data.authorizedKey, data.role, (response) => {
                         if (response.error) {
                             reject(response);
@@ -357,7 +374,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_m = options.rpc) !== null && _m !== void 0 ? _m : (_o = this.options) === null || _o === void 0 ? void 0 : _o.rpc);
+                    }, (_j = options.rpc) !== null && _j !== void 0 ? _j : (_k = this.options) === null || _k === void 0 ? void 0 : _k.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -368,7 +385,7 @@ class KeychainSDK {
          * Generic broadcast request
          * @example
          * try {
-         *     const broadcast = await KeychainSDK.requestBroadcast(
+         *     const broadcast = await KeyChainSDK.requestBroadcast(
          *       {
          *         username: 'keychain.tests',
          *         operations: [
@@ -397,8 +414,9 @@ class KeychainSDK {
          */
         this.requestBroadcast = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _p, _q;
+                var _l, _m;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestBroadcast(data.username, data.operations, data.method, (response) => {
                         if (response.error) {
                             reject(response);
@@ -406,7 +424,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_p = options.rpc) !== null && _p !== void 0 ? _p : (_q = this.options) === null || _q === void 0 ? void 0 : _q.rpc);
+                    }, (_l = options.rpc) !== null && _l !== void 0 ? _l : (_m = this.options) === null || _m === void 0 ? void 0 : _m.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -432,7 +450,7 @@ class KeychainSDK {
          *  operations: [...] // Add operations here
          * };
          *  try {
-         *     const signTx = await KeychainSDK.requestSignTx(
+         *     const signTx = await KeyChainSDK.requestSignTx(
          *       {
          *         username: 'keychain.tests',
          *         tx: op,
@@ -451,8 +469,9 @@ class KeychainSDK {
          */
         this.requestSignTx = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _r, _s;
+                var _o, _p;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestSignTx(data.username, data.tx, data.method, (response) => {
                         if (response.error) {
                             reject(response);
@@ -460,7 +479,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_r = options.rpc) !== null && _r !== void 0 ? _r : (_s = this.options) === null || _s === void 0 ? void 0 : _s.rpc);
+                    }, (_o = options.rpc) !== null && _o !== void 0 ? _o : (_p = this.options) === null || _p === void 0 ? void 0 : _p.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -479,6 +498,7 @@ class KeychainSDK {
         this.requestSignedCall = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
+                    yield this.isKeyChainInstalled();
                     resolve('requestSignedCall has been deprecated.');
                 }
                 catch (error) {
@@ -490,7 +510,7 @@ class KeychainSDK {
          * Requests to broadcast a blog post/comment
          * @example
          * try {
-         *     const post = await KeychainSDK.requestPost(
+         *     const post = await KeyChainSDK.requestPost(
          *       {
          *         username: 'keychain.tests',
          *         title: 'Keychain SDK 2!',
@@ -531,8 +551,9 @@ class KeychainSDK {
          */
         this.requestPost = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _t, _u;
+                var _q, _r;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestPost(data.username, data.title, data.body, data.parent_perm, data.parent_username, data.json_metadata, data.permlink, data.comment_options, (response) => {
                         if (response.error) {
                             reject(response);
@@ -540,7 +561,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_t = options.rpc) !== null && _t !== void 0 ? _t : (_u = this.options) === null || _u === void 0 ? void 0 : _u.rpc);
+                    }, (_q = options.rpc) !== null && _q !== void 0 ? _q : (_r = this.options) === null || _r === void 0 ? void 0 : _r.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -551,7 +572,7 @@ class KeychainSDK {
          * Requests a vote
          * @example
          *   try {
-         *     const vote = await KeychainSDK.requestVote(
+         *     const vote = await KeyChainSDK.requestVote(
          *       {
          *         username: 'keychain.tests',
          *         author: 'keychain.tests',
@@ -572,8 +593,9 @@ class KeychainSDK {
          */
         this.requestVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _v, _w;
+                var _s, _t;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestVote(data.username, data.permlink, data.author, data.weight, (response) => {
                         if (response.error) {
                             reject(response);
@@ -581,7 +603,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_v = options.rpc) !== null && _v !== void 0 ? _v : (_w = this.options) === null || _w === void 0 ? void 0 : _w.rpc);
+                    }, (_s = options.rpc) !== null && _s !== void 0 ? _s : (_t = this.options) === null || _t === void 0 ? void 0 : _t.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -592,7 +614,7 @@ class KeychainSDK {
          * Requests a custom JSON broadcast
          * @example
          *    try {
-         *     const custom_json = await KeychainSDK.requestCustomJson(
+         *     const custom_json = await KeyChainSDK.requestCustomJson(
          *       {
          *         username: undefined,
          *         id: '1',
@@ -619,8 +641,9 @@ class KeychainSDK {
          */
         this.requestCustomJson = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _x, _y;
+                var _u, _v;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestCustomJson(data.username, data.id, data.method, data.json, data.display_msg, (response) => {
                         if (response.error) {
                             reject(response);
@@ -628,7 +651,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_x = options.rpc) !== null && _x !== void 0 ? _x : (_y = this.options) === null || _y === void 0 ? void 0 : _y.rpc);
+                    }, (_u = options.rpc) !== null && _u !== void 0 ? _u : (_v = this.options) === null || _v === void 0 ? void 0 : _v.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -639,7 +662,7 @@ class KeychainSDK {
          * Requests a transfer
          * @example
          * try {
-         *   const transfer = await KeychainSDK.requestTransfer(
+         *   const transfer = await KeyChainSDK.requestTransfer(
          *       {
          *          username: 'theghost1980',
          *          to: 'keychain.tests',
@@ -665,8 +688,9 @@ class KeychainSDK {
          */
         this.requestTransfer = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _z, _0;
+                var _w, _x;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestTransfer(data.username, data.to, data.amount, data.memo, data.currency, (response) => {
                         if (response.error) {
                             reject(response);
@@ -674,7 +698,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, data.enforce, (_z = options.rpc) !== null && _z !== void 0 ? _z : (_0 = this.options) === null || _0 === void 0 ? void 0 : _0.rpc);
+                    }, data.enforce, (_w = options.rpc) !== null && _w !== void 0 ? _w : (_x = this.options) === null || _x === void 0 ? void 0 : _x.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -685,7 +709,7 @@ class KeychainSDK {
          * Requests a token transfer
          * @example
          *   try {
-         *     const sendToken = await KeychainSDK.requestSendToken(
+         *     const sendToken = await KeyChainSDK.requestSendToken(
          *       {
          *         username: 'keychain.tests',
          *         to: 'theghost1980',
@@ -708,8 +732,9 @@ class KeychainSDK {
          */
         this.requestSendToken = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _1, _2;
+                var _y, _z;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestSendToken(data.username, data.to, data.amount, data.memo, data.currency, (response) => {
                         if (response.error) {
                             reject(response);
@@ -717,7 +742,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_1 = options.rpc) !== null && _1 !== void 0 ? _1 : (_2 = this.options) === null || _2 === void 0 ? void 0 : _2.rpc);
+                    }, (_y = options.rpc) !== null && _y !== void 0 ? _y : (_z = this.options) === null || _z === void 0 ? void 0 : _z.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -728,7 +753,7 @@ class KeychainSDK {
          * Requests a delegation broadcast
          * @example
          *   try {
-         *     const delegation = await KeychainSDK.requestDelegation(
+         *     const delegation = await KeyChainSDK.requestDelegation(
          *       {
          *         username: undefined,
          *         delegatee: 'keychain.tests',
@@ -749,8 +774,9 @@ class KeychainSDK {
          */
         this.requestDelegation = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _3, _4;
+                var _0, _1;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestDelegation(data.username, data.delegatee, data.amount, data.unit, (response) => {
                         if (response.error) {
                             reject(response);
@@ -758,7 +784,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_3 = options.rpc) !== null && _3 !== void 0 ? _3 : (_4 = this.options) === null || _4 === void 0 ? void 0 : _4.rpc);
+                    }, (_0 = options.rpc) !== null && _0 !== void 0 ? _0 : (_1 = this.options) === null || _1 === void 0 ? void 0 : _1.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -769,7 +795,7 @@ class KeychainSDK {
          * Requests a delegation broadcast
          * @example
          *  try {
-         *     const witnessVote = await KeychainSDK.requestWitnessVote(
+         *     const witnessVote = await KeyChainSDK.requestWitnessVote(
          *       {
          *         username: 'keychain.tests',
          *         witness: 'stoodkev',
@@ -788,8 +814,9 @@ class KeychainSDK {
          */
         this.requestWitnessVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _5, _6;
+                var _2, _3;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestWitnessVote(data.username, data.witness, data.vote, (response) => {
                         if (response.error) {
                             reject(response);
@@ -797,7 +824,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_5 = options.rpc) !== null && _5 !== void 0 ? _5 : (_6 = this.options) === null || _6 === void 0 ? void 0 : _6.rpc);
+                    }, (_2 = options.rpc) !== null && _2 !== void 0 ? _2 : (_3 = this.options) === null || _3 === void 0 ? void 0 : _3.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -808,7 +835,7 @@ class KeychainSDK {
          * Select an account as proxy
          * @example
          *  try {
-         *     const proxy = await KeychainSDK.requestProxy(
+         *     const proxy = await KeyChainSDK.requestProxy(
          *       {
          *         username: 'keychain.tests',
          *         proxy: 'stoodkev',
@@ -825,8 +852,9 @@ class KeychainSDK {
          */
         this.requestProxy = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _7, _8;
+                var _4, _5;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestProxy(data.username, data.proxy, (response) => {
                         if (response.error) {
                             reject(response);
@@ -834,7 +862,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_7 = options.rpc) !== null && _7 !== void 0 ? _7 : (_8 = this.options) === null || _8 === void 0 ? void 0 : _8.rpc);
+                    }, (_4 = options.rpc) !== null && _4 !== void 0 ? _4 : (_5 = this.options) === null || _5 === void 0 ? void 0 : _5.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -845,7 +873,7 @@ class KeychainSDK {
          * Request a power up
          * @example
          *  try {
-         *     const powerUp = await KeychainSDK.requestPowerUp(
+         *     const powerUp = await KeyChainSDK.requestPowerUp(
          *       {
          *         username: 'keychain.tests',
          *         recipient: 'keychain.tests',
@@ -864,8 +892,9 @@ class KeychainSDK {
          */
         this.requestPowerUp = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _9, _10;
+                var _6, _7;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestPowerUp(data.username, data.recipient, data.hive, (response) => {
                         if (response.error) {
                             reject(response);
@@ -873,7 +902,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_9 = options.rpc) !== null && _9 !== void 0 ? _9 : (_10 = this.options) === null || _10 === void 0 ? void 0 : _10.rpc);
+                    }, (_6 = options.rpc) !== null && _6 !== void 0 ? _6 : (_7 = this.options) === null || _7 === void 0 ? void 0 : _7.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -884,7 +913,7 @@ class KeychainSDK {
          * Request a power down
          * @example
          *  try {
-         *     const powerDown = await KeychainSDK.requestPowerDown(
+         *     const powerDown = await KeyChainSDK.requestPowerDown(
          *       {
          *         username: 'keychain.tests',
          *         hive_power: '0.001',
@@ -901,8 +930,9 @@ class KeychainSDK {
          */
         this.requestPowerDown = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _11, _12;
+                var _8, _9;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestPowerDown(data.username, data.hive_power, (response) => {
                         if (response.error) {
                             reject(response);
@@ -910,7 +940,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_11 = options.rpc) !== null && _11 !== void 0 ? _11 : (_12 = this.options) === null || _12 === void 0 ? void 0 : _12.rpc);
+                    }, (_8 = options.rpc) !== null && _8 !== void 0 ? _8 : (_9 = this.options) === null || _9 === void 0 ? void 0 : _9.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -929,8 +959,9 @@ class KeychainSDK {
          */
         this.requestCreateClaimedAccount = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _13, _14;
+                var _10, _11;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestCreateClaimedAccount(data.username, data.new_account, data.owner, data.active, data.posting, data.memo, (response) => {
                         if (response.error) {
                             reject(response);
@@ -938,7 +969,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_13 = options.rpc) !== null && _13 !== void 0 ? _13 : (_14 = this.options) === null || _14 === void 0 ? void 0 : _14.rpc);
+                    }, (_10 = options.rpc) !== null && _10 !== void 0 ? _10 : (_11 = this.options) === null || _11 === void 0 ? void 0 : _11.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -960,8 +991,9 @@ class KeychainSDK {
          */
         this.requestCreateProposal = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _15, _16;
+                var _12, _13;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestCreateProposal(data.username, data.receiver, data.subject, data.permlink, data.start, data.end, data.daily_pay, data.extensions, (response) => {
                         if (response.error) {
                             reject(response);
@@ -969,7 +1001,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_15 = options.rpc) !== null && _15 !== void 0 ? _15 : (_16 = this.options) === null || _16 === void 0 ? void 0 : _16.rpc);
+                    }, (_12 = options.rpc) !== null && _12 !== void 0 ? _12 : (_13 = this.options) === null || _13 === void 0 ? void 0 : _13.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -985,8 +1017,9 @@ class KeychainSDK {
          */
         this.requestRemoveProposal = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _17, _18;
+                var _14, _15;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestRemoveProposal(data.username, data.proposal_ids, data.extensions, (response) => {
                         if (response.error) {
                             reject(response);
@@ -994,7 +1027,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_17 = options.rpc) !== null && _17 !== void 0 ? _17 : (_18 = this.options) === null || _18 === void 0 ? void 0 : _18.rpc);
+                    }, (_14 = options.rpc) !== null && _14 !== void 0 ? _14 : (_15 = this.options) === null || _15 === void 0 ? void 0 : _15.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -1011,8 +1044,9 @@ class KeychainSDK {
          */
         this.requestUpdateProposalVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _19, _20;
+                var _16, _17;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestUpdateProposalVote(data.username, data.proposal_ids, data.approve, data.extensions, (response) => {
                         if (response.error) {
                             reject(response);
@@ -1020,7 +1054,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_19 = options.rpc) !== null && _19 !== void 0 ? _19 : (_20 = this.options) === null || _20 === void 0 ? void 0 : _20.rpc);
+                    }, (_16 = options.rpc) !== null && _16 !== void 0 ? _16 : (_17 = this.options) === null || _17 === void 0 ? void 0 : _17.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -1031,7 +1065,7 @@ class KeychainSDK {
          * Add a new account to Keychain
          * @example
          *  try {
-         *     const addAccount = await KeychainSDK.requestAddAccount(
+         *     const addAccount = await KeyChainSDK.requestAddAccount(
          *       {
          *         username: 'keychain.tests',
          *         keys: {
@@ -1052,6 +1086,7 @@ class KeychainSDK {
         this.requestAddAccount = (data) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestAddAccount(data.username, data.keys, (response) => {
                         if (response.error) {
                             reject(response);
@@ -1070,7 +1105,7 @@ class KeychainSDK {
          * Request currency conversion
          * @example
          *  try {
-         *     const conversionCollateralized = await KeychainSDK.requestConversion(
+         *     const conversionCollateralized = await KeyChainSDK.requestConversion(
          *       {
          *         username: 'keychain.tests',
          *         amount: '1.000',
@@ -1089,8 +1124,9 @@ class KeychainSDK {
          */
         this.requestConversion = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _21, _22;
+                var _18, _19;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestConversion(data.username, data.amount, data.collaterized, (response) => {
                         if (response.error) {
                             reject(response);
@@ -1098,7 +1134,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_21 = options.rpc) !== null && _21 !== void 0 ? _21 : (_22 = this.options) === null || _22 === void 0 ? void 0 : _22.rpc);
+                    }, (_18 = options.rpc) !== null && _18 !== void 0 ? _18 : (_19 = this.options) === null || _19 === void 0 ? void 0 : _19.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -1109,7 +1145,7 @@ class KeychainSDK {
          * Request recurrent transfer
          * @example
          *  try {
-         *     const recurrentTransfer = await KeychainSDK.requestRecurrentTransfer(
+         *     const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
          *       {
          *         username: 'keychain.tests',
          *         to: 'theghost1980',
@@ -1137,8 +1173,9 @@ class KeychainSDK {
          */
         this.requestRecurrentTransfer = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                var _23, _24;
+                var _20, _21;
                 try {
+                    yield this.isKeyChainInstalled();
                     this.window.hive_keychain.requestRecurrentTransfer(data.username, data.to, data.amount, data.currency, data.memo, data.recurrence, data.executions, (response) => {
                         if (response.error) {
                             reject(response);
@@ -1146,7 +1183,7 @@ class KeychainSDK {
                         else {
                             resolve(response);
                         }
-                    }, (_23 = options.rpc) !== null && _23 !== void 0 ? _23 : (_24 = this.options) === null || _24 === void 0 ? void 0 : _24.rpc);
+                    }, (_20 = options.rpc) !== null && _20 !== void 0 ? _20 : (_21 = this.options) === null || _21 === void 0 ? void 0 : _21.rpc);
                 }
                 catch (error) {
                     throw error;
@@ -1155,6 +1192,17 @@ class KeychainSDK {
         });
         this.window = window;
         this.options = options;
+    }
+    //////utils////////
+    /**
+     *
+     * Note: Will return actual configuration of windows object.
+     */
+    getConfig() {
+        return {
+            window: this.window,
+            options: this.options,
+        };
     }
 }
 exports.KeychainSDK = KeychainSDK;
