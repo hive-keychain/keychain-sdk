@@ -1,4 +1,4 @@
-.request-encode-message-container {
+.request-sign-buffer-container {
   width: '90%';
   justify-content: center;
 }
@@ -15,8 +15,15 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  align-content: center;
 }
 
 .select-half {
   width: 200px;
+}
+
+.button-margin {
+  margin-top: 5px;
 }

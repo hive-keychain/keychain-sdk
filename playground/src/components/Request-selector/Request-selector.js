@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import RequestEncodeMessage from '../Requests/Request-encode-message';
+import RequestEncodeMessage from '../Requests/Request-encode-message/Request-encode-message';
+import RequestSignBuffer from '../Requests/Request-sign-buffer';
+import RequestVerifyKey from '../Requests/Request-verify-key/Request-verify-key';
 import './Request-selector.css';
 
 export default function RequestSelector({ setRequestResult, enabledKeychain }) {
@@ -14,6 +16,16 @@ export default function RequestSelector({ setRequestResult, enabledKeychain }) {
             <RequestEncodeMessage setRequestResult={setRequestResult} />,
           );
           break;
+        case 'request_verify_key':
+          setRequestCard(
+            <RequestVerifyKey setRequestResult={setRequestResult} />,
+          );
+          break;
+        case 'request_sign_buffer':
+          setRequestCard(
+            <RequestSignBuffer setRequestResult={setRequestResult} />,
+          );
+          break;
         default:
           setRequestCard(null);
           break;
@@ -23,6 +35,7 @@ export default function RequestSelector({ setRequestResult, enabledKeychain }) {
 
   const handleChange = (e) => {
     setRequest(e.target.value);
+    setRequestResult(undefined);
   };
 
   return (
@@ -35,9 +48,9 @@ export default function RequestSelector({ setRequestResult, enabledKeychain }) {
           Select a Request:
         </option>
         <option value="request_encode_message">request_encode_message</option>
-        <option value="lime">Lime</option>
-        <option selected value="coconut">
-          Coconut
+        <option value="request_verify_key">request_verify_key</option>
+        <option selected value="request_sign_buffer">
+          request_sign_buffer
         </option>
         <option value="mango">Mango</option>
       </select>

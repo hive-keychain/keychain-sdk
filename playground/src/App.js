@@ -70,9 +70,19 @@ function App() {
       />
       {/* //TODO move bellow to a component */}
       {requestResult && (
-        <div className="request-result-container">
+        <div
+          className={`request-result-container ${
+            requestResult.error ? 'err' : ''
+          }`}>
           <div>Success: {requestResult.success.toString()}</div>
-          {requestResult.error && <div>Error: {requestResult.error}</div>}
+          {requestResult.error && (
+            <div>
+              Error:{' '}
+              {typeof requestResult.error === 'object'
+                ? JSON.stringify(requestResult.error)
+                : requestResult.error}
+            </div>
+          )}
           <div>Result: {requestResult.result}</div>
           <div>Data...</div>
           <button onClick={() => setExpandDataResult(!expandDataResult)}>
@@ -95,7 +105,6 @@ function App() {
           {requestResult.publicKey && (
             <div>PublicKey: {requestResult.publicKey}</div>
           )}
-          {requestResult.error && <div>{requestResult.error}</div>}
         </div>
       )}
     </div>

@@ -1,0 +1,29 @@
+.request-verify-key-container {
+  width: '90%';
+  justify-content: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: '70%';
+  justify-content: center;
+  align-items: center;
+}
+
+.row-input-line {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  align-content: center;
+}
+
+.select-half {
+  width: 200px;
+}
+
+.button-margin {
+  margin-top: 5px;
+}

@@ -70,7 +70,7 @@ export default function RequestEncodeMessage({ setRequestResult }) {
           <option value="Posting">Posting</option>
           <option value="Memo">Memo</option>
         </select>
-        <button>Process Request</button>
+        <button className="button-margin">Process Request</button>
       </form>
     </div>
   );
