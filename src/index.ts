@@ -129,7 +129,9 @@ export class KeychainSDK {
   login = async (
     data: ExcludeCommonParams<RequestSignBuffer>,
     options: KeychainOptions,
-  ): Promise<KeychainRequestResponse> => {
+  ): Promise<any> => {
+    //TODO finish this guys here!
+    //TODO here add proper output types
     return new Promise(async (resolve, reject) => {
       try {
         //sample response signBuffer:
@@ -151,15 +153,13 @@ export class KeychainSDK {
         //     }
         // }
         //reusing class method
-        const response = await this.requestSignBuffer(data, options);
-        if (response.publicKey && response.result) {
-          const verification = await this.requestVerifyKey({
-            username: response.data.username,
-            message: `#${response.result}`,
-            method: data.method,
-          });
-          resolve(verification);
-        }
+        // const response = await this.requestSignBuffer(data, options);
+        // if (response.publicKey && response.result) {
+        //   const signatureClass = Signature;
+
+        //   resolve({ recoveredPublickKey });
+        // }
+        resolve('TODO, login needs to be finished!');
         //await this.isKeyChainInstalled();
         // this.window.hive_keychain.requestSignBuffer(
         //   data.username,

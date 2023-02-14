@@ -63,6 +63,8 @@ class KeychainSDK {
          * @param {String | undefined} options.rpc Override user's RPC settings
          */
         this.login = (data, options) => __awaiter(this, void 0, void 0, function* () {
+            //TODO finish this guys here!
+            //TODO here add proper output types
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     //sample response signBuffer:
@@ -84,15 +86,12 @@ class KeychainSDK {
                     //     }
                     // }
                     //reusing class method
-                    const response = yield this.requestSignBuffer(data, options);
-                    if (response.publicKey && response.result) {
-                        const verification = yield this.requestVerifyKey({
-                            username: response.data.username,
-                            message: `#${response.result}`,
-                            method: data.method,
-                        });
-                        resolve(verification);
-                    }
+                    // const response = await this.requestSignBuffer(data, options);
+                    // if (response.publicKey && response.result) {
+                    //   const signatureClass = Signature;
+                    //   resolve({ recoveredPublickKey });
+                    // }
+                    resolve('TODO, login needs to be finished!');
                     //await this.isKeyChainInstalled();
                     // this.window.hive_keychain.requestSignBuffer(
                     //   data.username,
