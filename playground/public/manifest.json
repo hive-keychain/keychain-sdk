@@ -1,6 +1,9 @@
 {
   "short_name": "React App",
   "name": "Create React App Sample",
+  "permissions": [
+    "storage"
+  ],
   "icons": [
     {
       "src": "favicon.ico",
