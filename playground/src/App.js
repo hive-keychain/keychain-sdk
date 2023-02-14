@@ -3,6 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
+import Keychainchecker from './components/Keychain-checker/Keychain-checker';
+import RequestSelector from './components/Request-selector/Request-selector';
 
 function App() {
   //using DEFAULT RPC.
@@ -32,55 +34,70 @@ function App() {
   //   };
   //   window.addEventListener('load', onLoadHandler);
   // });
-
-  //end tests
+  //end // tests on requestHandshake
 
   //Stays as useful hook that may be
-  //used as SDK on Hooks for: ReactJS, ANG, etc
+  // useEffect(() => {
+  //   const onLoadHandler = async () => {
+  //     console.log('Fully loaded!');
+  //     try {
+  //       const isInstalled = await sdk.isKeyChainInstalled();
+  //       console.log({ isInstalled });
+  //     } catch (error) {
+  //       console.log({ error });
+  //     }
+  //   };
 
-  useEffect(() => {
-    const onLoadHandler = async () => {
-      console.log('Fully loaded!');
-      try {
-        const login = await sdk.login(
-          {
-            username: undefined,
-            message: 'message!!',
-            method: 'Active',
-            title: 'Login in Into Saturnoman.com\nProceed?',
-          },
-          {},
-        );
-        console.log({ login });
-      } catch (error) {
-        console.log({ error });
-      }
-    };
+  //   window.addEventListener('load', onLoadHandler);
 
-    window.addEventListener('load', onLoadHandler);
-
-    return () => {
-      window.removeEventListener('load', onLoadHandler);
-    };
-  });
+  //   return () => {
+  //     window.removeEventListener('load', onLoadHandler);
+  //   };
+  // });
 
   //end useful hook.
 
+  const [requestResult, setRequestResult] = useState(undefined);
+  const [expandDataResult, setExpandDataResult] = useState(false);
+  const [enabledKeychain, setEnabledKeychain] = useState(false);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer">
-          Learn React
-        </a>
-      </header>
+      <Keychainchecker setEnabledKeychain={setEnabledKeychain} />
+      <RequestSelector
+        setRequestResult={setRequestResult}
+        enabledKeychain={enabledKeychain}
+      />
+      {/* //TODO move bellow to a component */}
+      {requestResult && (
+        <div className="request-result-container">
+          <div>Success: {requestResult.success.toString()}</div>
+          {requestResult.error && <div>Error: {requestResult.error}</div>}
+          <div>Result: {requestResult.result}</div>
+          <div>Data...</div>
+          <button onClick={() => setExpandDataResult(!expandDataResult)}>
+            click to expand
+          </button>
+          {expandDataResult && (
+            <div>
+              <div>Key: {requestResult.data.key}</div>
+              <div>Message: {requestResult.data.message}</div>
+              <div>Method: {requestResult.data.method}</div>
+              <div>Receiver: {requestResult.data.receiver}</div>
+              <div>Request_id: {requestResult.data.request_id}</div>
+              <div>Type: {requestResult.data.type}</div>
+              <div>Username: {requestResult.data.username}</div>
+            </div>
+          )}
+
+          <div>Message: {requestResult.message}</div>
+          <div>Request_id: {requestResult.request_id}</div>
+          {requestResult.publicKey && (
+            <div>PublicKey: {requestResult.publicKey}</div>
+          )}
+          {requestResult.error && <div>{requestResult.error}</div>}
+        </div>
+      )}
     </div>
   );
 }
