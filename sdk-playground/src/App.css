@@ -19,7 +19,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center !important;
   font-size: calc(10px + 2vmin);
   color: white;
 }
@@ -35,15 +35,4 @@
   to {
     transform: rotate(360deg);
   }
-}
-
-.request-result-container {
-  border: solid;
-  border-color: aquamarine;
-  padding: 30px;
-  margin-top: 20px;
-}
-
-.err {
-  border-color: red;
 }

@@ -28,27 +28,31 @@ import {
   RequestVote,
   RequestWitnessVote,
 } from 'hive-keychain-commons/lib/interfaces/keychain';
+import {
+  KeychainOptions,
+  KeychainRequestResponse,
+} from './interfaces/keychain.interface';
 
-interface KeychainOptions {
-  rpc?: string;
-}
-interface KeychainRequestResponse {
-  success: boolean;
-  error: string;
-  result: string | null;
-  data: {
-    key: string;
-    message: string;
-    method: string;
-    receiver: string;
-    request_id: number;
-    type: string;
-    username: string;
-  };
-  message: string;
-  request_id: number;
-  publicKey?: string;
-}
+// interface KeychainOptions {
+//   rpc?: string;
+// }
+// interface KeychainRequestResponse {
+//   success: boolean;
+//   error: string;
+//   result: string | null;
+//   data: {
+//     key: string;
+//     message: string;
+//     method: string;
+//     receiver: string;
+//     request_id: number;
+//     type: string;
+//     username: string;
+//   };
+//   message: string;
+//   request_id: number;
+//   publicKey?: string;
+// }
 declare global {
   interface Window {
     hive_keychain: any;

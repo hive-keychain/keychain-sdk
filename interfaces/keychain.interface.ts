@@ -17,6 +17,7 @@ export interface KeychainRequestResponse {
   };
   message: string;
   request_id: number;
+  publicKey?: string;
 }
 
 export interface KeychainConfig {
