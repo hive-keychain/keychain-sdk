@@ -39,9 +39,6 @@ const RequestResults = ({ requestResult }: Props) => {
                       </ListGroup.Item>
                     )}
                     <ListGroup.Item>
-                      Request_id: {requestResult.data.request_id}
-                    </ListGroup.Item>
-                    <ListGroup.Item>
                       Type: {requestResult.data.type}
                     </ListGroup.Item>
                     <ListGroup.Item>
@@ -51,6 +48,7 @@ const RequestResults = ({ requestResult }: Props) => {
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
+            <Card.Text>Request_id: {requestResult.request_id}</Card.Text>
             {requestResult.publicKey && (
               <Card.Text>PublicKey: {requestResult.publicKey}</Card.Text>
             )}
