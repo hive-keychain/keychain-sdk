@@ -30,7 +30,7 @@ type Props = {
   requestResult: any; //TODO add proper type
   enabledKeychain: boolean; //TODO use it to disable??
 };
-
+//TODO important update all inputs & UI using stacks(react-bootstrap).
 const RequestSelector = ({
   setRequestResult,
   enabledKeychain,

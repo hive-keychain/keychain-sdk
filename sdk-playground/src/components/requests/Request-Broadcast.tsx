@@ -11,6 +11,7 @@ import {
 } from 'hive-keychain-commons';
 import { Button, Card, Form } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
+import { Operation } from '@hiveio/dhive';
 
 type Props = {
   setRequestResult: any; //TODO add proper type
@@ -28,6 +29,9 @@ const undefinedParamsToValidate = ['']; //none to check
 //TODO clean up
 const Requestbroadcast = ({ setRequestResult }: Props) => {
   const sdk = new KeychainSDK(window);
+
+  const [operation, setOperation] = useState(['', {}]);
+
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestBroadcast>;
     options: KeychainOptions;
@@ -35,6 +39,28 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
     data: DEFAULT_PARAMS,
     options: DEFAULT_OPTIONS,
   });
+
+  const handleOperation = (e: any) => {
+    const { name, value } = e.target;
+    if (name === 'operation_name') {
+      setOperation((prevOp) => [value, prevOp[1]]);
+    } else {
+      // {
+      //     "from": "keychain.tests",
+      //     "to": "theghost1980",
+      //     "amount": "0.001 HIVE",
+      //     "memo": "testing keychain SDK - requestBroadcast",
+      //   }
+      //json
+      console.log({ value });
+      const json = JSON.stringify(
+        String(value).replaceAll('\n', '').replaceAll(' ', ''),
+      );
+      console.log({ json });
+      console.log({ jsonParsed: JSON.parse(json) });
+      // setOperation(prevOp => [prevOp[0], value])
+    }
+  };
 
   //TODO bellow add proper event type
   const handleFormParams = (e: any) => {
@@ -47,17 +73,10 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
     if (
       Object.keys(formParams.data).findIndex((param) => param === name) !== -1
     ) {
-      //TODO find another approach for this, maybe
-      //  easier just to allow user to construct the operation having
-      //      - inputs for each part
-      //      - select for operation
-      //          - depending on selected, may display required params as array???
       //operations validation
-      if (name === 'operations') {
+      if (name === 'json') {
         //  '[["transfer",{"from":"keychain.tests","to":"theghost1980","amount":"0.001HIVE","memo":"testingkeychainSDK-requestBroadcast",},],]'
-
-        tempValue = JSON.stringify(String(tempValue).replaceAll(' ', ''));
-        console.log({ tempValue });
+        tempValue = JSON.stringify(tempValue);
       }
       //end validation
       setFormParams((prevFormParams) => ({
@@ -75,17 +94,17 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     //testcode
-    // const opsArray = [
-    //   [
-    //     'transfer',
-    //     {
-    //       from: 'keychain.tests',
-    //       to: 'theghost1980',
-    //       amount: '0.001 HIVE',
-    //       memo: 'testing keychain SDK - requestBroadcast',
-    //     },
-    //   ],
-    // ];
+    const opsArray = [
+      [
+        'transfer',
+        {
+          from: 'keychain.tests',
+          to: 'theghost1980',
+          amount: '0.001 HIVE',
+          memo: 'testing keychain SDK - requestBroadcast',
+        },
+      ],
+    ] as Operation[];
     // const opsAsString = JSON.stringify(opsArray);
     // formParams['data']['operations'] = opsAsString;
     //end testcode
@@ -121,15 +140,21 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
           <Form.Group className="mb-3" controlId="formBasicOperations">
             <Form.Label>Operations</Form.Label>
             <Form.Control
-              //   as="textarea"
-              //   rows={3}
-              placeholder="Operation to broadcast, see example on sdk.requestBroadcast"
-              name="operations"
-              defaultValue={''}
-              //   value={formParams.data.operations as string}
-              onChange={handleFormParams}
+              placeholder="Operation type"
+              name="operation_name"
+              //   value={operation[0]}
+              onChange={handleOperation}
+            />
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="JSON"
+              name="json"
+              //   value={JSON.stringify(operation[1]) as string}
+              onChange={handleOperation}
             />
           </Form.Group>
+
           <Form.Group className="mb-3" controlId="formBasicOptions">
             <Form.Label>Rpc</Form.Label>
             <Form.Control
