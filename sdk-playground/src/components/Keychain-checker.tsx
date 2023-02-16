@@ -32,7 +32,7 @@ const Keychainchecker = ({ setEnabledKeychain }: Props) => {
     };
   });
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="light" expand="lg" className="mb-2">
       <Container>
         <Navbar.Brand
           href="home"

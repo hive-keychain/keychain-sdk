@@ -18,6 +18,7 @@ function App() {
       <Keychainchecker setEnabledKeychain={setEnabledKeychain} />
       <RequestSelector
         setRequestResult={setRequestResult}
+        requestResult={requestResult}
         enabledKeychain={enabledKeychain}
       />
       {requestResult && <RequestResults requestResult={requestResult} />}

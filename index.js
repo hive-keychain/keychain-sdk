@@ -441,7 +441,9 @@ class KeychainSDK {
                 var _l, _m;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestBroadcast(data.username, data.operations, data.method, (response) => {
+                    this.window.hive_keychain.requestBroadcast(data.username, typeof data.operations === 'string'
+                        ? JSON.parse(data.operations)
+                        : data.operations, data.method, (response) => {
                         if (response.error) {
                             reject(response);
                         }

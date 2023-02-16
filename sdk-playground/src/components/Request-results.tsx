@@ -5,20 +5,40 @@ type Props = {
   requestResult: any; //TODo add proper type
 };
 
-//TODO here validate error as object, i.e: requestAddAccountAuthority
 const RequestResults = ({ requestResult }: Props) => {
+  const error =
+    typeof requestResult.error === 'object'
+      ? JSON.stringify(requestResult.error)
+      : requestResult.error;
+
   return (
     <Container className="w-50 mt-1">
-      <Card text={requestResult.error !== null ? 'danger' : 'success'}>
-        {requestResult.error !== null ? (
-          <Card.Body>Error: {requestResult.error}</Card.Body>
+      <Card
+        text={
+          requestResult.error ||
+          (requestResult.error && Object.keys(requestResult.error).length > 0)
+            ? 'danger'
+            : 'success'
+        }>
+        {requestResult.error ? (
+          <Card.Body>
+            <Card.Text>Error: {error}</Card.Text>
+            <Card.Text>Message: {requestResult.message}</Card.Text>
+          </Card.Body>
         ) : (
           <Card.Body>
             <Card.Title>Request: {requestResult.data.type}</Card.Title>
             <Card.Subtitle>
               Success: {requestResult.success.toString()}
             </Card.Subtitle>
-            <Card.Text>Result: {requestResult.result}</Card.Text>
+            <Card.Text>Result: {requestResult.result.toString()}</Card.Text>
+            {requestResult.message && (
+              <Card.Text>Message: {requestResult.message}</Card.Text>
+            )}
+            <Card.Text>Request_id: {requestResult.request_id}</Card.Text>
+            {requestResult.publicKey && (
+              <Card.Text>PublicKey: {requestResult.publicKey}</Card.Text>
+            )}
             <Accordion defaultActiveKey="0">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>Data:</Accordion.Header>
@@ -48,10 +68,6 @@ const RequestResults = ({ requestResult }: Props) => {
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
-            <Card.Text>Request_id: {requestResult.request_id}</Card.Text>
-            {requestResult.publicKey && (
-              <Card.Text>PublicKey: {requestResult.publicKey}</Card.Text>
-            )}
           </Card.Body>
         )}
       </Card>
