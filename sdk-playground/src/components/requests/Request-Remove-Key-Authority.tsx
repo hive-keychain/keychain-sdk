@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
   KeychainKeyTypes,
-  RequestAddAccountAuthority,
-  RequestAddKeyAuthority,
-  RequestRemoveAccountAuthority,
   RequestRemoveKeyAuthority,
-  RequestSignBuffer,
 } from 'hive-keychain-commons';
 import { Button, Card, Form } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';

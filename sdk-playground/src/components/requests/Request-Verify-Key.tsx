@@ -22,14 +22,13 @@ const Requestverifykey = ({ setRequestResult }: Props) => {
   const [formParams, setFormParams] =
     useState<ExcludeCommonParams<RequestDecode>>(DEFAULT_PARAMS);
 
-  //TODO bellow add proper event type
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
     if (value !== '') {
       setFormParams((prevFormParams) => ({ ...prevFormParams, [name]: value }));
     }
   };
-  //TODO bellow add proper event type
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     console.log('about to process: ', { formParams });
@@ -61,7 +60,7 @@ const Requestverifykey = ({ setRequestResult }: Props) => {
             <Form.Control
               as="textarea"
               rows={3}
-              placeholder="To encode. # is required"
+              placeholder="To Decode. # is required"
               name="message"
               value={formParams.message}
               onChange={handleFormParams}

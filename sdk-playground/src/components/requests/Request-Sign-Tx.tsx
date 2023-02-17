@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
   KeychainKeyTypes,
-  RequestBroadcast,
+  RequestSignTx,
 } from 'hive-keychain-commons';
 import {
   Button,
@@ -14,19 +14,28 @@ import {
   Stack,
 } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
-import { Operation } from '@hiveio/dhive';
+import { DynamicGlobalProperties, Operation, Transaction } from '@hiveio/dhive';
 import json5 from 'json5';
+import { Buffer } from 'buffer';
+import { Client } from '@hiveio/dhive';
 
 type Props = {
   setRequestResult: any; //TODO add proper type
 };
 
-const DEFAULT_PARAMS: ExcludeCommonParams<RequestBroadcast> = {
+const DEFAULT_PARAMS: ExcludeCommonParams<RequestSignTx> = {
   username: '',
-  operations: [],
-  method: KeychainKeyTypes.active,
+  tx: {
+    ref_block_num: 1,
+    ref_block_prefix: 1,
+    expiration: new Date(Date.now() + 60000).toISOString(),
+    operations: [],
+    extensions: [],
+  } as Transaction,
+  method: KeychainKeyTypes.memo,
 };
 const DEFAULT_OPTIONS: KeychainOptions = {};
+
 const DEFAULT_OPERATION: [
   string,
   {
@@ -44,8 +53,14 @@ const DEFAULT_OPERATION: [
 
 const undefinedParamsToValidate = ['']; //none to check
 
-const Requestbroadcast = ({ setRequestResult }: Props) => {
+//TODO clean up
+const Requestsigntx = ({ setRequestResult }: Props) => {
   const sdk = new KeychainSDK(window);
+  const client = new Client([
+    'https://api.hive.blog',
+    'https://anyx.io',
+    'https://api.openhive.network',
+  ]);
   const [operation, setOperation] =
     useState<[string, object]>(DEFAULT_OPERATION);
   const [arrayOperations, setArrayOperations] = useState<
@@ -58,12 +73,41 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
   >([]);
 
   const [formParams, setFormParams] = useState<{
-    data: ExcludeCommonParams<RequestBroadcast>;
+    data: ExcludeCommonParams<RequestSignTx>;
     options: KeychainOptions;
   }>({
     data: DEFAULT_PARAMS,
     options: DEFAULT_OPTIONS,
   });
+
+  const [dHiveprops, setDHiveProps] = useState<DynamicGlobalProperties>();
+
+  useEffect(() => {
+    initProps();
+  });
+
+  //TODO remove, just for testing
+  useEffect(() => {
+    console.log({ arrayOperations });
+  }, [arrayOperations]);
+  // useEffect(() => {
+  //   console.log({ operation });
+  // }, [operation]);
+  //end remove
+
+  useEffect(() => {
+    if (dHiveprops) {
+      formParams.data.tx.ref_block_num = dHiveprops.head_block_number & 0xffff;
+      formParams.data.tx.ref_block_prefix = Buffer.from(
+        dHiveprops.head_block_id,
+        'hex',
+      ).readUInt32LE(4);
+    }
+  }, [dHiveprops]);
+
+  const initProps = async () => {
+    setDHiveProps(await client.database.getDynamicGlobalProperties());
+  };
 
   const handleOperation = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -94,7 +138,7 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
     setArrayOperations([]);
   };
 
-  const handleFormParams = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFormParams = (e: any) => {
     const { name, value } = e.target;
     let tempValue =
       undefinedParamsToValidate.findIndex((param) => param === name) !== -1 &&
@@ -118,11 +162,10 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    formParams['data']['operations'] = arrayOperations as Operation[];
-
+    formParams['data']['tx']['operations'] = arrayOperations as Operation[];
     console.log('about to process ...: ', { formParams });
     try {
-      const broadcast = await sdk.requestBroadcast(
+      const broadcast = await sdk.requestSignTx(
         formParams.data,
         formParams.options,
       );
@@ -135,7 +178,7 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
   };
   return (
     <Card className="d-flex justify-content-center">
-      <Card.Header as={'h5'}>Request Generic Broadcast</Card.Header>
+      <Card.Header as={'h5'}>Request Sign Tx</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicUsername">
@@ -186,7 +229,24 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
               +
             </Button>
           </Form.Group>
-
+          <Form.Group className="mb-3" controlId="formBasicSelectMethod">
+            <Form.Select
+              onChange={handleFormParams}
+              className={'mt-1'}
+              value={formParams.data.method}
+              name="method">
+              <option>Please select a Method</option>
+              <option value={KeychainKeyTypes.active}>
+                {KeychainKeyTypes.active}
+              </option>
+              <option value={KeychainKeyTypes.posting}>
+                {KeychainKeyTypes.posting}
+              </option>
+              <option value={KeychainKeyTypes.memo}>
+                {KeychainKeyTypes.memo}
+              </option>
+            </Form.Select>
+          </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicOptions">
             <Form.Label>Rpc</Form.Label>
             <Form.Control
@@ -205,4 +265,4 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
   );
 };
 
-export default Requestbroadcast;
+export default Requestsigntx;

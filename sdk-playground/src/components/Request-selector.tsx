@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { Button, Card, Form, Container, Collapse } from 'react-bootstrap';
 import Requestaddaccountauthority from './requests/Request-Add-Account-Authority';
 import Requestaddkeyauthority from './requests/Request-Add-Key-Authority';
@@ -7,6 +7,7 @@ import Requestencodemessage from './requests/Request-Encode-Message';
 import Requestremoveaccountauthority from './requests/Request-Remove-Account-Authority';
 import Requestremovekeyauthority from './requests/Request-Remove-Key-Authority';
 import Requestsignbuffer from './requests/Request-Sign-Buffer';
+import Requestsigntx from './requests/Request-Sign-Tx';
 import Requestverifykey from './requests/Request-Verify-Key';
 
 //TODO change using keychain request types.
@@ -19,6 +20,7 @@ export enum SDKRequestType {
   Request_Add_Key_Authority = 'Request_Add_Key_Authority',
   Request_Remove_Key_Authority = 'Request_Remove_Key_Authority',
   Request_Broadcast = 'Request_Broadcast',
+  Request_Sign_Tx = 'Request_Sign_Tx',
 }
 
 export interface KeychainOptions {
@@ -31,12 +33,8 @@ type Props = {
   enabledKeychain: boolean; //TODO use it to disable??
 };
 //TODO important update all inputs & UI using stacks(react-bootstrap).
-const RequestSelector = ({
-  setRequestResult,
-  enabledKeychain,
-  requestResult,
-}: Props) => {
-  const [request, setRequest] = useState<SDKRequestType>();
+const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
+  const [request, setRequest] = useState<string>();
   const [requestCard, setRequestCard] = useState<ReactNode>();
   const [open, setOpen] = useState(true);
 
@@ -44,7 +42,7 @@ const RequestSelector = ({
     if (requestResult) {
       setOpen(!open);
     }
-  }, [requestResult]);
+  }, [requestResult, setOpen]);
 
   useEffect(() => {
     switch (request) {
@@ -88,15 +86,17 @@ const RequestSelector = ({
           <Requestbroadcast setRequestResult={setRequestResult} />,
         );
         break;
+      case SDKRequestType.Request_Sign_Tx:
+        setRequestCard(<Requestsigntx setRequestResult={setRequestResult} />);
+        break;
       default:
         setRequestCard(null);
         console.log('trying to set: ', { request });
         break;
     }
-  }, [request]);
+  }, [request, setRequestResult]);
 
-  //TODO bellow add proper event type
-  const handleChange = (e: any) => {
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
     setRequest(e.target.value);
     setRequestResult(undefined);
@@ -154,9 +154,14 @@ const RequestSelector = ({
                 <option value={SDKRequestType.Request_Broadcast}>
                   {SDKRequestType.Request_Broadcast.split('_').join(' ')}
                 </option>
+                <option value={SDKRequestType.Request_Sign_Tx}>
+                  {SDKRequestType.Request_Sign_Tx.split('_').join(' ')}
+                </option>
               </Form.Select>
             </Form>
-            {requestCard ? requestCard : null}
+            <Container className="mt-2">
+              {requestCard ? requestCard : null}
+            </Container>
           </Card.Body>
         </Collapse>
       </Card>
