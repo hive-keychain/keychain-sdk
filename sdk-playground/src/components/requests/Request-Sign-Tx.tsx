@@ -18,7 +18,14 @@ import { DynamicGlobalProperties, Operation, Transaction } from '@hiveio/dhive';
 import json5 from 'json5';
 import { Buffer } from 'buffer';
 import { Client } from '@hiveio/dhive';
-
+//TODO here:
+//  - ask cedric about nasty dHive error
+//      -> error here:
+// WARNING in ./node_modules/@hiveio/dhive/dist/dhive.js
+// Module Warning (from ./node_modules/source-map-loader/dist/cjs.js):
+// Failed to parse source map from 'C:\cygwin64\home\Saturno\KeyChain\keychain-sdk\sdk-playground\node_modules\@hiveio\dhive\dist\src\utils.ts' file: Error: ENOENT: no such file or directory, open 'C:\cygwin64\home\Saturno\KeyChain\keychain-sdk\sdk-playground\node_modules\@hiveio\dhive\dist\src\utils.ts'
+//  - see if possible make the proxy work(run-p) so no more errors on browser.
+//  - fix this request to make it work.
 type Props = {
   setRequestResult: any; //TODO add proper type
 };
