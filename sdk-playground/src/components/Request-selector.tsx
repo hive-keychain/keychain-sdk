@@ -3,6 +3,7 @@ import { Button, Card, Form, Container, Collapse } from 'react-bootstrap';
 import Requestaddaccountauthority from './requests/Request-Add-Account-Authority';
 import Requestaddkeyauthority from './requests/Request-Add-Key-Authority';
 import Requestbroadcast from './requests/Request-Broadcast';
+import Requestcustomjson from './requests/Request-Custom-Json';
 import Requestencodemessage from './requests/Request-Encode-Message';
 import Requestpost from './requests/Request-Post';
 import Requestremoveaccountauthority from './requests/Request-Remove-Account-Authority';
@@ -26,6 +27,7 @@ export enum SDKRequestType {
   Request_Signed_Call = 'Request_Signed_Call',
   Request_Post = 'Request_Post',
   Request_Vote = 'Request_Vote',
+  Request_Custom_Json = 'Request_Custom_Json',
 }
 
 export interface KeychainOptions {
@@ -105,6 +107,11 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
       case SDKRequestType.Request_Vote:
         setRequestCard(<Requestvote setRequestResult={setRequestResult} />);
         break;
+      case SDKRequestType.Request_Custom_Json:
+        setRequestCard(
+          <Requestcustomjson setRequestResult={setRequestResult} />,
+        );
+        break;
       default:
         setRequestCard(null);
         console.log('trying to set: ', { request });
@@ -181,6 +188,9 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
                 </option>
                 <option value={SDKRequestType.Request_Vote}>
                   {SDKRequestType.Request_Vote.split('_').join(' ')}
+                </option>
+                <option value={SDKRequestType.Request_Custom_Json}>
+                  {SDKRequestType.Request_Custom_Json.split('_').join(' ')}
                 </option>
               </Form.Select>
             </Form>
