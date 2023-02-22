@@ -11,6 +11,7 @@ import Requestremovekeyauthority from './requests/Request-Remove-Key-Authority';
 import Requestsignbuffer from './requests/Request-Sign-Buffer';
 import Requestsigntx from './requests/Request-Sign-Tx';
 import Requestsignedcall from './requests/Request-Signed-Call';
+import Requesttransfer from './requests/Request-Transfer';
 import Requestverifykey from './requests/Request-Verify-Key';
 import Requestvote from './requests/Request-Vote';
 
@@ -28,6 +29,7 @@ export enum SDKRequestType {
   Request_Post = 'Request_Post',
   Request_Vote = 'Request_Vote',
   Request_Custom_Json = 'Request_Custom_Json',
+  Request_Transfer = 'Request_Transfer',
 }
 
 export interface KeychainOptions {
@@ -112,6 +114,9 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
           <Requestcustomjson setRequestResult={setRequestResult} />,
         );
         break;
+      case SDKRequestType.Request_Transfer:
+        setRequestCard(<Requesttransfer setRequestResult={setRequestResult} />);
+        break;
       default:
         setRequestCard(null);
         console.log('trying to set: ', { request });
@@ -191,6 +196,9 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
                 </option>
                 <option value={SDKRequestType.Request_Custom_Json}>
                   {SDKRequestType.Request_Custom_Json.split('_').join(' ')}
+                </option>
+                <option value={SDKRequestType.Request_Transfer}>
+                  {SDKRequestType.Request_Transfer.split('_').join(' ')}
                 </option>
               </Form.Select>
             </Form>
