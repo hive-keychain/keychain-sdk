@@ -31,7 +31,12 @@ const RequestResults = ({ requestResult }: Props) => {
             <Card.Subtitle>
               Success: {requestResult.success.toString()}
             </Card.Subtitle>
-            <Card.Text>Result: {requestResult.result.toString()}</Card.Text>
+            <Card.Text>
+              Result:{' '}
+              {typeof requestResult.result === 'object'
+                ? JSON.stringify(requestResult.result)
+                : requestResult.result.toString()}
+            </Card.Text>
             {requestResult.message && (
               <Card.Text>Message: {requestResult.message}</Card.Text>
             )}

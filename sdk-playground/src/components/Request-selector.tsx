@@ -8,6 +8,7 @@ import Requestencodemessage from './requests/Request-Encode-Message';
 import Requestpost from './requests/Request-Post';
 import Requestremoveaccountauthority from './requests/Request-Remove-Account-Authority';
 import Requestremovekeyauthority from './requests/Request-Remove-Key-Authority';
+import Requestsendtoken from './requests/Request-Send-Token';
 import Requestsignbuffer from './requests/Request-Sign-Buffer';
 import Requestsigntx from './requests/Request-Sign-Tx';
 import Requestsignedcall from './requests/Request-Signed-Call';
@@ -30,6 +31,7 @@ export enum SDKRequestType {
   Request_Vote = 'Request_Vote',
   Request_Custom_Json = 'Request_Custom_Json',
   Request_Transfer = 'Request_Transfer',
+  Request_Send_Token = 'Request_Send_Token',
 }
 
 export interface KeychainOptions {
@@ -117,6 +119,11 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
       case SDKRequestType.Request_Transfer:
         setRequestCard(<Requesttransfer setRequestResult={setRequestResult} />);
         break;
+      case SDKRequestType.Request_Send_Token:
+        setRequestCard(
+          <Requestsendtoken setRequestResult={setRequestResult} />,
+        );
+        break;
       default:
         setRequestCard(null);
         console.log('trying to set: ', { request });
@@ -199,6 +206,9 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
                 </option>
                 <option value={SDKRequestType.Request_Transfer}>
                   {SDKRequestType.Request_Transfer.split('_').join(' ')}
+                </option>
+                <option value={SDKRequestType.Request_Send_Token}>
+                  {SDKRequestType.Request_Send_Token.split('_').join(' ')}
                 </option>
               </Form.Select>
             </Form>

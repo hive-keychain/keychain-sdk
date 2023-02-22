@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
+  RequestSendToken,
   RequestTransfer,
   RequestVote,
 } from 'hive-keychain-commons';
@@ -12,23 +13,22 @@ type Props = {
   setRequestResult: any; //TODO add proper type
 };
 
-const DEFAULT_PARAMS: ExcludeCommonParams<RequestTransfer> = {
+const DEFAULT_PARAMS: ExcludeCommonParams<RequestSendToken> = {
   username: 'keychain.tests',
   to: 'theghost1980',
-  amount: '1.000',
+  amount: '0.001',
   memo: '#Test Keychain SDK transfer(will be encrypted)',
-  enforce: false,
-  currency: 'HIVE',
+  currency: 'LEO',
 };
 const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
 //TODO clean up
-const Requesttransfer = ({ setRequestResult }: Props) => {
+const Requestsendtoken = ({ setRequestResult }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
-    data: ExcludeCommonParams<RequestTransfer>;
+    data: ExcludeCommonParams<RequestSendToken>;
     options: KeychainOptions;
   }>({
     data: DEFAULT_PARAMS,
@@ -61,12 +61,12 @@ const Requesttransfer = ({ setRequestResult }: Props) => {
     e.preventDefault();
     console.log('about to process ...: ', { formParams });
     try {
-      const transfer = await sdk.requestTransfer(
+      const sendToken = await sdk.requestSendToken(
         formParams.data,
         formParams.options,
       );
-      setRequestResult(transfer);
-      console.log({ transfer });
+      setRequestResult(sendToken);
+      console.log({ sendToken });
     } catch (error) {
       setRequestResult(error);
       console.log({ error });
@@ -75,7 +75,7 @@ const Requesttransfer = ({ setRequestResult }: Props) => {
 
   return (
     <Card className="d-flex justify-content-center">
-      <Card.Header as={'h5'}>Request Transfer</Card.Header>
+      <Card.Header as={'h5'}>Request Send Token</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicUsername">
@@ -114,32 +114,14 @@ const Requesttransfer = ({ setRequestResult }: Props) => {
               onChange={handleFormParams}
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicEnforce">
-            <Form.Label>Enforce Transfer</Form.Label>
-            <Form.Check
-              type="checkbox"
-              name="enforce"
-              value={formParams.data.enforce ? 'true' : 'false'}
-              onChange={(e) =>
-                handleFormParams({
-                  target: {
-                    value: e.target.checked,
-                    name: e.target.name,
-                  },
-                })
-              }
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicCurrency">
-            <Form.Select
-              onChange={handleFormParams}
-              className={'mt-1'}
+          <Form.Group className="mb-3" controlId="formBasicSymbol">
+            <Form.Label>Token Symbol</Form.Label>
+            <Form.Control
+              placeholder="Token symbol to be sent, i.e: 'LEO'"
+              name="currency"
               value={formParams.data.currency}
-              name="currency">
-              <option>Please select a Currency</option>
-              <option value={'HIVE'}>HIVE</option>
-              <option value={'HBD'}>HBD</option>
-            </Form.Select>
+              onChange={handleFormParams}
+            />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicOptions">
             <Form.Label>Rpc</Form.Label>
@@ -159,4 +141,4 @@ const Requesttransfer = ({ setRequestResult }: Props) => {
   );
 };
 
-export default Requesttransfer;
+export default Requestsendtoken;
