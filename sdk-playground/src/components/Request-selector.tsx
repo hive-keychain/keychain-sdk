@@ -7,6 +7,7 @@ import Requestcustomjson from './requests/Request-Custom-Json';
 import Requestdelegation from './requests/Request-Delegation';
 import Requestencodemessage from './requests/Request-Encode-Message';
 import Requestpost from './requests/Request-Post';
+import Requestpowerdown from './requests/Request-Power-Down';
 import Requestpowerup from './requests/Request-Power-Up';
 import Requestproxy from './requests/Request-Proxy';
 import Requestremoveaccountauthority from './requests/Request-Remove-Account-Authority';
@@ -40,6 +41,7 @@ export enum SDKRequestType {
   Request_Witness_Vote = 'Request_Witness_Vote',
   Request_Proxy = 'Request_Proxy',
   Request_Power_Up = 'Request_Power_Up',
+  Request_Power_Down = 'Request_Power_Down',
 }
 
 export interface KeychainOptions {
@@ -148,6 +150,11 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
       case SDKRequestType.Request_Power_Up:
         setRequestCard(<Requestpowerup setRequestResult={setRequestResult} />);
         break;
+      case SDKRequestType.Request_Power_Down:
+        setRequestCard(
+          <Requestpowerdown setRequestResult={setRequestResult} />,
+        );
+        break;
       default:
         setRequestCard(null);
         console.log('trying to set: ', { request });
@@ -245,6 +252,9 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
                 </option>
                 <option value={SDKRequestType.Request_Power_Up}>
                   {SDKRequestType.Request_Power_Up.split('_').join(' ')}
+                </option>
+                <option value={SDKRequestType.Request_Power_Down}>
+                  {SDKRequestType.Request_Power_Down.split('_').join(' ')}
                 </option>
               </Form.Select>
             </Form>
