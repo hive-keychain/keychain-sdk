@@ -60,7 +60,9 @@ const DEFAULT_OPERATION: [
 
 const undefinedParamsToValidate = ['']; //none to check
 
-//TODO clean up
+//TODO clean up & finish as cannot properly test:
+//    1. errors when trying to fetch data from hive(console warnings about dHive package)
+//    2. error when sending the request but no description about that error.
 const Requestsigntx = ({ setRequestResult }: Props) => {
   const sdk = new KeychainSDK(window);
   const client = new Client([
@@ -248,9 +250,6 @@ const Requestsigntx = ({ setRequestResult }: Props) => {
               </option>
               <option value={KeychainKeyTypes.posting}>
                 {KeychainKeyTypes.posting}
-              </option>
-              <option value={KeychainKeyTypes.memo}>
-                {KeychainKeyTypes.memo}
               </option>
             </Form.Select>
           </Form.Group>

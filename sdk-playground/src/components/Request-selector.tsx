@@ -4,13 +4,15 @@ import Requestaddaccountauthority from './requests/Request-Add-Account-Authority
 import Requestaddkeyauthority from './requests/Request-Add-Key-Authority';
 import Requestbroadcast from './requests/Request-Broadcast';
 import Requestencodemessage from './requests/Request-Encode-Message';
+import Requestpost from './requests/Request-Post';
 import Requestremoveaccountauthority from './requests/Request-Remove-Account-Authority';
 import Requestremovekeyauthority from './requests/Request-Remove-Key-Authority';
 import Requestsignbuffer from './requests/Request-Sign-Buffer';
 import Requestsigntx from './requests/Request-Sign-Tx';
+import Requestsignedcall from './requests/Request-Signed-Call';
 import Requestverifykey from './requests/Request-Verify-Key';
+import Requestvote from './requests/Request-Vote';
 
-//TODO change using keychain request types.
 export enum SDKRequestType {
   Request_Encode_Message = 'Request_Encode_Message',
   Request_Verify_Key = 'Request_Verify_Key',
@@ -21,6 +23,9 @@ export enum SDKRequestType {
   Request_Remove_Key_Authority = 'Request_Remove_Key_Authority',
   Request_Broadcast = 'Request_Broadcast',
   Request_Sign_Tx = 'Request_Sign_Tx',
+  Request_Signed_Call = 'Request_Signed_Call',
+  Request_Post = 'Request_Post',
+  Request_Vote = 'Request_Vote',
 }
 
 export interface KeychainOptions {
@@ -89,6 +94,17 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
       case SDKRequestType.Request_Sign_Tx:
         setRequestCard(<Requestsigntx setRequestResult={setRequestResult} />);
         break;
+      case SDKRequestType.Request_Signed_Call:
+        setRequestCard(
+          <Requestsignedcall setRequestResult={setRequestResult} />,
+        );
+        break;
+      case SDKRequestType.Request_Post:
+        setRequestCard(<Requestpost setRequestResult={setRequestResult} />);
+        break;
+      case SDKRequestType.Request_Vote:
+        setRequestCard(<Requestvote setRequestResult={setRequestResult} />);
+        break;
       default:
         setRequestCard(null);
         console.log('trying to set: ', { request });
@@ -156,6 +172,15 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
                 </option>
                 <option value={SDKRequestType.Request_Sign_Tx}>
                   {SDKRequestType.Request_Sign_Tx.split('_').join(' ')}
+                </option>
+                <option value={SDKRequestType.Request_Signed_Call}>
+                  {SDKRequestType.Request_Signed_Call.split('_').join(' ')}
+                </option>
+                <option value={SDKRequestType.Request_Post}>
+                  {SDKRequestType.Request_Post.split('_').join(' ')}
+                </option>
+                <option value={SDKRequestType.Request_Vote}>
+                  {SDKRequestType.Request_Vote.split('_').join(' ')}
                 </option>
               </Form.Select>
             </Form>
