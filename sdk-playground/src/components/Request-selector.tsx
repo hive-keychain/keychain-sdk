@@ -7,6 +7,7 @@ import Requestcustomjson from './requests/Request-Custom-Json';
 import Requestdelegation from './requests/Request-Delegation';
 import Requestencodemessage from './requests/Request-Encode-Message';
 import Requestpost from './requests/Request-Post';
+import Requestproxy from './requests/Request-Proxy';
 import Requestremoveaccountauthority from './requests/Request-Remove-Account-Authority';
 import Requestremovekeyauthority from './requests/Request-Remove-Key-Authority';
 import Requestsendtoken from './requests/Request-Send-Token';
@@ -16,6 +17,7 @@ import Requestsignedcall from './requests/Request-Signed-Call';
 import Requesttransfer from './requests/Request-Transfer';
 import Requestverifykey from './requests/Request-Verify-Key';
 import Requestvote from './requests/Request-Vote';
+import Requestwitnessvote from './requests/Request-Witness-Vote';
 
 export enum SDKRequestType {
   Request_Encode_Message = 'Request_Encode_Message',
@@ -34,6 +36,8 @@ export enum SDKRequestType {
   Request_Transfer = 'Request_Transfer',
   Request_Send_Token = 'Request_Send_Token',
   Request_Delegation = 'Request_Delegation',
+  Request_Witness_Vote = 'Request_Witness_Vote',
+  Request_Proxy = 'Request_Proxy',
 }
 
 export interface KeychainOptions {
@@ -131,6 +135,14 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
           <Requestdelegation setRequestResult={setRequestResult} />,
         );
         break;
+      case SDKRequestType.Request_Witness_Vote:
+        setRequestCard(
+          <Requestwitnessvote setRequestResult={setRequestResult} />,
+        );
+        break;
+      case SDKRequestType.Request_Proxy:
+        setRequestCard(<Requestproxy setRequestResult={setRequestResult} />);
+        break;
       default:
         setRequestCard(null);
         console.log('trying to set: ', { request });
@@ -219,6 +231,12 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
                 </option>
                 <option value={SDKRequestType.Request_Delegation}>
                   {SDKRequestType.Request_Delegation.split('_').join(' ')}
+                </option>
+                <option value={SDKRequestType.Request_Witness_Vote}>
+                  {SDKRequestType.Request_Witness_Vote.split('_').join(' ')}
+                </option>
+                <option value={SDKRequestType.Request_Proxy}>
+                  {SDKRequestType.Request_Proxy.split('_').join(' ')}
                 </option>
               </Form.Select>
             </Form>
