@@ -4,6 +4,7 @@ import Requestaddaccountauthority from './requests/Request-Add-Account-Authority
 import Requestaddkeyauthority from './requests/Request-Add-Key-Authority';
 import Requestbroadcast from './requests/Request-Broadcast';
 import Requestcustomjson from './requests/Request-Custom-Json';
+import Requestdelegation from './requests/Request-Delegation';
 import Requestencodemessage from './requests/Request-Encode-Message';
 import Requestpost from './requests/Request-Post';
 import Requestremoveaccountauthority from './requests/Request-Remove-Account-Authority';
@@ -32,6 +33,7 @@ export enum SDKRequestType {
   Request_Custom_Json = 'Request_Custom_Json',
   Request_Transfer = 'Request_Transfer',
   Request_Send_Token = 'Request_Send_Token',
+  Request_Delegation = 'Request_Delegation',
 }
 
 export interface KeychainOptions {
@@ -124,6 +126,11 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
           <Requestsendtoken setRequestResult={setRequestResult} />,
         );
         break;
+      case SDKRequestType.Request_Delegation:
+        setRequestCard(
+          <Requestdelegation setRequestResult={setRequestResult} />,
+        );
+        break;
       default:
         setRequestCard(null);
         console.log('trying to set: ', { request });
@@ -209,6 +216,9 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
                 </option>
                 <option value={SDKRequestType.Request_Send_Token}>
                   {SDKRequestType.Request_Send_Token.split('_').join(' ')}
+                </option>
+                <option value={SDKRequestType.Request_Delegation}>
+                  {SDKRequestType.Request_Delegation.split('_').join(' ')}
                 </option>
               </Form.Select>
             </Form>
