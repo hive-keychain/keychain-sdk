@@ -1,11 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
-import {
-  ExcludeCommonParams,
-  KeychainKeyTypes,
-  RequestSignBuffer,
-  RequestVote,
-} from 'hive-keychain-commons';
+import { ExcludeCommonParams, RequestVote } from 'hive-keychain-commons';
 import { Button, Card, Form } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
@@ -21,7 +16,7 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestVote> = {
 };
 const DEFAULT_OPTIONS: KeychainOptions = {};
 
-const undefinedParamsToValidate = ['username', 'title', 'rpc'];
+const undefinedParamsToValidate = ['rpc'];
 
 //TODO clean up
 const Requestvote = ({ setRequestResult }: Props) => {
@@ -71,57 +66,47 @@ const Requestvote = ({ setRequestResult }: Props) => {
       console.log({ error });
     }
   };
+
   return (
     <Card className="d-flex justify-content-center">
-      <Card.Header as={'h5'}>Request sign buffer</Card.Header>
+      <Card.Header as={'h5'}>Request Vote</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicUsername">
             <Form.Label>Username @</Form.Label>
             <Form.Control
-              placeholder="Hive username, leave blank for a dropdown"
+              placeholder="Hive username"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicMessage">
-            <Form.Label>Message</Form.Label>
+          <Form.Group className="mb-3" controlId="formBasicPermlink">
+            <Form.Label>Permlink</Form.Label>
             <Form.Control
-              as="textarea"
-              rows={3}
-              placeholder="To encode. # is required on message"
-              name="message"
-              value={formParams.data.message}
+              placeholder="Permlink of post"
+              name="permlink"
+              value={formParams.data.permlink}
               onChange={handleFormParams}
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicTitle">
-            <Form.Label>Title</Form.Label>
+          <Form.Group className="mb-3" controlId="formBasicAuthor">
+            <Form.Label>Author</Form.Label>
             <Form.Control
-              placeholder="Title to show in request - optional"
-              name="title"
-              value={formParams.data.title}
+              placeholder="Author of post"
+              name="author"
+              value={formParams.data.author}
               onChange={handleFormParams}
             />
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicSelect">
-            <Form.Select
+          <Form.Group className="mb-3" controlId="formBasicWeight">
+            <Form.Label>Weight</Form.Label>
+            <Form.Control
+              placeholder="between -10,000 (-100%) and 10,000 (100%)"
+              name="weight"
+              value={formParams.data.weight}
               onChange={handleFormParams}
-              className={'mt-1'}
-              value={formParams.data.method}
-              name="method">
-              <option>Please select a Method</option>
-              <option value={KeychainKeyTypes.active}>
-                {KeychainKeyTypes.active}
-              </option>
-              <option value={KeychainKeyTypes.posting}>
-                {KeychainKeyTypes.posting}
-              </option>
-              <option value={KeychainKeyTypes.memo}>
-                {KeychainKeyTypes.memo}
-              </option>
-            </Form.Select>
+            />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicOptions">
             <Form.Label>Rpc</Form.Label>
