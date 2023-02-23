@@ -1260,9 +1260,9 @@ export class KeychainSDK {
           data.receiver,
           data.subject,
           data.permlink,
+          data.daily_pay,
           data.start,
           data.end,
-          data.daily_pay,
           data.extensions,
           (response: KeychainRequestResponse) => {
             if (response.error) {

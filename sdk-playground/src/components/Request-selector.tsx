@@ -3,6 +3,8 @@ import { Button, Card, Form, Container, Collapse } from 'react-bootstrap';
 import Requestaddaccountauthority from './requests/Request-Add-Account-Authority';
 import Requestaddkeyauthority from './requests/Request-Add-Key-Authority';
 import Requestbroadcast from './requests/Request-Broadcast';
+import Requestcreateclaimedaccount from './requests/Request-Create-Claimed-Account';
+import Requestcreateproposal from './requests/Request-Create-Proposal';
 import Requestcustomjson from './requests/Request-Custom-Json';
 import Requestdelegation from './requests/Request-Delegation';
 import Requestencodemessage from './requests/Request-Encode-Message';
@@ -42,6 +44,8 @@ export enum SDKRequestType {
   Request_Proxy = 'Request_Proxy',
   Request_Power_Up = 'Request_Power_Up',
   Request_Power_Down = 'Request_Power_Down',
+  Request_Create_Claimed_Account = 'Request_Create_Claimed_Account',
+  Request_Create_Proposal = 'Request_Create_Proposal',
 }
 
 export interface KeychainOptions {
@@ -53,7 +57,10 @@ type Props = {
   requestResult: any; //TODO add proper type
   enabledKeychain: boolean; //TODO use it to disable??
 };
-//TODO important update all inputs & UI using stacks(react-bootstrap).
+//TODO
+//  important update all:
+//    - inputs & UI using InputGroup.
+//    - conditional use of console.log if user wants.
 const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
   const [request, setRequest] = useState<string>();
   const [requestCard, setRequestCard] = useState<ReactNode>();
@@ -64,6 +71,14 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
       setOpen(!open);
     }
   }, [requestResult, setOpen]);
+
+  //TODO to remove
+  // useEffect(() => {
+  //   (Object.keys(SDKRequestType) as Array<SDKRequestType>).map((_type) =>
+  //     console.log({ _type }),
+  //   );
+  // });
+  //end to remove
 
   useEffect(() => {
     switch (request) {
@@ -155,6 +170,16 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
           <Requestpowerdown setRequestResult={setRequestResult} />,
         );
         break;
+      case SDKRequestType.Request_Create_Claimed_Account:
+        setRequestCard(
+          <Requestcreateclaimedaccount setRequestResult={setRequestResult} />,
+        );
+        break;
+      case SDKRequestType.Request_Create_Proposal:
+        setRequestCard(
+          <Requestcreateproposal setRequestResult={setRequestResult} />,
+        );
+        break;
       default:
         setRequestCard(null);
         console.log('trying to set: ', { request });
@@ -188,74 +213,17 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
                 aria-label="Default select example"
                 onChange={handleChange}>
                 <option>Please select a Request</option>
-                <option value={SDKRequestType.Request_Encode_Message}>
-                  {SDKRequestType.Request_Encode_Message.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Verify_Key}>
-                  {SDKRequestType.Request_Verify_Key.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Sign_Buffer}>
-                  {SDKRequestType.Request_Sign_Buffer.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Add_Account_Authority}>
-                  {SDKRequestType.Request_Add_Account_Authority.split('_').join(
-                    ' ',
-                  )}
-                </option>
-                <option value={SDKRequestType.Request_Remove_Account_Authority}>
-                  {SDKRequestType.Request_Remove_Account_Authority.split(
-                    '_',
-                  ).join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Add_Key_Authority}>
-                  {SDKRequestType.Request_Add_Key_Authority.split('_').join(
-                    ' ',
-                  )}
-                </option>
-                <option value={SDKRequestType.Request_Remove_Key_Authority}>
-                  {SDKRequestType.Request_Remove_Key_Authority.split('_').join(
-                    ' ',
-                  )}
-                </option>
-                <option value={SDKRequestType.Request_Broadcast}>
-                  {SDKRequestType.Request_Broadcast.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Sign_Tx}>
-                  {SDKRequestType.Request_Sign_Tx.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Signed_Call}>
-                  {SDKRequestType.Request_Signed_Call.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Post}>
-                  {SDKRequestType.Request_Post.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Vote}>
-                  {SDKRequestType.Request_Vote.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Custom_Json}>
-                  {SDKRequestType.Request_Custom_Json.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Transfer}>
-                  {SDKRequestType.Request_Transfer.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Send_Token}>
-                  {SDKRequestType.Request_Send_Token.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Delegation}>
-                  {SDKRequestType.Request_Delegation.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Witness_Vote}>
-                  {SDKRequestType.Request_Witness_Vote.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Proxy}>
-                  {SDKRequestType.Request_Proxy.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Power_Up}>
-                  {SDKRequestType.Request_Power_Up.split('_').join(' ')}
-                </option>
-                <option value={SDKRequestType.Request_Power_Down}>
-                  {SDKRequestType.Request_Power_Down.split('_').join(' ')}
-                </option>
+                {(Object.keys(SDKRequestType) as Array<SDKRequestType>).map(
+                  (_type) => {
+                    return (
+                      <option
+                        value={SDKRequestType[_type]}
+                        key={`${_type}-rq-type`}>
+                        {_type.split('_').join(' ')}
+                      </option>
+                    );
+                  },
+                )}
               </Form.Select>
             </Form>
             <Container className="mt-2">

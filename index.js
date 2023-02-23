@@ -1020,7 +1020,7 @@ class KeychainSDK {
                 var _12, _13;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestCreateProposal(data.username, data.receiver, data.subject, data.permlink, data.start, data.end, data.daily_pay, data.extensions, (response) => {
+                    this.window.hive_keychain.requestCreateProposal(data.username, data.receiver, data.subject, data.permlink, data.daily_pay, data.start, data.end, data.extensions, (response) => {
                         if (response.error) {
                             reject(response);
                         }
