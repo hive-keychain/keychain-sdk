@@ -1,5 +1,6 @@
 import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { Button, Card, Form, Container, Collapse } from 'react-bootstrap';
+import Requestaddaccount from './requests/Request-Add-Account';
 import Requestaddaccountauthority from './requests/Request-Add-Account-Authority';
 import Requestaddkeyauthority from './requests/Request-Add-Key-Authority';
 import Requestbroadcast from './requests/Request-Broadcast';
@@ -50,6 +51,7 @@ export enum SDKRequestType {
   Request_Create_Proposal = 'Request_Create_Proposal',
   Request_Remove_Proposal = 'Request_Remove_Proposal',
   Request_Update_Proposal_Vote = 'Request_Update_Proposal_Vote',
+  Request_Add_Account = 'Request_Add_Account',
 }
 
 export interface KeychainOptions {
@@ -185,6 +187,11 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
       case SDKRequestType.Request_Update_Proposal_Vote:
         setRequestCard(
           <Requestupdateproposalvote setRequestResult={setRequestResult} />,
+        );
+        break;
+      case SDKRequestType.Request_Add_Account:
+        setRequestCard(
+          <Requestaddaccount setRequestResult={setRequestResult} />,
         );
         break;
       default:
