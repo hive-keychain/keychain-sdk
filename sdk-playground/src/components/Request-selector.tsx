@@ -4,6 +4,7 @@ import Requestaddaccount from './requests/Request-Add-Account';
 import Requestaddaccountauthority from './requests/Request-Add-Account-Authority';
 import Requestaddkeyauthority from './requests/Request-Add-Key-Authority';
 import Requestbroadcast from './requests/Request-Broadcast';
+import Requestconversion from './requests/Request-Conversion';
 import Requestcreateclaimedaccount from './requests/Request-Create-Claimed-Account';
 import Requestcreateproposal from './requests/Request-Create-Proposal';
 import Requestcustomjson from './requests/Request-Custom-Json';
@@ -52,6 +53,7 @@ export enum SDKRequestType {
   Request_Remove_Proposal = 'Request_Remove_Proposal',
   Request_Update_Proposal_Vote = 'Request_Update_Proposal_Vote',
   Request_Add_Account = 'Request_Add_Account',
+  Request_Conversion = 'Request_Conversion',
 }
 
 export interface KeychainOptions {
@@ -192,6 +194,11 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
       case SDKRequestType.Request_Add_Account:
         setRequestCard(
           <Requestaddaccount setRequestResult={setRequestResult} />,
+        );
+        break;
+      case SDKRequestType.Request_Conversion:
+        setRequestCard(
+          <Requestconversion setRequestResult={setRequestResult} />,
         );
         break;
       default:
