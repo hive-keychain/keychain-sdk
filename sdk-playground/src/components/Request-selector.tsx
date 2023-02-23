@@ -14,11 +14,13 @@ import Requestpowerup from './requests/Request-Power-Up';
 import Requestproxy from './requests/Request-Proxy';
 import Requestremoveaccountauthority from './requests/Request-Remove-Account-Authority';
 import Requestremovekeyauthority from './requests/Request-Remove-Key-Authority';
+import Requestremoveproposal from './requests/Request-Remove-Proposal';
 import Requestsendtoken from './requests/Request-Send-Token';
 import Requestsignbuffer from './requests/Request-Sign-Buffer';
 import Requestsigntx from './requests/Request-Sign-Tx';
 import Requestsignedcall from './requests/Request-Signed-Call';
 import Requesttransfer from './requests/Request-Transfer';
+import Requestupdateproposalvote from './requests/Request-Update-Proposal-Vote';
 import Requestverifykey from './requests/Request-Verify-Key';
 import Requestvote from './requests/Request-Vote';
 import Requestwitnessvote from './requests/Request-Witness-Vote';
@@ -46,6 +48,8 @@ export enum SDKRequestType {
   Request_Power_Down = 'Request_Power_Down',
   Request_Create_Claimed_Account = 'Request_Create_Claimed_Account',
   Request_Create_Proposal = 'Request_Create_Proposal',
+  Request_Remove_Proposal = 'Request_Remove_Proposal',
+  Request_Update_Proposal_Vote = 'Request_Update_Proposal_Vote',
 }
 
 export interface KeychainOptions {
@@ -61,6 +65,7 @@ type Props = {
 //  important update all:
 //    - inputs & UI using InputGroup.
 //    - conditional use of console.log if user wants.
+//    - fix requestCreateClaimedAccount, conflicting types between ExcludeCommonParams & hive_keychain types.
 const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
   const [request, setRequest] = useState<string>();
   const [requestCard, setRequestCard] = useState<ReactNode>();
@@ -71,14 +76,6 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
       setOpen(!open);
     }
   }, [requestResult, setOpen]);
-
-  //TODO to remove
-  // useEffect(() => {
-  //   (Object.keys(SDKRequestType) as Array<SDKRequestType>).map((_type) =>
-  //     console.log({ _type }),
-  //   );
-  // });
-  //end to remove
 
   useEffect(() => {
     switch (request) {
@@ -178,6 +175,16 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
       case SDKRequestType.Request_Create_Proposal:
         setRequestCard(
           <Requestcreateproposal setRequestResult={setRequestResult} />,
+        );
+        break;
+      case SDKRequestType.Request_Remove_Proposal:
+        setRequestCard(
+          <Requestremoveproposal setRequestResult={setRequestResult} />,
+        );
+        break;
+      case SDKRequestType.Request_Update_Proposal_Vote:
+        setRequestCard(
+          <Requestupdateproposalvote setRequestResult={setRequestResult} />,
         );
         break;
       default:
