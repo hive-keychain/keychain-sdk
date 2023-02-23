@@ -2,13 +2,10 @@ import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
-  RequestCreateClaimedAccount,
   RequestCreateProposal,
-  RequestPowerDown,
 } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup, Stack } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
-import { AuthorityType } from '@hiveio/dhive';
 
 type Props = {
   setRequestResult: any; //TODO add proper type
@@ -19,8 +16,8 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestCreateProposal> = {
   receiver: 'keychain.tests',
   subject: 'The New proposal title',
   permlink: 'proposal-keychain-dev-permlink',
-  start: '2023-11-15T00:00:00',
-  end: '2024-11-15T00:00:00',
+  start: '2023-02-25',
+  end: '2024-02-25',
   daily_pay: '390.000 HBD',
   extensions: JSON.stringify([]),
 };
@@ -65,6 +62,8 @@ const Requestcreateproposal = ({ setRequestResult }: Props) => {
     e.preventDefault();
     console.log('about to process ...: ', { formParams });
     try {
+      formParams.data['start'] = `${formParams.data['start']}T00:00:00`;
+      formParams.data['end'] = `${formParams.data['end']}T00:00:00`;
       const createProposal = await sdk.requestCreateProposal(
         formParams.data,
         formParams.options,
@@ -77,7 +76,6 @@ const Requestcreateproposal = ({ setRequestResult }: Props) => {
     }
   };
 
-  //   extensions: JSON.stringify([]),
   return (
     <Card className="d-flex justify-content-center">
       <Card.Header as={'h5'}>Request Create Proposal</Card.Header>
@@ -126,7 +124,7 @@ const Requestcreateproposal = ({ setRequestResult }: Props) => {
           <InputGroup className="mb-3">
             <InputGroup.Text>Start</InputGroup.Text>
             <Form.Control
-              //   type={'date'}
+              type={'date'}
               title="Starting date"
               placeholder="Starting date"
               name="start"
@@ -137,7 +135,7 @@ const Requestcreateproposal = ({ setRequestResult }: Props) => {
           <InputGroup className="mb-3">
             <InputGroup.Text>End</InputGroup.Text>
             <Form.Control
-              //   type={'date'}
+              type={'date'}
               title="Ending date"
               placeholder="Ending date"
               name="end"
