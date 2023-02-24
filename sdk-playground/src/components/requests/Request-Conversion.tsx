@@ -12,12 +12,11 @@ import { KeychainOptions } from '../Request-selector';
 type Props = {
   setRequestResult: any; //TODO add proper type
 };
-//TODO finish this one.
+
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestConvert> = {
   username: 'keychain.tests',
-  proposal_ids: JSON.stringify([1, 2, 3]),
-  approve: true,
-  extensions: JSON.stringify([]),
+  amount: '1.000',
+  collaterized: false,
 };
 const DEFAULT_OPTIONS: KeychainOptions = {};
 
@@ -87,42 +86,39 @@ const Requestconversion = ({ setRequestResult }: Props) => {
               onChange={handleFormParams}
             />
           </InputGroup>
-          <InputGroup className="mb-3">
-            <InputGroup.Text>Ids</InputGroup.Text>
-            <Form.Control
-              title="Stringified Array of ids of the proposals to be removed, i.e: '[1,10]'"
-              placeholder="ids of the proposals"
-              name="proposal_ids"
-              value={formParams.data.proposal_ids as string}
-              onChange={handleFormParams}
-            />
-          </InputGroup>
-          <Form.Group className="mb-3" controlId="formBasicEnforce">
-            <Form.Label>Approve</Form.Label>
+          <Form.Group className="mb-3 d-flex justify-content-center">
             <Form.Check
-              type="checkbox"
-              name="approve"
-              value={formParams.data.approve ? 'true' : 'false'}
+              type="switch"
+              id="custom-switch"
+              label="Collateralized"
+              title={
+                'true to convert HIVE to HBD. false to convert HBD to HIVE.'
+              }
+              value={formParams.data.collaterized ? 'true' : 'false'}
               onChange={(e) =>
                 handleFormParams({
                   target: {
+                    name: 'collaterized',
                     value: e.target.checked,
-                    name: e.target.name,
                   },
                 })
               }
             />
           </Form.Group>
           <InputGroup className="mb-3">
-            <InputGroup.Text>Extensions</InputGroup.Text>
+            <InputGroup.Text>Amount</InputGroup.Text>
             <Form.Control
-              title="Stringified Array of extensions"
-              placeholder="Stringified Array of extensions"
-              name="extensions"
-              value={formParams.data.extensions}
+              title="Amount to be converted. Requires 3 decimals, i.e: '1.000'."
+              placeholder="amount i.e: '1.000'"
+              name="amount"
+              value={formParams.data.amount}
               onChange={handleFormParams}
             />
+            <InputGroup.Text>
+              {formParams.data.collaterized ? 'HIVE' : 'HBD'}
+            </InputGroup.Text>
           </InputGroup>
+
           <InputGroup className="mb-3">
             <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
