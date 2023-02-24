@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
-import { Navbar } from 'react-bootstrap';
+import { Image, Navbar } from 'react-bootstrap';
 import Container from 'react-bootstrap/esm/Container';
+import KeyChainDetectedIcon from '../assets/images/svgs/check_circle_black.svg';
+import KeychainError from '../assets/images/svgs/cancel_black.svg';
 
 type Props = {
   setEnabledKeychain: React.Dispatch<React.SetStateAction<boolean>>;
@@ -10,7 +12,6 @@ type Props = {
 const Keychainchecker = ({ setEnabledKeychain }: Props) => {
   const sdk = new KeychainSDK(window);
   const [keychainInstalled, setKeychainInstalled] = useState(false);
-  //   const [detecting, setDetecting] = useState(true);
 
   useEffect(() => {
     const onLoadHandler = async () => {
@@ -22,7 +23,6 @@ const Keychainchecker = ({ setEnabledKeychain }: Props) => {
       } catch (error) {
         console.log({ error });
       }
-      //   setDetecting(false);
     };
 
     window.addEventListener('load', onLoadHandler);
@@ -33,7 +33,7 @@ const Keychainchecker = ({ setEnabledKeychain }: Props) => {
   });
   return (
     <Navbar bg="light" expand="lg" className="mb-2">
-      <Container>
+      <Container className="d-flex justify-content-center">
         <Navbar.Brand
           href="home"
           title={
@@ -41,7 +41,10 @@ const Keychainchecker = ({ setEnabledKeychain }: Props) => {
               ? 'Good to play with requests'
               : 'Install keychain or reload extension on settings.'
           }>
-          {keychainInstalled ? 'Keychain Detected' : 'Not Detected'}
+          {keychainInstalled ? 'Keychain Detected' : 'Keychain Not Detected'}
+          <Image
+            src={keychainInstalled ? KeyChainDetectedIcon : KeychainError}
+          />
         </Navbar.Brand>
       </Container>
     </Navbar>

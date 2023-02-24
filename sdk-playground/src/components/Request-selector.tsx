@@ -72,7 +72,11 @@ type Props = {
 //    - inputs & UI using InputGroup.
 //    - conditional use of console.log if user wants.
 //    - fix requestCreateClaimedAccount, conflicting types between ExcludeCommonParams & hive_keychain types.
-const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
+const RequestSelector = ({
+  setRequestResult,
+  requestResult,
+  enabledKeychain,
+}: Props) => {
   const [request, setRequest] = useState<string>();
   const [requestCard, setRequestCard] = useState<ReactNode>();
   const [open, setOpen] = useState(true);
@@ -238,6 +242,7 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
           <Card.Body>
             <Form>
               <Form.Select
+                disabled={!enabledKeychain}
                 aria-label="Default select example"
                 onChange={handleChange}>
                 <option>Please select a Request</option>
