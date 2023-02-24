@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
-import { ExcludeCommonParams, RequestConvert } from 'hive-keychain-commons';
+import {
+  ExcludeCommonParams,
+  RequestRecurrentTransfer,
+} from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
@@ -8,20 +11,24 @@ type Props = {
   setRequestResult: any; //TODO add proper type
 };
 
-const DEFAULT_PARAMS: ExcludeCommonParams<RequestConvert> = {
+const DEFAULT_PARAMS: ExcludeCommonParams<RequestRecurrentTransfer> = {
   username: 'keychain.tests',
+  to: 'theghost1980',
   amount: '1.000',
-  collaterized: false,
+  currency: 'HIVE',
+  memo: '#Encrypted memo sample',
+  recurrence: 24,
+  executions: 2,
 };
 const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
 //TODO clean up
-const Requestconversion = ({ setRequestResult }: Props) => {
+const Requestrecurrenttransfer = ({ setRequestResult }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
-    data: ExcludeCommonParams<RequestConvert>;
+    data: ExcludeCommonParams<RequestRecurrentTransfer>;
     options: KeychainOptions;
   }>({
     data: DEFAULT_PARAMS,
@@ -54,7 +61,7 @@ const Requestconversion = ({ setRequestResult }: Props) => {
     e.preventDefault();
     console.log('about to process ...: ', { formParams });
     try {
-      const conversion = await sdk.requestConversion(
+      const conversion = await sdk.requestRecurrentTransfer(
         formParams.data,
         formParams.options,
       );
@@ -66,9 +73,10 @@ const Requestconversion = ({ setRequestResult }: Props) => {
     }
   };
 
+  //   executions: 2,
   return (
     <Card className="d-flex justify-content-center">
-      <Card.Header as={'h5'}>Request Conversion</Card.Header>
+      <Card.Header as={'h5'}>Request Recurrent Transfer</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
           <InputGroup className="mb-3">
@@ -81,39 +89,66 @@ const Requestconversion = ({ setRequestResult }: Props) => {
               onChange={handleFormParams}
             />
           </InputGroup>
-          <Form.Group className="mb-3 d-flex justify-content-center">
-            <Form.Check
-              type="switch"
-              id="custom-switch"
-              label="Collateralized"
-              title={
-                'true to convert HIVE to HBD. false to convert HBD to HIVE.'
-              }
-              value={formParams.data.collaterized ? 'true' : 'false'}
-              onChange={(e) =>
-                handleFormParams({
-                  target: {
-                    name: 'collaterized',
-                    value: e.target.checked,
-                  },
-                })
-              }
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
+            <Form.Control
+              title="Hive account receiving the transfers"
+              placeholder="Receiver username"
+              name="to"
+              value={formParams.data.to}
+              onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <InputGroup className="mb-3">
             <InputGroup.Text>Amount</InputGroup.Text>
             <Form.Control
-              title="Amount to be converted. Requires 3 decimals, i.e: '1.000'."
-              placeholder="amount i.e: '1.000'"
+              title="Amount to be sent on each execution. Requires 3 decimals, i.e: '1.000'."
+              placeholder="Amount to send"
               name="amount"
               value={formParams.data.amount}
               onChange={handleFormParams}
             />
-            <InputGroup.Text>
-              {formParams.data.collaterized ? 'HIVE' : 'HBD'}
-            </InputGroup.Text>
+            <Form.Select
+              onChange={handleFormParams}
+              className={'mt-1'}
+              value={formParams.data.currency}
+              name="currency">
+              <option>Please select a currency</option>
+              <option value={'HIVE'}>HIVE</option>
+              <option value={'HBD'}>HBD</option>
+            </Form.Select>
           </InputGroup>
-
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Memo</InputGroup.Text>
+            <Form.Control
+              as={'textarea'}
+              title="Transfer memo, use # to encrypt"
+              placeholder="transfer memo"
+              name="memo"
+              value={formParams.data.memo}
+              onChange={handleFormParams}
+            />
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Recurrence</InputGroup.Text>
+            <Form.Control
+              title="How often will the payment be triggered (in hours) - minimum 24"
+              placeholder="Recurrence i.e: '24'"
+              name="recurrence"
+              value={formParams.data.recurrence}
+              onChange={handleFormParams}
+            />
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Executions</InputGroup.Text>
+            <Form.Control
+              title="The times the recurrent payment will be executed - minimum 2"
+              placeholder="executions i.e: '2'"
+              name="executions"
+              value={formParams.data.executions}
+              onChange={handleFormParams}
+            />
+          </InputGroup>
           <InputGroup className="mb-3">
             <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
@@ -132,4 +167,4 @@ const Requestconversion = ({ setRequestResult }: Props) => {
   );
 };
 
-export default Requestconversion;
+export default Requestrecurrenttransfer;

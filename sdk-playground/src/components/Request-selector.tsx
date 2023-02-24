@@ -14,6 +14,7 @@ import Requestpost from './requests/Request-Post';
 import Requestpowerdown from './requests/Request-Power-Down';
 import Requestpowerup from './requests/Request-Power-Up';
 import Requestproxy from './requests/Request-Proxy';
+import Requestrecurrenttransfer from './requests/Request-Recurrent-Transfer';
 import Requestremoveaccountauthority from './requests/Request-Remove-Account-Authority';
 import Requestremovekeyauthority from './requests/Request-Remove-Key-Authority';
 import Requestremoveproposal from './requests/Request-Remove-Proposal';
@@ -54,6 +55,7 @@ export enum SDKRequestType {
   Request_Update_Proposal_Vote = 'Request_Update_Proposal_Vote',
   Request_Add_Account = 'Request_Add_Account',
   Request_Conversion = 'Request_Conversion',
+  Request_Recurrent_Transfer = 'Request_Recurrent_Transfer',
 }
 
 export interface KeychainOptions {
@@ -199,6 +201,11 @@ const RequestSelector = ({ setRequestResult, requestResult }: Props) => {
       case SDKRequestType.Request_Conversion:
         setRequestCard(
           <Requestconversion setRequestResult={setRequestResult} />,
+        );
+        break;
+      case SDKRequestType.Request_Recurrent_Transfer:
+        setRequestCard(
+          <Requestrecurrenttransfer setRequestResult={setRequestResult} />,
         );
         break;
       default:
