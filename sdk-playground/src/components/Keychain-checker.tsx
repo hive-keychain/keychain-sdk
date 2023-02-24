@@ -7,19 +7,21 @@ import KeychainError from '../assets/images/svgs/cancel_black.svg';
 
 type Props = {
   setEnabledKeychain: React.Dispatch<React.SetStateAction<boolean>>;
+  enableLogs: boolean;
 };
 //TODO clean up
-const Keychainchecker = ({ setEnabledKeychain }: Props) => {
+const Keychainchecker = ({ setEnabledKeychain, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [keychainInstalled, setKeychainInstalled] = useState(false);
 
   useEffect(() => {
     const onLoadHandler = async () => {
-      console.log('Fully loaded!');
+      if (enableLogs) console.log('Fully loaded!');
       try {
         const enabled = await sdk.isKeyChainInstalled();
         setKeychainInstalled(enabled);
         setEnabledKeychain(enabled);
+        if (enableLogs) console.log({ KeychainDetected: enabled });
       } catch (error) {
         console.log({ error });
       }

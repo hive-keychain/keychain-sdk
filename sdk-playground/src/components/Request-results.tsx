@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Accordion, Card, Container, ListGroup } from 'react-bootstrap';
 
 type Props = {
-  requestResult: any; //TODo add proper type
+  requestResult: any;
+  enableLogs: boolean;
 };
 
-const RequestResults = ({ requestResult }: Props) => {
+const RequestResults = ({ requestResult, enableLogs }: Props) => {
   const error =
     typeof requestResult.error === 'object'
       ? JSON.stringify(requestResult.error)
       : requestResult.error;
+
+  useEffect(() => {
+    if (enableLogs) console.log({ requestResult });
+  });
 
   return (
     <Container className="w-50 mt-1">

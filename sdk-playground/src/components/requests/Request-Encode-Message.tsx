@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
   KeychainKeyTypes,
   RequestEncode,
 } from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestEncode> = {
@@ -17,30 +18,28 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestEncode> = {
   message: '',
   method: KeychainKeyTypes.active,
 };
-//TODO clean up
-const Requestencodemessage = ({ setRequestResult }: Props) => {
+
+const Requestencodemessage = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] =
     useState<ExcludeCommonParams<RequestEncode>>(DEFAULT_PARAMS);
 
-  //TODO bellow add proper event type
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
     if (value !== '') {
       setFormParams((prevFormParams) => ({ ...prevFormParams, [name]: value }));
     }
   };
-  //TODO bellow add proper event type
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process: ', { formParams });
+    if (enableLogs) console.log('about to process: ', { formParams });
     try {
       const encodeMessage = await sdk.requestEncodeMessage(formParams);
       setRequestResult(encodeMessage);
-      console.log({ encodeMessage });
+      if (enableLogs) console.log({ encodeMessage });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
   return (
@@ -48,26 +47,27 @@ const Requestencodemessage = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request encode message</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
+              title="Hive account to perform the request"
               placeholder="Hive username"
               name="username"
               value={formParams.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicReceiver">
-            <Form.Label>Receiver @</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Receiver @</InputGroup.Text>
             <Form.Control
               placeholder="Hive receiver's username"
               name="receiver"
               value={formParams.receiver}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicMessage">
-            <Form.Label>Message</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Message</InputGroup.Text>
             <Form.Control
               as="textarea"
               rows={3}
@@ -76,11 +76,11 @@ const Requestencodemessage = ({ setRequestResult }: Props) => {
               value={formParams.message}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicSelect">
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Method</InputGroup.Text>
             <Form.Select
               onChange={handleFormParams}
-              className={'mt-1'}
               value={formParams.method}
               name="method">
               <option>Please select a Method</option>
@@ -94,7 +94,7 @@ const Requestencodemessage = ({ setRequestResult }: Props) => {
                 {KeychainKeyTypes.memo}
               </option>
             </Form.Select>
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

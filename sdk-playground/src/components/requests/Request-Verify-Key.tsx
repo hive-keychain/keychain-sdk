@@ -5,10 +5,11 @@ import {
   KeychainKeyTypes,
   RequestDecode,
 } from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestDecode> = {
@@ -17,7 +18,7 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestDecode> = {
   method: KeychainKeyTypes.active,
 };
 //TODO clean up
-const Requestverifykey = ({ setRequestResult }: Props) => {
+const Requestverifykey = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] =
     useState<ExcludeCommonParams<RequestDecode>>(DEFAULT_PARAMS);
@@ -31,11 +32,11 @@ const Requestverifykey = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process: ', { formParams });
+    if (enableLogs) console.log('about to process: ', { formParams });
     try {
       const verifyKey = await sdk.requestVerifyKey(formParams);
       setRequestResult(verifyKey);
-      console.log({ verifyKey });
+      if (enableLogs) console.log({ verifyKey });
     } catch (error) {
       setRequestResult(error);
       console.log({ error });
@@ -46,17 +47,18 @@ const Requestverifykey = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request verify key</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
+              title="Hive account to perform the request"
               placeholder="Hive username"
               name="username"
               value={formParams.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicMessage">
-            <Form.Label>Message</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Message</InputGroup.Text>
             <Form.Control
               as="textarea"
               rows={3}
@@ -65,11 +67,11 @@ const Requestverifykey = ({ setRequestResult }: Props) => {
               value={formParams.message}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicSelect">
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Method</InputGroup.Text>
             <Form.Select
               onChange={handleFormParams}
-              className={'mt-1'}
               value={formParams.method}
               name="method">
               <option>Please select a Method</option>
@@ -83,7 +85,7 @@ const Requestverifykey = ({ setRequestResult }: Props) => {
                 {KeychainKeyTypes.memo}
               </option>
             </Form.Select>
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

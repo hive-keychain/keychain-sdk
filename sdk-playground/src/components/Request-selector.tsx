@@ -63,9 +63,10 @@ export interface KeychainOptions {
 }
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
-  requestResult: any; //TODO add proper type
-  enabledKeychain: boolean; //TODO use it to disable??
+  setRequestResult: any; //TODO add proper type needed?
+  requestResult: any; //TODO add proper type needed?
+  enabledKeychain: boolean;
+  enableLogs: boolean;
 };
 //TODO
 //  important update all:
@@ -76,6 +77,7 @@ const RequestSelector = ({
   setRequestResult,
   requestResult,
   enabledKeychain,
+  enableLogs,
 }: Props) => {
   const [request, setRequest] = useState<string>();
   const [requestCard, setRequestCard] = useState<ReactNode>();
@@ -91,12 +93,18 @@ const RequestSelector = ({
     switch (request) {
       case SDKRequestType.Request_Encode_Message:
         setRequestCard(
-          <Requestencodemessage setRequestResult={setRequestResult} />,
+          <Requestencodemessage
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Verify_Key:
         setRequestCard(
-          <Requestverifykey setRequestResult={setRequestResult} />,
+          <Requestverifykey
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Sign_Buffer:
@@ -214,13 +222,13 @@ const RequestSelector = ({
         break;
       default:
         setRequestCard(null);
-        console.log('trying to set: ', { request });
+        if (enableLogs) console.log('trying to set: ', { request });
         break;
     }
   }, [request, setRequestResult]);
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value);
+    if (enableLogs) console.log(e.target.value);
     setRequest(e.target.value);
     setRequestResult(undefined);
   };
