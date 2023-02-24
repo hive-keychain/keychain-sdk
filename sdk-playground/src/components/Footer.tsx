@@ -9,7 +9,9 @@ export default function Footer({}: Props) {
   return (
     <Container className="d-flex justify-content-center bottom-0 mt-5">
       <ListGroup className="d-flex justify-content-center">
-        <ListGroup.Item>Made with ❤ by Keychain Team</ListGroup.Item>
+        <ListGroup.Item action href={'https://hive-keychain.com/'}>
+          Made with ❤ by Keychain Team
+        </ListGroup.Item>
         <ListGroup.Item className="d-flex justify-content-center">
           <ListGroup horizontal>
             <ListGroup.Item action href={'https://hive.blog/@keychain'}>
