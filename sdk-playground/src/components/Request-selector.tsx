@@ -10,6 +10,7 @@ import Requestcreateproposal from './requests/Request-Create-Proposal';
 import Requestcustomjson from './requests/Request-Custom-Json';
 import Requestdelegation from './requests/Request-Delegation';
 import Requestencodemessage from './requests/Request-Encode-Message';
+import Requestlogin from './requests/Request-Login';
 import Requestpost from './requests/Request-Post';
 import Requestpowerdown from './requests/Request-Power-Down';
 import Requestpowerup from './requests/Request-Power-Up';
@@ -29,6 +30,7 @@ import Requestvote from './requests/Request-Vote';
 import Requestwitnessvote from './requests/Request-Witness-Vote';
 
 export enum SDKRequestType {
+  Request_Login = 'Request_Login',
   Request_Encode_Message = 'Request_Encode_Message',
   Request_Verify_Key = 'Request_Verify_Key',
   Request_Sign_Buffer = 'Request_Sign_Buffer',
@@ -87,6 +89,14 @@ const RequestSelector = ({
 
   useEffect(() => {
     switch (request) {
+      case SDKRequestType.Request_Login:
+        setRequestCard(
+          <Requestlogin
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
+        );
+        break;
       case SDKRequestType.Request_Encode_Message:
         setRequestCard(
           <Requestencodemessage
