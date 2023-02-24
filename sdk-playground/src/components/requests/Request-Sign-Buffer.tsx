@@ -5,11 +5,12 @@ import {
   KeychainKeyTypes,
   RequestSignBuffer,
 } from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestSignBuffer> = {
@@ -22,8 +23,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['username', 'title', 'rpc'];
 
-//TODO clean up
-const Requestsignbuffer = ({ setRequestResult }: Props) => {
+const Requestsignbuffer = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestSignBuffer>;
@@ -33,7 +33,6 @@ const Requestsignbuffer = ({ setRequestResult }: Props) => {
     options: DEFAULT_OPTIONS,
   });
 
-  //TODO bellow add proper event type
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
     const tempValue =
@@ -55,20 +54,19 @@ const Requestsignbuffer = ({ setRequestResult }: Props) => {
       }));
     }
   };
-  //TODO bellow add proper event type
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const signBuffer = await sdk.requestSignBuffer(
         formParams.data,
         formParams.options,
       );
       setRequestResult(signBuffer);
-      console.log({ signBuffer });
+      if (enableLogs) console.log({ signBuffer });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
   return (
@@ -76,17 +74,18 @@ const Requestsignbuffer = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request sign buffer</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
+              title="Hive account to perform the request"
               placeholder="Hive username, leave blank for a dropdown"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicMessage">
-            <Form.Label>Message</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Message</InputGroup.Text>
             <Form.Control
               as="textarea"
               rows={3}
@@ -95,20 +94,20 @@ const Requestsignbuffer = ({ setRequestResult }: Props) => {
               value={formParams.data.message}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicTitle">
-            <Form.Label>Title</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Title</InputGroup.Text>
             <Form.Control
               placeholder="Title to show in request - optional"
               name="title"
               value={formParams.data.title}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicSelect">
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Method</InputGroup.Text>
             <Form.Select
               onChange={handleFormParams}
-              className={'mt-1'}
               value={formParams.data.method}
               name="method">
               <option>Please select a Method</option>
@@ -122,16 +121,16 @@ const Requestsignbuffer = ({ setRequestResult }: Props) => {
                 {KeychainKeyTypes.memo}
               </option>
             </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

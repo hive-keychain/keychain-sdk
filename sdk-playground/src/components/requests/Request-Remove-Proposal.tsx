@@ -4,11 +4,12 @@ import {
   ExcludeCommonParams,
   RequestRemoveProposal,
 } from 'hive-keychain-commons';
-import { Button, Card, Form, InputGroup, Stack } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestRemoveProposal> = {
@@ -20,8 +21,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
-//TODO clean up
-const Requestremoveproposal = ({ setRequestResult }: Props) => {
+const Requestremoveproposal = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestRemoveProposal>;
@@ -55,17 +55,16 @@ const Requestremoveproposal = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const removeProposal = await sdk.requestRemoveProposal(
         formParams.data,
         formParams.options,
       );
       setRequestResult(removeProposal);
-      console.log({ removeProposal });
+      if (enableLogs) console.log({ removeProposal });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 

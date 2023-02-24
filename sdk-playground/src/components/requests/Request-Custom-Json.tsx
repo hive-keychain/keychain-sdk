@@ -4,13 +4,13 @@ import {
   ExcludeCommonParams,
   KeychainKeyTypes,
   RequestCustomJSON,
-  RequestVote,
 } from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestCustomJSON> = {
@@ -28,8 +28,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['username', 'rpc'];
 
-//TODO clean up
-const Requestcustomjson = ({ setRequestResult }: Props) => {
+const Requestcustomjson = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestCustomJSON>;
@@ -63,17 +62,16 @@ const Requestcustomjson = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const customJson = await sdk.requestCustomJson(
         formParams.data,
         formParams.options,
       );
       setRequestResult(customJson);
-      console.log({ customJson });
+      if (enableLogs) console.log({ customJson });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 
@@ -82,28 +80,28 @@ const Requestcustomjson = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Custom Json</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
               placeholder="Hive username, leave blank for a dropdown"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicId">
-            <Form.Label>Id</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Id</InputGroup.Text>
             <Form.Control
               placeholder="Type of custom_json to be broadcasted"
               name="id"
               value={formParams.data.id}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicSelectMethod">
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Method</InputGroup.Text>
             <Form.Select
               onChange={handleFormParams}
-              className={'mt-1'}
               value={formParams.data.method}
               name="method">
               <option>Please select a Method</option>
@@ -117,34 +115,34 @@ const Requestcustomjson = ({ setRequestResult }: Props) => {
                 {KeychainKeyTypes.memo}
               </option>
             </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicJson">
-            <Form.Label>Json</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Json</InputGroup.Text>
             <Form.Control
               placeholder="Stringified custom json"
               name="json"
               value={formParams.data.json}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicDisplaymsg">
-            <Form.Label>Display message</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Display message</InputGroup.Text>
             <Form.Control
               placeholder="Message to display to explain to the user what this broadcast is about"
               name="display_msg"
               value={formParams.data.display_msg}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

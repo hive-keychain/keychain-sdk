@@ -10,15 +10,16 @@ import {
   Card,
   Container,
   Form,
+  InputGroup,
   ListGroup,
-  Stack,
 } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 import { Operation } from '@hiveio/dhive';
 import json5 from 'json5';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestBroadcast> = {
@@ -44,7 +45,7 @@ const DEFAULT_OPERATION: [
 
 const undefinedParamsToValidate = ['']; //none to check
 
-const Requestbroadcast = ({ setRequestResult }: Props) => {
+const Requestbroadcast = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [operation, setOperation] =
     useState<[string, object]>(DEFAULT_OPERATION);
@@ -119,18 +120,16 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
   const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     formParams['data']['operations'] = arrayOperations as Operation[];
-
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const broadcast = await sdk.requestBroadcast(
         formParams.data,
         formParams.options,
       );
       setRequestResult(broadcast);
-      console.log({ broadcast });
+      if (enableLogs) console.log({ broadcast });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
   return (
@@ -138,35 +137,38 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Generic Broadcast</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Username @</InputGroup.Text>
             <Form.Control
               placeholder="Hive username to perform the request"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
 
-          <Form.Group className="mb-3" controlId="formBasicOperations">
+          <Form.Group className="mb-3">
             <Form.Label>Operations</Form.Label>
-            <Stack direction="horizontal" gap={3}>
-              <Container>
-                <Form.Control
-                  placeholder="Operation type"
-                  name="operation_name"
-                  onChange={handleOperation}
-                />
-                <Form.Control
-                  as="textarea"
-                  rows={5}
-                  placeholder="JSON"
-                  name="json"
-                  onChange={handleOperation}
-                />
-              </Container>
+            <Container>
+              <Form.Control
+                placeholder="Operation type"
+                name="operation_name"
+                onChange={handleOperation}
+              />
+              <Form.Control
+                as="textarea"
+                rows={5}
+                placeholder="JSON"
+                name="json"
+                onChange={handleOperation}
+              />
+            </Container>
+            <Button className="mt-2" onClick={handleAddOperation}>
+              +
+            </Button>
+            <Container>
               {arrayOperations.length > 0 && (
-                <Container>
+                <>
                   <ListGroup>
                     {arrayOperations.map((op, index) => {
                       return (
@@ -179,23 +181,20 @@ const Requestbroadcast = ({ setRequestResult }: Props) => {
                   <Button onClick={handleResetList} variant="outline-primary">
                     reset
                   </Button>
-                </Container>
+                </>
               )}
-            </Stack>
-            <Button className="mt-2" onClick={handleAddOperation}>
-              +
-            </Button>
+            </Container>
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

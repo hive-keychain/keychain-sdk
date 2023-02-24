@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import { ExcludeCommonParams, RequestPowerDown } from 'hive-keychain-commons';
-import { Button, Card, Form, Stack } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup, Stack } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestPowerDown> = {
@@ -16,8 +17,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
-//TODO clean up
-const Requestpowerdown = ({ setRequestResult }: Props) => {
+const Requestpowerdown = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestPowerDown>;
@@ -51,17 +51,16 @@ const Requestpowerdown = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const powerDown = await sdk.requestPowerDown(
         formParams.data,
         formParams.options,
       );
       setRequestResult(powerDown);
-      console.log({ powerDown });
+      if (enableLogs) console.log({ powerDown });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 
@@ -70,41 +69,35 @@ const Requestpowerdown = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Power Down</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Stack direction="horizontal" gap={2}>
-              <Form.Label>Username@</Form.Label>
-              <Form.Control
-                title="Hive account to perform the request"
-                placeholder="Hive username"
-                name="username"
-                value={formParams.data.username}
-                onChange={handleFormParams}
-              />
-            </Stack>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicHive">
-            <Stack direction="horizontal" gap={2}>
-              <Form.Label>Hive</Form.Label>
-              <Form.Control
-                title="Amount of HP(hive power), to be powered down, i.e: '1.000' "
-                placeholder="Amount of HIVE"
-                name="hive_power"
-                value={formParams.data.hive_power}
-                onChange={handleFormParams}
-              />
-            </Stack>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Stack direction="horizontal" gap={2}>
-              <Form.Label>Rpc</Form.Label>
-              <Form.Control
-                placeholder="Rpc node to broadcast - optional"
-                name="rpc"
-                value={formParams.options.rpc}
-                onChange={handleFormParams}
-              />
-            </Stack>
-          </Form.Group>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Username@</InputGroup.Text>
+            <Form.Control
+              title="Hive account to perform the request"
+              placeholder="Hive username"
+              name="username"
+              value={formParams.data.username}
+              onChange={handleFormParams}
+            />
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Hive</InputGroup.Text>
+            <Form.Control
+              title="Amount of HP(hive power), to be powered down, i.e: '1.000' "
+              placeholder="Amount of HIVE"
+              name="hive_power"
+              value={formParams.data.hive_power}
+              onChange={handleFormParams}
+            />
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
+            <Form.Control
+              placeholder="Rpc node to broadcast - optional"
+              name="rpc"
+              value={formParams.options.rpc}
+              onChange={handleFormParams}
+            />
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

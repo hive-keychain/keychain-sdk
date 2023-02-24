@@ -8,7 +8,8 @@ import {
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestAddAccount> = {
@@ -20,8 +21,7 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestAddAccount> = {
   } as RequestAddAccountKeys,
 };
 
-//TODO clean up
-const Requestaddaccount = ({ setRequestResult }: Props) => {
+const Requestaddaccount = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] =
     useState<ExcludeCommonParams<RequestAddAccount>>(DEFAULT_PARAMS);
@@ -43,14 +43,13 @@ const Requestaddaccount = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const addAccount = await sdk.requestAddAccount(formParams);
       setRequestResult(addAccount);
-      console.log({ addAccount });
+      if (enableLogs) console.log({ addAccount });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 

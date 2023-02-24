@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
-import {
-  ExcludeCommonParams,
-  RequestProxy,
-  RequestWitnessVote,
-} from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { ExcludeCommonParams, RequestProxy } from 'hive-keychain-commons';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestProxy> = {
@@ -20,8 +17,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['username', 'rpc'];
 
-//TODO clean up
-const Requestproxy = ({ setRequestResult }: Props) => {
+const Requestproxy = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestProxy>;
@@ -55,14 +51,13 @@ const Requestproxy = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const proxy = await sdk.requestProxy(formParams.data, formParams.options);
       setRequestResult(proxy);
-      console.log({ proxy });
+      if (enableLogs) console.log({ proxy });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 
@@ -71,33 +66,33 @@ const Requestproxy = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Proxy</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
               placeholder="Hive username, leave blank for dropdown"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicProxy">
-            <Form.Label>Proxy</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Proxy</InputGroup.Text>
             <Form.Control
               placeholder="Account to become the proxy. Empty string ('') to remove a proxy"
               name="proxy"
               value={formParams.data.proxy}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

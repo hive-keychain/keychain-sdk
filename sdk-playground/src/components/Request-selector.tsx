@@ -63,16 +63,12 @@ export interface KeychainOptions {
 }
 
 type Props = {
-  setRequestResult: any; //TODO add proper type needed?
-  requestResult: any; //TODO add proper type needed?
+  setRequestResult: any;
+  requestResult: any;
   enabledKeychain: boolean;
   enableLogs: boolean;
 };
-//TODO
-//  important update all:
-//    - inputs & UI using InputGroup.
-//    - conditional use of console.log if user wants.
-//    - fix requestCreateClaimedAccount, conflicting types between ExcludeCommonParams & hive_keychain types.
+
 const RequestSelector = ({
   setRequestResult,
   requestResult,
@@ -109,36 +105,59 @@ const RequestSelector = ({
         break;
       case SDKRequestType.Request_Sign_Buffer:
         setRequestCard(
-          <Requestsignbuffer setRequestResult={setRequestResult} />,
+          <Requestsignbuffer
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Add_Account_Authority:
         setRequestCard(
-          <Requestaddaccountauthority setRequestResult={setRequestResult} />,
+          <Requestaddaccountauthority
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Remove_Account_Authority:
         setRequestCard(
-          <Requestremoveaccountauthority setRequestResult={setRequestResult} />,
+          <Requestremoveaccountauthority
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Add_Key_Authority:
         setRequestCard(
-          <Requestaddkeyauthority setRequestResult={setRequestResult} />,
+          <Requestaddkeyauthority
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Remove_Key_Authority:
         setRequestCard(
-          <Requestremovekeyauthority setRequestResult={setRequestResult} />,
+          <Requestremovekeyauthority
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Broadcast:
         setRequestCard(
-          <Requestbroadcast setRequestResult={setRequestResult} />,
+          <Requestbroadcast
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Sign_Tx:
-        setRequestCard(<Requestsigntx setRequestResult={setRequestResult} />);
+        setRequestCard(
+          <Requestsigntx
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
+        );
         break;
       case SDKRequestType.Request_Signed_Call:
         setRequestCard(
@@ -146,78 +165,139 @@ const RequestSelector = ({
         );
         break;
       case SDKRequestType.Request_Post:
-        setRequestCard(<Requestpost setRequestResult={setRequestResult} />);
+        setRequestCard(
+          <Requestpost
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
+        );
         break;
       case SDKRequestType.Request_Vote:
-        setRequestCard(<Requestvote setRequestResult={setRequestResult} />);
+        setRequestCard(
+          <Requestvote
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
+        );
         break;
       case SDKRequestType.Request_Custom_Json:
         setRequestCard(
-          <Requestcustomjson setRequestResult={setRequestResult} />,
+          <Requestcustomjson
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Transfer:
-        setRequestCard(<Requesttransfer setRequestResult={setRequestResult} />);
+        setRequestCard(
+          <Requesttransfer
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
+        );
         break;
       case SDKRequestType.Request_Send_Token:
         setRequestCard(
-          <Requestsendtoken setRequestResult={setRequestResult} />,
+          <Requestsendtoken
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Delegation:
         setRequestCard(
-          <Requestdelegation setRequestResult={setRequestResult} />,
+          <Requestdelegation
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Witness_Vote:
         setRequestCard(
-          <Requestwitnessvote setRequestResult={setRequestResult} />,
+          <Requestwitnessvote
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Proxy:
-        setRequestCard(<Requestproxy setRequestResult={setRequestResult} />);
+        setRequestCard(
+          <Requestproxy
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
+        );
         break;
       case SDKRequestType.Request_Power_Up:
-        setRequestCard(<Requestpowerup setRequestResult={setRequestResult} />);
+        setRequestCard(
+          <Requestpowerup
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
+        );
         break;
       case SDKRequestType.Request_Power_Down:
         setRequestCard(
-          <Requestpowerdown setRequestResult={setRequestResult} />,
+          <Requestpowerdown
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Create_Claimed_Account:
         setRequestCard(
-          <Requestcreateclaimedaccount setRequestResult={setRequestResult} />,
+          <Requestcreateclaimedaccount
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Create_Proposal:
         setRequestCard(
-          <Requestcreateproposal setRequestResult={setRequestResult} />,
+          <Requestcreateproposal
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Remove_Proposal:
         setRequestCard(
-          <Requestremoveproposal setRequestResult={setRequestResult} />,
+          <Requestremoveproposal
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Update_Proposal_Vote:
         setRequestCard(
-          <Requestupdateproposalvote setRequestResult={setRequestResult} />,
+          <Requestupdateproposalvote
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Add_Account:
         setRequestCard(
-          <Requestaddaccount setRequestResult={setRequestResult} />,
+          <Requestaddaccount
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Conversion:
         setRequestCard(
-          <Requestconversion setRequestResult={setRequestResult} />,
+          <Requestconversion
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       case SDKRequestType.Request_Recurrent_Transfer:
         setRequestCard(
-          <Requestrecurrenttransfer setRequestResult={setRequestResult} />,
+          <Requestrecurrenttransfer
+            setRequestResult={setRequestResult}
+            enableLogs={enableLogs}
+          />,
         );
         break;
       default:

@@ -8,7 +8,8 @@ import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestRecurrentTransfer> = {
@@ -24,8 +25,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
-//TODO clean up
-const Requestrecurrenttransfer = ({ setRequestResult }: Props) => {
+const Requestrecurrenttransfer = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestRecurrentTransfer>;
@@ -59,21 +59,19 @@ const Requestrecurrenttransfer = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const conversion = await sdk.requestRecurrentTransfer(
         formParams.data,
         formParams.options,
       );
       setRequestResult(conversion);
-      console.log({ conversion });
+      if (enableLogs) console.log({ conversion });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 
-  //   executions: 2,
   return (
     <Card className="d-flex justify-content-center">
       <Card.Header as={'h5'}>Request Recurrent Transfer</Card.Header>
@@ -110,7 +108,6 @@ const Requestrecurrenttransfer = ({ setRequestResult }: Props) => {
             />
             <Form.Select
               onChange={handleFormParams}
-              className={'mt-1'}
               value={formParams.data.currency}
               name="currency">
               <option>Please select a currency</option>

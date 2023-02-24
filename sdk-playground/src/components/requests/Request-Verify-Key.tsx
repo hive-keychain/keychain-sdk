@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
@@ -17,7 +17,7 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestDecode> = {
   message: '',
   method: KeychainKeyTypes.active,
 };
-//TODO clean up
+
 const Requestverifykey = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] =
@@ -39,7 +39,6 @@ const Requestverifykey = ({ setRequestResult, enableLogs }: Props) => {
       if (enableLogs) console.log({ verifyKey });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
   return (

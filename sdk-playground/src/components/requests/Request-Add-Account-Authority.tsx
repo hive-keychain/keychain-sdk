@@ -5,11 +5,12 @@ import {
   KeychainKeyTypes,
   RequestAddAccountAuthority,
 } from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestAddAccountAuthority> = {
@@ -23,8 +24,10 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['']; //none to check
 
-//TODO clean up
-const Requestaddaccountauthority = ({ setRequestResult }: Props) => {
+const Requestaddaccountauthority = ({
+  setRequestResult,
+  enableLogs,
+}: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestAddAccountAuthority>;
@@ -34,7 +37,6 @@ const Requestaddaccountauthority = ({ setRequestResult }: Props) => {
     options: DEFAULT_OPTIONS,
   });
 
-  //TODO bellow add proper event type
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
     const tempValue =
@@ -56,21 +58,20 @@ const Requestaddaccountauthority = ({ setRequestResult }: Props) => {
       }));
     }
   };
-  //TODO bellow add proper event type
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const addAccountAuthority = await sdk.requestAddAccountAuthority(
         formParams.data,
         formParams.options,
       );
-      //TODO check on requestResult on this request
+
       setRequestResult(addAccountAuthority);
-      console.log({ addAccountAuthority });
+      if (enableLogs) console.log({ addAccountAuthority });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
   return (
@@ -78,28 +79,29 @@ const Requestaddaccountauthority = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request add Account Authority</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
               placeholder="Hive username to perform the request"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicAuthorizedUsername">
-            <Form.Label>Authorized Username @</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Authorized @</InputGroup.Text>
             <Form.Control
+              title="Authorized account"
               placeholder="Hive username to authorize"
               name="authorizedUsername"
               value={formParams.data.authorizedUsername}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicSelect">
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Method</InputGroup.Text>
             <Form.Select
               onChange={handleFormParams}
-              className={'mt-1'}
               value={formParams.data.role}
               name="role">
               <option>Please select a Role to authorize</option>
@@ -110,25 +112,26 @@ const Requestaddaccountauthority = ({ setRequestResult }: Props) => {
                 {KeychainKeyTypes.posting}
               </option>
             </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicWeight">
-            <Form.Label>Weight</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Weight</InputGroup.Text>
             <Form.Control
+              title="Weight of the authority"
               placeholder="Weight number"
               name="weight"
               value={formParams.data.weight}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

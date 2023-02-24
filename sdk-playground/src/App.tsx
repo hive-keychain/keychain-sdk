@@ -4,12 +4,12 @@ import Keychainchecker from './components/Keychain-checker';
 import RequestSelector from './components/Request-selector';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import RequestResults from './components/Request-results';
-import { Container, Form, Image, ListGroup, Stack } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import Footer from './components/Footer';
 
 function App() {
   const [enabledKeychain, setEnabledKeychain] = useState(false);
-  const [requestResult, setRequestResult] = useState(); //TODO add proper types
+  const [requestResult, setRequestResult] = useState();
   const [enableLogs, setEnableLogs] = useState(false);
 
   return (

@@ -3,14 +3,13 @@ import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
   RequestCreateClaimedAccount,
-  RequestPowerDown,
 } from 'hive-keychain-commons';
-import { Button, Card, Form, InputGroup, Stack } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
-import { AuthorityType } from '@hiveio/dhive';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestCreateClaimedAccount> = {
@@ -25,10 +24,11 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
-//TODO clean up
 //TODO needs to be discussed about differ types(keychainsdk vs common-types).
-//TODO ask quentin how to test after fixing types.
-const Requestcreateclaimedaccount = ({ setRequestResult }: Props) => {
+const Requestcreateclaimedaccount = ({
+  setRequestResult,
+  enableLogs,
+}: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestCreateClaimedAccount>;
@@ -62,17 +62,16 @@ const Requestcreateclaimedaccount = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const createClaimedAccount = await sdk.requestCreateClaimedAccount(
         formParams.data,
         formParams.options,
       );
       setRequestResult(createClaimedAccount);
-      console.log({ createClaimedAccount });
+      if (enableLogs) console.log({ createClaimedAccount });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 

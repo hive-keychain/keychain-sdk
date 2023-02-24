@@ -1,16 +1,12 @@
 import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
-import {
-  ExcludeCommonParams,
-  RequestPowerUp,
-  RequestProxy,
-  RequestWitnessVote,
-} from 'hive-keychain-commons';
-import { Button, Card, Form, Stack } from 'react-bootstrap';
+import { ExcludeCommonParams, RequestPowerUp } from 'hive-keychain-commons';
+import { Button, Card, Form, InputGroup, Stack } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestPowerUp> = {
@@ -22,8 +18,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
-//TODO clean up
-const Requestpowerup = ({ setRequestResult }: Props) => {
+const Requestpowerup = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestPowerUp>;
@@ -57,17 +52,16 @@ const Requestpowerup = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const powerUp = await sdk.requestPowerUp(
         formParams.data,
         formParams.options,
       );
       setRequestResult(powerUp);
-      console.log({ powerUp });
+      if (enableLogs) console.log({ powerUp });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 
@@ -76,53 +70,45 @@ const Requestpowerup = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Power Up</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Stack direction="horizontal" gap={2}>
-              <Form.Label>Username@</Form.Label>
-              <Form.Control
-                title="Hive account to perform the request"
-                placeholder="Hive username"
-                name="username"
-                value={formParams.data.username}
-                onChange={handleFormParams}
-              />
-            </Stack>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicRecipient">
-            <Stack direction="horizontal" gap={2}>
-              <Form.Label>Recipient</Form.Label>
-              <Form.Control
-                title="Account to receive the power up"
-                placeholder="Account to receive the power up"
-                name="recipient"
-                value={formParams.data.recipient}
-                onChange={handleFormParams}
-              />
-            </Stack>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicHive">
-            <Stack direction="horizontal" gap={2}>
-              <Form.Label>Hive</Form.Label>
-              <Form.Control
-                title="Amount of HIVE to be powered up, requires 3 decimals, i.e: '1.000'"
-                placeholder="Amount of HIVE"
-                name="hive"
-                value={formParams.data.hive}
-                onChange={handleFormParams}
-              />
-            </Stack>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Stack direction="horizontal" gap={2}>
-              <Form.Label>Rpc</Form.Label>
-              <Form.Control
-                placeholder="Rpc node to broadcast - optional"
-                name="rpc"
-                value={formParams.options.rpc}
-                onChange={handleFormParams}
-              />
-            </Stack>
-          </Form.Group>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
+            <Form.Control
+              title="Hive account to perform the request"
+              placeholder="Hive username"
+              name="username"
+              value={formParams.data.username}
+              onChange={handleFormParams}
+            />
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Recipient</InputGroup.Text>
+            <Form.Control
+              title="Account to receive the power up"
+              placeholder="Account to receive the power up"
+              name="recipient"
+              value={formParams.data.recipient}
+              onChange={handleFormParams}
+            />
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Hive</InputGroup.Text>
+            <Form.Control
+              title="Amount of HIVE to be powered up, requires 3 decimals, i.e: '1.000'"
+              placeholder="Amount of HIVE"
+              name="hive"
+              value={formParams.data.hive}
+              onChange={handleFormParams}
+            />
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
+            <Form.Control
+              placeholder="Rpc node to broadcast - optional"
+              name="rpc"
+              value={formParams.options.rpc}
+              onChange={handleFormParams}
+            />
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

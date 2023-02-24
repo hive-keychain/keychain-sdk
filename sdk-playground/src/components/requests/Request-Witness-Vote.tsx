@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import { ExcludeCommonParams, RequestWitnessVote } from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestWitnessVote> = {
@@ -17,8 +18,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['username', 'rpc'];
 
-//TODO clean up
-const Requestwitnessvote = ({ setRequestResult }: Props) => {
+const Requestwitnessvote = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestWitnessVote>;
@@ -52,17 +52,16 @@ const Requestwitnessvote = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const witnessVote = await sdk.requestWitnessVote(
         formParams.data,
         formParams.options,
       );
       setRequestResult(witnessVote);
-      console.log({ witnessVote });
+      if (enableLogs) console.log({ witnessVote });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 
@@ -71,27 +70,28 @@ const Requestwitnessvote = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Witness Vote</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
               placeholder="Hive username, leave blank for dropdown"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicWitness">
-            <Form.Label>Witness</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Witness</InputGroup.Text>
             <Form.Control
               placeholder="Account to receive the witness vote"
               name="witness"
               value={formParams.data.witness}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicVote">
-            <Form.Label>Vote</Form.Label>
+          </InputGroup>
+          <InputGroup className="d-flex justify-content-center mb-3 align-items-center">
+            <InputGroup.Text>Vote</InputGroup.Text>
             <Form.Check
+              className="ms-5"
               type="checkbox"
               name="vote"
               value={formParams.data.vote ? 'true' : 'false'}
@@ -105,16 +105,16 @@ const Requestwitnessvote = ({ setRequestResult }: Props) => {
                 })
               }
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

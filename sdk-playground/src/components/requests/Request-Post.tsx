@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import { ExcludeCommonParams, RequestPost } from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestPost> = {
-  username: '',
+  username: 'keychain.tests',
   title: 'Keychain Playground SDK',
   body: '## This is a blog post n And this is some text. Testing the brand new Keychain SDK v1.0',
   parent_perm: 'blog',
@@ -19,7 +20,7 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestPost> = {
     description: 'A blog post',
     tags: ['Blog'],
   }),
-  permlink: 'a-permlinkt-post-sample',
+  permlink: 'a-permlink-post-sample',
   comment_options: JSON.stringify({
     author: 'keychain.tests',
     permlink: 'a-post-by-keychaintests-fourth-part-post',
@@ -34,8 +35,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['title', 'parent_username', 'rpc'];
 
-//TODO clean up
-const Requestpost = ({ setRequestResult }: Props) => {
+const Requestpost = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestPost>;
@@ -69,14 +69,13 @@ const Requestpost = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const post = await sdk.requestPost(formParams.data, formParams.options);
       setRequestResult(post);
-      console.log({ post });
+      if (enableLogs) console.log({ post });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 
@@ -85,26 +84,26 @@ const Requestpost = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Post</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
               placeholder="Hive username"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicTitle">
-            <Form.Label>Title</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Title</InputGroup.Text>
             <Form.Control
               placeholder="Title of post. Can be undefined"
               name="title"
               value={formParams.data.title}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicBody">
-            <Form.Label>Body</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Body</InputGroup.Text>
             <Form.Control
               as={'textarea'}
               rows={3}
@@ -113,61 +112,62 @@ const Requestpost = ({ setRequestResult }: Props) => {
               value={formParams.data.body}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicParentperm">
-            <Form.Label>Parent perm</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Parent perm</InputGroup.Text>
             <Form.Control
               placeholder="Permlink of the parent post. Main tag for a root post"
               name="parent_perm"
               value={formParams.data.parent_perm}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicJsonmetadata">
-            <Form.Label>Json metadata</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Json metadata</InputGroup.Text>
             <Form.Control
               placeholder="Parameters of the call"
               name="json_metadata"
               value={formParams.data.json_metadata}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicPermlink">
-            <Form.Label>Permlink</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Permlink</InputGroup.Text>
             <Form.Control
               placeholder="Permlink of post"
               name="permlink"
               value={formParams.data.permlink}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicParentusername">
-            <Form.Label>Parent username</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Parent username</InputGroup.Text>
             <Form.Control
               placeholder="Author of the parent post. Pass undefined for root post"
               name="parent_username"
               value={formParams.data.parent_username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicCommentoptions">
-            <Form.Label>Comment options</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Comment options</InputGroup.Text>
             <Form.Control
+              title="Options attached to the blog post, must be stringyfied. Consult Hive documentation at https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options to learn more about it. Note: Must be the same as data.permlink if is a Post."
               placeholder="Options attached to the blog post"
               name="comment_options"
               value={formParams.data.comment_options}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

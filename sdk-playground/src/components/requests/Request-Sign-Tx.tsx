@@ -10,8 +10,8 @@ import {
   Card,
   Container,
   Form,
+  InputGroup,
   ListGroup,
-  Stack,
 } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 import { DynamicGlobalProperties, Operation, Transaction } from '@hiveio/dhive';
@@ -24,10 +24,9 @@ import { Client } from '@hiveio/dhive';
 // WARNING in ./node_modules/@hiveio/dhive/dist/dhive.js
 // Module Warning (from ./node_modules/source-map-loader/dist/cjs.js):
 // Failed to parse source map from 'C:\cygwin64\home\Saturno\KeyChain\keychain-sdk\sdk-playground\node_modules\@hiveio\dhive\dist\src\utils.ts' file: Error: ENOENT: no such file or directory, open 'C:\cygwin64\home\Saturno\KeyChain\keychain-sdk\sdk-playground\node_modules\@hiveio\dhive\dist\src\utils.ts'
-//  - see if possible make the proxy work(run-p) so no more errors on browser.
-//  - fix this request to make it work.
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestSignTx> = {
@@ -58,18 +57,19 @@ const DEFAULT_OPERATION: [
   },
 ];
 
+const client = new Client([
+  'https://api.hive.blog',
+  'https://anyx.io',
+  'https://api.openhive.network',
+]);
+
 const undefinedParamsToValidate = ['']; //none to check
 
-//TODO clean up & finish as cannot properly test:
+//TODO Cannot properly test:
 //    1. errors when trying to fetch data from hive(console warnings about dHive package)
 //    2. error when sending the request but no description about that error.
-const Requestsigntx = ({ setRequestResult }: Props) => {
+const Requestsigntx = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
-  const client = new Client([
-    'https://api.hive.blog',
-    'https://anyx.io',
-    'https://api.openhive.network',
-  ]);
   const [operation, setOperation] =
     useState<[string, object]>(DEFAULT_OPERATION);
   const [arrayOperations, setArrayOperations] = useState<
@@ -126,7 +126,7 @@ const Requestsigntx = ({ setRequestResult }: Props) => {
       if (String(value).trim() === '') return;
       try {
         const jsonParsed = json5.parse<object>(value);
-        console.log({ jsonParsed });
+        if (enableLogs) console.log({ jsonParsed });
         setOperation([operation[0], jsonParsed]);
       } catch (error) {
         console.log('Error trying to parse json: ', error);
@@ -172,17 +172,16 @@ const Requestsigntx = ({ setRequestResult }: Props) => {
   const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
     formParams['data']['tx']['operations'] = arrayOperations as Operation[];
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const broadcast = await sdk.requestSignTx(
         formParams.data,
         formParams.options,
       );
       setRequestResult(broadcast);
-      console.log({ broadcast });
+      if (enableLogs) console.log({ broadcast });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
   return (
@@ -190,55 +189,53 @@ const Requestsigntx = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Sign Tx</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
               placeholder="Hive username to perform the request"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
 
-          <Form.Group className="mb-3" controlId="formBasicOperations">
+          <Form.Group className="mb-3">
             <Form.Label>Operations</Form.Label>
-            <Stack direction="horizontal" gap={3}>
-              <Container>
-                <Form.Control
-                  placeholder="Operation type"
-                  name="operation_name"
-                  onChange={handleOperation}
-                />
-                <Form.Control
-                  as="textarea"
-                  rows={5}
-                  placeholder="JSON"
-                  name="json"
-                  onChange={handleOperation}
-                />
-              </Container>
-              {arrayOperations.length > 0 && (
-                <Container>
-                  <ListGroup>
-                    {arrayOperations.map((op, index) => {
-                      return (
-                        <ListGroup.Item key={`${index}-op-queue`}>
-                          On Queue: {op[0]} {op[1].amount ? op[1].amount : ''}
-                        </ListGroup.Item>
-                      );
-                    })}
-                  </ListGroup>
-                  <Button onClick={handleResetList} variant="outline-primary">
-                    reset
-                  </Button>
-                </Container>
-              )}
-            </Stack>
+            <Container>
+              <Form.Control
+                placeholder="Operation type"
+                name="operation_name"
+                onChange={handleOperation}
+              />
+              <Form.Control
+                as="textarea"
+                rows={5}
+                placeholder="JSON"
+                name="json"
+                onChange={handleOperation}
+              />
+            </Container>
             <Button className="mt-2" onClick={handleAddOperation}>
               +
             </Button>
+            {arrayOperations.length > 0 && (
+              <Container>
+                <ListGroup>
+                  {arrayOperations.map((op, index) => {
+                    return (
+                      <ListGroup.Item key={`${index}-op-queue`}>
+                        On Queue: {op[0]} {op[1].amount ? op[1].amount : ''}
+                      </ListGroup.Item>
+                    );
+                  })}
+                </ListGroup>
+                <Button onClick={handleResetList} variant="outline-primary">
+                  reset
+                </Button>
+              </Container>
+            )}
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicSelectMethod">
+          <InputGroup className="mb-3">
             <Form.Select
               onChange={handleFormParams}
               className={'mt-1'}
@@ -252,16 +249,16 @@ const Requestsigntx = ({ setRequestResult }: Props) => {
                 {KeychainKeyTypes.posting}
               </option>
             </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

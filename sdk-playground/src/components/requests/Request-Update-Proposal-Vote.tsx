@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
-  RequestRemoveProposal,
   RequestUpdateProposalVote,
 } from 'hive-keychain-commons';
-import { Button, Card, Form, InputGroup, Stack } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestUpdateProposalVote> = {
@@ -22,8 +22,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
-//TODO clean up
-const Requestupdateproposalvote = ({ setRequestResult }: Props) => {
+const Requestupdateproposalvote = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestUpdateProposalVote>;
@@ -57,17 +56,16 @@ const Requestupdateproposalvote = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const updateProposalVote = await sdk.requestUpdateProposalVote(
         formParams.data,
         formParams.options,
       );
       setRequestResult(updateProposalVote);
-      console.log({ updateProposalVote });
+      if (enableLogs) console.log({ updateProposalVote });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 
@@ -96,9 +94,11 @@ const Requestupdateproposalvote = ({ setRequestResult }: Props) => {
               onChange={handleFormParams}
             />
           </InputGroup>
-          <Form.Group className="mb-3" controlId="formBasicEnforce">
-            <Form.Label>Approve</Form.Label>
+          <Form.Group
+            className="d-flex mb-3 justify-content-center"
+            controlId="formBasicEnforce">
             <Form.Check
+              label="Approve"
               type="checkbox"
               name="approve"
               value={formParams.data.approve ? 'true' : 'false'}

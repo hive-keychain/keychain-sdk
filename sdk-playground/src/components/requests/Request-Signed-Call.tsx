@@ -5,11 +5,11 @@ import {
   KeychainKeyTypes,
   RequestSignedCall,
 } from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestSignedCall> = {
@@ -77,17 +77,17 @@ const Requestsignedcall = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Signed Call</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
               placeholder="Hive username, leave blank for a dropdown"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicParams">
-            <Form.Label>Params</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Params</InputGroup.Text>
             <Form.Control
               as="textarea"
               rows={3}
@@ -96,17 +96,18 @@ const Requestsignedcall = ({ setRequestResult }: Props) => {
               value={formParams.data.params}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicMethodOfCall">
-            <Form.Label>Method</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Method</InputGroup.Text>
             <Form.Control
               placeholder="Method of the call"
               name="method"
               value={formParams.data.method}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicTypeWif">
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Method</InputGroup.Text>
             <Form.Select
               onChange={handleFormParams}
               className={'mt-1'}
@@ -123,16 +124,16 @@ const Requestsignedcall = ({ setRequestResult }: Props) => {
                 {KeychainKeyTypes.memo}
               </option>
             </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

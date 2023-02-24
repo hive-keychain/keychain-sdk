@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
   KeychainKeyTypes,
   RequestRemoveAccountAuthority,
 } from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestRemoveAccountAuthority> = {
@@ -22,8 +23,10 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['']; //none to check
 
-//TODO clean up
-const Requestremoveaccountauthority = ({ setRequestResult }: Props) => {
+const Requestremoveaccountauthority = ({
+  setRequestResult,
+  enableLogs,
+}: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestRemoveAccountAuthority>;
@@ -33,7 +36,6 @@ const Requestremoveaccountauthority = ({ setRequestResult }: Props) => {
     options: DEFAULT_OPTIONS,
   });
 
-  //TODO bellow add proper event type
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
     const tempValue =
@@ -55,20 +57,19 @@ const Requestremoveaccountauthority = ({ setRequestResult }: Props) => {
       }));
     }
   };
-  //TODO bellow add proper event type
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const removeAccountAuthority = await sdk.requestRemoveAccountAuthority(
         formParams.data,
         formParams.options,
       );
       setRequestResult(removeAccountAuthority);
-      console.log({ removeAccountAuthority });
+      if (enableLogs) console.log({ removeAccountAuthority });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
   return (
@@ -76,28 +77,29 @@ const Requestremoveaccountauthority = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request remove Account Authority</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
               placeholder="Hive username to perform the request"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicAuthorizedUsername">
-            <Form.Label>Authorized Username @</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Authorized @</InputGroup.Text>
             <Form.Control
+              title="Account to lose authority"
               placeholder="Hive username to authorize"
               name="authorizedUsername"
               value={formParams.data.authorizedUsername}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicSelect">
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Method</InputGroup.Text>
             <Form.Select
               onChange={handleFormParams}
-              className={'mt-1'}
               value={formParams.data.role}
               name="role">
               <option>Please select a Role to authorize</option>
@@ -108,16 +110,16 @@ const Requestremoveaccountauthority = ({ setRequestResult }: Props) => {
                 {KeychainKeyTypes.posting}
               </option>
             </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

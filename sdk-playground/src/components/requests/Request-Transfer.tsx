@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
-import {
-  ExcludeCommonParams,
-  RequestTransfer,
-  RequestVote,
-} from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { ExcludeCommonParams, RequestTransfer } from 'hive-keychain-commons';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestTransfer> = {
@@ -24,8 +21,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
-//TODO clean up
-const Requesttransfer = ({ setRequestResult }: Props) => {
+const Requesttransfer = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestTransfer>;
@@ -59,17 +55,16 @@ const Requesttransfer = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const transfer = await sdk.requestTransfer(
         formParams.data,
         formParams.options,
       );
       setRequestResult(transfer);
-      console.log({ transfer });
+      if (enableLogs) console.log({ transfer });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 
@@ -78,45 +73,54 @@ const Requesttransfer = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Transfer</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
               placeholder="Hive username"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicTo">
-            <Form.Label>To @</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>To @</InputGroup.Text>
             <Form.Control
               placeholder="Hive username to receive"
               name="to"
               value={formParams.data.to}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicAmount">
-            <Form.Label>Amount</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Amount</InputGroup.Text>
             <Form.Control
               placeholder="Amount to be transfered. Requires 3 decimals i.e: '1.000'"
               name="amount"
               value={formParams.data.amount}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicMemo">
-            <Form.Label>Memo</Form.Label>
+            <Form.Select
+              onChange={handleFormParams}
+              value={formParams.data.currency}
+              name="currency">
+              <option>Please select a Currency</option>
+              <option value={'HIVE'}>HIVE</option>
+              <option value={'HBD'}>HBD</option>
+            </Form.Select>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Memo</InputGroup.Text>
             <Form.Control
               placeholder="Memo of transfer. Use # to encrypt."
               name="memo"
               value={formParams.data.memo}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicEnforce">
-            <Form.Label>Enforce Transfer</Form.Label>
+          </InputGroup>
+          <InputGroup className="d-flex justify-content-center mb-3 align-items-center">
+            <InputGroup.Text>Enforce Transfer</InputGroup.Text>
             <Form.Check
+              className="ms-5"
               type="checkbox"
               name="enforce"
               value={formParams.data.enforce ? 'true' : 'false'}
@@ -129,27 +133,16 @@ const Requesttransfer = ({ setRequestResult }: Props) => {
                 })
               }
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicCurrency">
-            <Form.Select
-              onChange={handleFormParams}
-              className={'mt-1'}
-              value={formParams.data.currency}
-              name="currency">
-              <option>Please select a Currency</option>
-              <option value={'HIVE'}>HIVE</option>
-              <option value={'HBD'}>HBD</option>
-            </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>

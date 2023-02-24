@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
-import {
-  ExcludeCommonParams,
-  RequestDelegation,
-  RequestVote,
-} from 'hive-keychain-commons';
-import { Button, Card, Form } from 'react-bootstrap';
+import { ExcludeCommonParams, RequestDelegation } from 'hive-keychain-commons';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 import { KeychainOptions } from '../Request-selector';
 
 type Props = {
-  setRequestResult: any; //TODO add proper type
+  setRequestResult: any;
+  enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestDelegation> = {
@@ -22,8 +19,7 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['username', 'rpc'];
 
-//TODO clean up
-const Requestdelegation = ({ setRequestResult }: Props) => {
+const Requestdelegation = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestDelegation>;
@@ -57,17 +53,16 @@ const Requestdelegation = ({ setRequestResult }: Props) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    console.log('about to process ...: ', { formParams });
+    if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const delegation = await sdk.requestDelegation(
         formParams.data,
         formParams.options,
       );
       setRequestResult(delegation);
-      console.log({ delegation });
+      if (enableLogs) console.log({ delegation });
     } catch (error) {
       setRequestResult(error);
-      console.log({ error });
     }
   };
 
@@ -76,54 +71,50 @@ const Requestdelegation = ({ setRequestResult }: Props) => {
       <Card.Header as={'h5'}>Request Delegation</Card.Header>
       <Card.Body>
         <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicUsername">
-            <Form.Label>Username @</Form.Label>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>@</InputGroup.Text>
             <Form.Control
               placeholder="Hive username, leave blank for dropdown"
               name="username"
               value={formParams.data.username}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicDelegatee">
-            <Form.Label>Delegatee</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Delegatee</InputGroup.Text>
             <Form.Control
               placeholder="Account to receive the delegation"
               name="delegatee"
               value={formParams.data.delegatee}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicAmount">
-            <Form.Label>Amount</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Amount</InputGroup.Text>
             <Form.Control
               placeholder="Requires 3 decimals, i.e: '1.000'"
               name="amount"
               value={formParams.data.amount}
               onChange={handleFormParams}
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicUnit">
-            <Form.Label>Unit</Form.Label>
             <Form.Select
               onChange={handleFormParams}
-              className={'mt-1'}
               value={formParams.data.unit}
               name="unit">
               <option>Please select a UNIT</option>
               <option value={'HP'}>HP</option>
               <option value={'VESTS'}>VESTS</option>
             </Form.Select>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicOptions">
-            <Form.Label>Rpc</Form.Label>
+          </InputGroup>
+          <InputGroup className="mb-3">
+            <InputGroup.Text>Rpc</InputGroup.Text>
             <Form.Control
               placeholder="Rpc node to broadcast - optional"
               name="rpc"
               value={formParams.options.rpc}
               onChange={handleFormParams}
             />
-          </Form.Group>
+          </InputGroup>
           <Button variant="primary" type="submit" className="mt-1">
             Submit
           </Button>
