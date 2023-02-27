@@ -13,15 +13,17 @@ type Props = {
   enableLogs: boolean;
 };
 
+//TODO what about cedric request of having undefined message?
+//  - add this to RequestSignBuffer?? or just locally here?
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestSignBuffer> = {
   username: undefined,
   message: '',
   method: KeychainKeyTypes.posting,
-  title: '',
+  title: undefined,
 };
 const DEFAULT_OPTIONS: KeychainOptions = {};
 
-const undefinedParamsToValidate = ['username', 'rpc'];
+const undefinedParamsToValidate = ['username', 'title', 'rpc'];
 //TODO finish on SDK + test here.
 const Requestlogin = ({ setRequestResult, enableLogs }: Props) => {
   const sdk = new KeychainSDK(window);

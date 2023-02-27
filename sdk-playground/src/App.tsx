@@ -10,7 +10,7 @@ import Footer from './components/Footer';
 function App() {
   const [enabledKeychain, setEnabledKeychain] = useState(false);
   const [requestResult, setRequestResult] = useState();
-  const [enableLogs, setEnableLogs] = useState(false);
+  const [enableLogs, setEnableLogs] = useState(true);
 
   return (
     <div className="App">
@@ -29,6 +29,7 @@ function App() {
             label="enable logs"
             title={'enable logs in console for extra information'}
             value={enableLogs ? 'true' : 'false'}
+            defaultChecked
             onChange={(e) => setEnableLogs(e.target.checked)}
           />
         </Form.Group>

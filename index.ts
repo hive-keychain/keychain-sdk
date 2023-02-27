@@ -1,3 +1,5 @@
+import { PublicKey, Signature } from '@hiveio/dhive';
+import { verify, Verify } from 'crypto';
 import { ExcludeCommonParams } from 'hive-keychain-commons';
 import {
   RequestAddAccount,
@@ -32,6 +34,7 @@ import {
   KeychainOptions,
   KeychainRequestResponse,
 } from './interfaces/keychain.interface';
+import { Utils } from './utils/utils';
 
 // interface KeychainOptions {
 //   rpc?: string;
@@ -134,7 +137,6 @@ export class KeychainSDK {
     data: ExcludeCommonParams<RequestSignBuffer>,
     options: KeychainOptions,
   ): Promise<any> => {
-    //TODO finish this guys here!
     //TODO here add proper output types
     return new Promise(async (resolve, reject) => {
       try {
@@ -163,8 +165,7 @@ export class KeychainSDK {
 
         //   resolve({ recoveredPublickKey });
         // }
-        resolve('TODO, login needs to be finished!');
-        //await this.isKeyChainInstalled();
+
         // this.window.hive_keychain.requestSignBuffer(
         //   data.username,
         //   data.message ?? utils.generateRandomString(),
@@ -187,6 +188,49 @@ export class KeychainSDK {
         //   options.rpc ?? this.options?.rpc,
         //   data.title,
         // );
+
+        //Tying from here. //TODO finish this part... to remove comments
+
+        await this.isKeyChainInstalled();
+        //steps. Make the signBuffer here using the callBack, to get the response.
+        const randomMessage = Utils.generateRandomString();
+        this.window.hive_keychain.requestSignBuffer(
+          data.username,
+          data.message ?? randomMessage,
+          data.method,
+          (response: any) => {
+            if (response.error) {
+              reject({
+                ...response,
+                success: false,
+                result: data.title ? `Cannot login into: ${data.title}` : null,
+              });
+            } else {
+              //test
+              // resolve({ response });
+              //end test
+              //verify the original message and received signature.
+              // const buffer = new Buffer(response.publicKey);
+              const pubKeyClass = new PublicKey(
+                //@ts-ignore
+                this.window.Buffer.from(
+                  'STM7KKUZb1CzwRiaN2RQcGeJUpcHM5BmCNudxXW21xqktBe91RpD8',
+                ),
+              );
+              const verification = pubKeyClass.verify(
+                //@ts-ignore
+                data.message,
+                response.result,
+              );
+              resolve({
+                success: true,
+                verification,
+              });
+            }
+          },
+          options.rpc ?? this.options?.rpc,
+          data.title,
+        );
       } catch (error) {
         throw error;
       }

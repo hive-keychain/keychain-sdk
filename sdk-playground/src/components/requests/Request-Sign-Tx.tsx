@@ -91,9 +91,10 @@ const Requestsigntx = ({ setRequestResult, enableLogs }: Props) => {
 
   const [dHiveprops, setDHiveProps] = useState<DynamicGlobalProperties>();
 
-  useEffect(() => {
-    initProps();
-  });
+  //TODO uncomment to take effect
+  // useEffect(() => {
+  //   initProps();
+  // });
 
   //TODO remove, just for testing
   useEffect(() => {
@@ -171,7 +172,14 @@ const Requestsigntx = ({ setRequestResult, enableLogs }: Props) => {
 
   const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    formParams['data']['tx']['operations'] = arrayOperations as Operation[];
+
+    formParams['data']['tx']['operations'] = arrayOperations as Operation[]; //As common types require
+
+    // //@ts-ignore
+    // formParams['data']['tx']['operations'] = JSON.stringify(
+    //   arrayOperations as Operation[],
+    // ); //as quentin suggested
+
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
       const broadcast = await sdk.requestSignTx(
