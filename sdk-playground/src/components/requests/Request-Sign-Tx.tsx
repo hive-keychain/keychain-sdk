@@ -91,7 +91,7 @@ const Requestsigntx = ({ setRequestResult, enableLogs }: Props) => {
 
   const [dHiveprops, setDHiveProps] = useState<DynamicGlobalProperties>();
 
-  //TODO uncomment to take effect
+  //TODO uncomment to take effect as some weird errors are showing in console.
   // useEffect(() => {
   //   initProps();
   // });

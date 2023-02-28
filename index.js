@@ -12,6 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.KeychainSDK = void 0;
 const dhive_1 = require("@hiveio/dhive");
 const utils_1 = require("./utils/utils");
+const buffer_1 = require("buffer");
+// @ts-ignore
+window.Buffer = buffer_1.Buffer;
 class KeychainSDK {
     constructor(window, options) {
         /**
@@ -127,18 +130,15 @@ class KeychainSDK {
                             //test
                             // resolve({ response });
                             //end test
-                            //verify the original message and received signature.
-                            // const buffer = new Buffer(response.publicKey);
-                            const pubKeyClass = new dhive_1.PublicKey(
-                            //@ts-ignore
-                            this.window.Buffer.from('STM7KKUZb1CzwRiaN2RQcGeJUpcHM5BmCNudxXW21xqktBe91RpD8'));
-                            const verification = pubKeyClass.verify(
-                            //@ts-ignore
-                            data.message, response.result);
+                            /////
+                            //"STM7KKUZb1CzwRiaN2RQcGeJUpcHM5BmCNudxXW21xqktBe91RpD8"
+                            const pubKeyClass = new dhive_1.PublicKey(buffer_1.Buffer.from('STM7KKUZb1CzwRiaN2RQcGeJUpcHM5BmCNudxXW21xqktBe91RpD8'), 'STM');
+                            const verification = pubKeyClass.verify(buffer_1.Buffer.from(data.message), response.result);
                             resolve({
                                 success: true,
                                 verification,
                             });
+                            /////
                         }
                     }, (_b = options.rpc) !== null && _b !== void 0 ? _b : (_c = this.options) === null || _c === void 0 ? void 0 : _c.rpc, data.title);
                 }

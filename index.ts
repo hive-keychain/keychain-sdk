@@ -35,6 +35,10 @@ import {
   KeychainRequestResponse,
 } from './interfaces/keychain.interface';
 import { Utils } from './utils/utils';
+import { Buffer } from 'buffer';
+
+// @ts-ignore
+window.Buffer = Buffer;
 
 // interface KeychainOptions {
 //   rpc?: string;
@@ -209,23 +213,24 @@ export class KeychainSDK {
               //test
               // resolve({ response });
               //end test
-              //verify the original message and received signature.
-              // const buffer = new Buffer(response.publicKey);
+
+              /////
+              //"STM7KKUZb1CzwRiaN2RQcGeJUpcHM5BmCNudxXW21xqktBe91RpD8"
               const pubKeyClass = new PublicKey(
-                //@ts-ignore
-                this.window.Buffer.from(
+                Buffer.from(
                   'STM7KKUZb1CzwRiaN2RQcGeJUpcHM5BmCNudxXW21xqktBe91RpD8',
                 ),
+                'STM',
               );
               const verification = pubKeyClass.verify(
-                //@ts-ignore
-                data.message,
+                Buffer.from(data.message),
                 response.result,
               );
               resolve({
                 success: true,
                 verification,
               });
+              /////
             }
           },
           options.rpc ?? this.options?.rpc,
