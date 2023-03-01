@@ -37,38 +37,13 @@ import {
 import { Utils } from './utils/utils';
 import { Buffer } from 'buffer';
 
+//TODO check if needed, added to handle buffer error message on login.
 // @ts-ignore
 window.Buffer = Buffer;
 
-// interface KeychainOptions {
-//   rpc?: string;
-// }
-// interface KeychainRequestResponse {
-//   success: boolean;
-//   error: string;
-//   result: string | null;
-//   data: {
-//     key: string;
-//     message: string;
-//     method: string;
-//     receiver: string;
-//     request_id: number;
-//     type: string;
-//     username: string;
-//   };
-//   message: string;
-//   request_id: number;
-//   publicKey?: string;
-// }
-declare global {
-  interface Window {
-    hive_keychain: any;
-  }
-}
-
 export class KeychainSDK {
   window: Window;
-  options: KeychainOptions | undefined;
+  options?: KeychainOptions;
 
   constructor(window: Window, options?: KeychainOptions) {
     this.window = window;

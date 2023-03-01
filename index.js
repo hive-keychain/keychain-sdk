@@ -13,6 +13,7 @@ exports.KeychainSDK = void 0;
 const dhive_1 = require("@hiveio/dhive");
 const utils_1 = require("./utils/utils");
 const buffer_1 = require("buffer");
+//TODO check if needed, added to handle buffer error message on login.
 // @ts-ignore
 window.Buffer = buffer_1.Buffer;
 class KeychainSDK {

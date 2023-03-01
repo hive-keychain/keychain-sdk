@@ -60,6 +60,20 @@ export enum SDKRequestType {
   Request_Recurrent_Transfer = 'Request_Recurrent_Transfer',
 }
 
+//TODO here:
+//  - change obvious name -> keychainchecker -> Checker
+// - components file name -> first Capital - lower
+// - component export name Camelcase -> RequestSigntx
+//  AFTER this:
+//  - move sdk=playground content folder to its own repo:
+//    -> https://github.com/hive-keychain/keychain-sdk-playground
+//  THen:
+//    - follow cards TODO's & list.
+//    - remove collapse selector.
+// 	- remove select on main -> change as something as the algolia search
+//   - showing all categories if nothing to search
+
+// - add same widths to label inputs & input itselfs.
 export interface KeychainOptions {
   rpc?: string;
 }
