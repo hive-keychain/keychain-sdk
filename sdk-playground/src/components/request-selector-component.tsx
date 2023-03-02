@@ -58,16 +58,7 @@ export enum SDKRequestType {
   Request_Recurrent_Transfer = 'Request_Recurrent_Transfer',
 }
 
-//TODO here:
-//  - change obvious name -> keychainchecker -> Checker
-// - components file name -> first Capital - lower
-// - component export name Camelcase -> RequestSigntx
-//  AFTER this:
-//  - move sdk=playground content folder to its own repo:
-//    -> https://github.com/hive-keychain/keychain-sdk-playground
-//  THen:
-//    - follow cards TODO's & list.
-//    - remove collapse selector.
+//TODO
 // 	- remove select on main -> change as something as the algolia search
 //   - showing all categories if nothing to search
 
@@ -91,13 +82,6 @@ const RequestSelectorComponent = ({
 }: Props) => {
   const [request, setRequest] = useState<string>();
   const [requestCard, setRequestCard] = useState<ReactNode>();
-  const [open, setOpen] = useState(true);
-
-  useEffect(() => {
-    if (requestResult) {
-      setOpen(!open);
-    }
-  }, [requestResult, setOpen]);
 
   useEffect(() => {
     switch (request) {
@@ -333,42 +317,31 @@ const RequestSelectorComponent = ({
   return (
     <Container className="w-50 mt-2">
       <Card className="d-flex justify-content-center">
-        <Card.Header as={'h4'}>
-          SDK Playground
-          <Button
-            className="ms-5"
-            onClick={() => setOpen(!open)}
-            aria-controls="example-collapse-text"
-            aria-expanded={open}>
-            {open ? 'collapse selector' : 'expand selector'}
-          </Button>
-        </Card.Header>
-        <Collapse in={open}>
-          <Card.Body>
-            <Form>
-              <Form.Select
-                disabled={!enabledKeychain}
-                aria-label="Default select example"
-                onChange={handleChange}>
-                <option>Please select a Request</option>
-                {(Object.keys(SDKRequestType) as Array<SDKRequestType>).map(
-                  (_type) => {
-                    return (
-                      <option
-                        value={SDKRequestType[_type]}
-                        key={`${_type}-rq-type`}>
-                        {_type.split('_').join(' ')}
-                      </option>
-                    );
-                  },
-                )}
-              </Form.Select>
-            </Form>
-            <Container className="mt-2">
-              {requestCard ? requestCard : null}
-            </Container>
-          </Card.Body>
-        </Collapse>
+        <Card.Header as={'h4'}>SDK Playground</Card.Header>
+        <Card.Body>
+          <Form>
+            <Form.Select
+              disabled={!enabledKeychain}
+              aria-label="Default select example"
+              onChange={handleChange}>
+              <option>Please select a Request</option>
+              {(Object.keys(SDKRequestType) as Array<SDKRequestType>).map(
+                (_type) => {
+                  return (
+                    <option
+                      value={SDKRequestType[_type]}
+                      key={`${_type}-rq-type`}>
+                      {_type.split('_').join(' ')}
+                    </option>
+                  );
+                },
+              )}
+            </Form.Select>
+          </Form>
+          <Container className="mt-2">
+            {requestCard ? requestCard : null}
+          </Container>
+        </Card.Body>
       </Card>
     </Container>
   );
