@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import './App.css';
-import Keychainchecker from './components/Keychain-checker';
-import RequestSelector from './components/Request-selector';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import RequestResults from './components/Request-results';
 import { Form } from 'react-bootstrap';
-import Footer from './components/Footer';
+import RequestSelectorComponent from './components/request-selector-component';
+import KeychainCheckerComponent from './components/keychain-checker-component';
+import RequestResultsComponent from './components/request-results-component';
+import FooterComponent from './components/footer-component';
+import LogsEnablerComponent from './components/logs-enabler-component';
 
 function App() {
   const [enabledKeychain, setEnabledKeychain] = useState(false);
@@ -14,36 +15,27 @@ function App() {
 
   return (
     <div className="App">
-      <Keychainchecker
+      <KeychainCheckerComponent
         setEnabledKeychain={setEnabledKeychain}
         enableLogs={enableLogs}
       />
-      <Form
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}>
-        <Form.Group className="mb-3 d-flex justify-content-center">
-          <Form.Check
-            type="switch"
-            id="custom-switch"
-            label="enable logs"
-            title={'enable logs in console for extra information'}
-            value={enableLogs ? 'true' : 'false'}
-            defaultChecked
-            onChange={(e) => setEnableLogs(e.target.checked)}
-          />
-        </Form.Group>
-      </Form>
-      <RequestSelector
+      <LogsEnablerComponent
+        enableLogs={enableLogs}
+        setEnableLogs={setEnableLogs}
+      />
+      <RequestSelectorComponent
         setRequestResult={setRequestResult}
         requestResult={requestResult}
         enabledKeychain={enabledKeychain}
         enableLogs={enableLogs}
       />
       {requestResult && (
-        <RequestResults requestResult={requestResult} enableLogs={enableLogs} />
+        <RequestResultsComponent
+          requestResult={requestResult}
+          enableLogs={enableLogs}
+        />
       )}
-      <Footer />
+      <FooterComponent />
     </div>
   );
 }
