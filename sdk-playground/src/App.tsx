@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Form } from 'react-bootstrap';
 import RequestSelectorComponent from './components/request-selector-component';
 import KeychainCheckerComponent from './components/keychain-checker-component';
 import RequestResultsComponent from './components/request-results-component';
