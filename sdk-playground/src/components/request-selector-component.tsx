@@ -1,5 +1,13 @@
 import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
-import { Button, Card, Form, Container, Collapse } from 'react-bootstrap';
+import {
+  Button,
+  Card,
+  Form,
+  Container,
+  Collapse,
+  Row,
+  Col,
+} from 'react-bootstrap';
 import RequestAddAccountAuthorityComponent from './requests/request-add-account-authority-component';
 import RequestAddKeyAuthorityComponent from './requests/request-add-key-authority-component';
 import RequestBroadcastComponent from './requests/request-broadcast-component';
@@ -27,6 +35,7 @@ import RequestWitnessVoteComponent from './requests/request-witness-vote-compone
 import RequestAddAccountComponent from './requests/request-add-account-component';
 import RequestConversionComponent from './requests/request-conversion-component';
 import RequestRecurrentTransferComponent from './requests/request-recurrent-transfer-component';
+import { CopyBlock, solarizedDark } from 'react-code-blocks';
 
 export enum SDKRequestType {
   Request_Login = 'Request_Login',
@@ -315,34 +324,53 @@ const RequestSelectorComponent = ({
   };
 
   return (
-    <Container className="w-50 mt-2">
-      <Card className="d-flex justify-content-center">
-        <Card.Header as={'h4'}>SDK Playground</Card.Header>
-        <Card.Body>
-          <Form>
-            <Form.Select
-              disabled={!enabledKeychain}
-              aria-label="Default select example"
-              onChange={handleChange}>
-              <option>Please select a Request</option>
-              {(Object.keys(SDKRequestType) as Array<SDKRequestType>).map(
-                (_type) => {
-                  return (
-                    <option
-                      value={SDKRequestType[_type]}
-                      key={`${_type}-rq-type`}>
-                      {_type.split('_').join(' ')}
-                    </option>
-                  );
-                },
-              )}
-            </Form.Select>
-          </Form>
-          <Container className="mt-2">
-            {requestCard ? requestCard : null}
-          </Container>
-        </Card.Body>
-      </Card>
+    <Container fluid>
+      <Row>
+        <Col className="w-50">
+          <Card className="d-flex justify-content-center">
+            <Card.Header as={'h4'}>SDK Playground</Card.Header>
+            <Card.Body>
+              <Form>
+                <Form.Select
+                  disabled={!enabledKeychain}
+                  aria-label="Default select example"
+                  onChange={handleChange}>
+                  <option>Please select a Request</option>
+                  {(Object.keys(SDKRequestType) as Array<SDKRequestType>).map(
+                    (_type) => {
+                      return (
+                        <option
+                          value={SDKRequestType[_type]}
+                          key={`${_type}-rq-type`}>
+                          {_type.split('_').join(' ')}
+                        </option>
+                      );
+                    },
+                  )}
+                </Form.Select>
+              </Form>
+              <Container className="mt-2">
+                {requestCard ? requestCard : null}
+              </Container>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col className="w-50">
+          <Card className="d-flex justify-content-center">
+            <Card.Header as={'h4'}>Code Sample</Card.Header>
+            <Card.Body>
+              <CopyBlock
+                text={JSON.stringify([1, 2, 3])}
+                language={'typescript'}
+                showLineNumbers={true}
+                startingLineNumber={1}
+                wrapLines
+                theme={solarizedDark}
+              />
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Container>
   );
 };
