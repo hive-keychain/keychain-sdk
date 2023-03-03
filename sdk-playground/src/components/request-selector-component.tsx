@@ -38,7 +38,9 @@ import RequestRecurrentTransferComponent from './requests/request-recurrent-tran
 import { CopyBlock, solarizedDark } from 'react-code-blocks';
 
 export enum SDKRequestType {
-  Request_Login = 'Request_Login',
+  //TODO change to uppercase on left.
+  //REQUEST_LOGIN = 'REQUEST_LOGIN',
+  REQUEST_LOGIN = 'REQUEST_LOGIN',
   Request_Encode_Message = 'Request_Encode_Message',
   Request_Verify_Key = 'Request_Verify_Key',
   Request_Sign_Buffer = 'Request_Sign_Buffer',
@@ -71,7 +73,19 @@ export enum SDKRequestType {
 // 	- remove select on main -> change as something as the algolia search
 //   - showing all categories if nothing to search
 
-// - add same widths to label inputs & input itselfs.
+//TODO move to utils maybe?
+const fromCodeToText = (params: {}) => {
+  return `
+try {\n
+    const params = ${JSON.stringify(params)};\n
+    const encodeMessage = await sdk.requestEncodeMessage(formParams);\n
+    setRequestResult(encodeMessage);
+    if (enableLogs) console.log({ encodeMessage });
+  } catch (error) {
+    setRequestResult(error);
+  }`;
+};
+
 export interface KeychainOptions {
   rpc?: string;
 }
@@ -94,7 +108,7 @@ const RequestSelectorComponent = ({
 
   useEffect(() => {
     switch (request) {
-      case SDKRequestType.Request_Login:
+      case SDKRequestType.REQUEST_LOGIN:
         setRequestCard(
           <RequestLoginComponent
             setRequestResult={setRequestResult}
@@ -356,13 +370,13 @@ const RequestSelectorComponent = ({
           </Card>
         </Col>
         <Col className="w-50">
-          <Card className="d-flex justify-content-center">
+          <Card className="d-flex">
             <Card.Header as={'h4'}>Code Sample</Card.Header>
             <Card.Body>
               <CopyBlock
-                text={JSON.stringify([1, 2, 3])}
+                text={fromCodeToText({ one: 1, two: 2 })} //JSON.stringify([1, 2, 3])
                 language={'typescript'}
-                showLineNumbers={true}
+                showLineNumbers={false}
                 startingLineNumber={1}
                 wrapLines
                 theme={solarizedDark}
