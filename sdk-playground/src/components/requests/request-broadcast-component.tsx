@@ -122,7 +122,8 @@ const RequestBroadcastComponent = ({ setRequestResult, enableLogs }: Props) => {
     formParams['data']['operations'] = arrayOperations as Operation[];
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const broadcast = await sdk.requestBroadcast(
+      //TODO change as [requestType]
+      const broadcast = await sdk.broadcast(
         formParams.data,
         formParams.options,
       );

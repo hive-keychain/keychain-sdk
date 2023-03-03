@@ -182,10 +182,8 @@ const RequestSignTxComponent = ({ setRequestResult, enableLogs }: Props) => {
 
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const broadcast = await sdk.requestSignTx(
-        formParams.data,
-        formParams.options,
-      );
+      //TODO change as [requestType]
+      const broadcast = await sdk.signTx(formParams.data, formParams.options);
       setRequestResult(broadcast);
       if (enableLogs) console.log({ broadcast });
     } catch (error) {

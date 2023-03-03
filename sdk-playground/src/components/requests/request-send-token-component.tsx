@@ -56,7 +56,8 @@ const RequestSendTokenComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const sendToken = await sdk.requestSendToken(
+      //TODO change as [requestType]
+      const sendToken = await sdk.sendToken(
         formParams.data,
         formParams.options,
       );

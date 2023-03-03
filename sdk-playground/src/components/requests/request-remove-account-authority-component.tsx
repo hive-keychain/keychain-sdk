@@ -62,7 +62,8 @@ const RequestRemoveAccountAuthorityComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const removeAccountAuthority = await sdk.requestRemoveAccountAuthority(
+      //TODO change as [requestType]
+      const removeAccountAuthority = await sdk.removeAccountAuthority(
         formParams.data,
         formParams.options,
       );

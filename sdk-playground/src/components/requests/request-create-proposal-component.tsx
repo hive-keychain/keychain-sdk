@@ -67,7 +67,8 @@ const RequestCreateProposalComponent = ({
     try {
       formParams.data['start'] = `${formParams.data['start']}T00:00:00`;
       formParams.data['end'] = `${formParams.data['end']}T00:00:00`;
-      const createProposal = await sdk.requestCreateProposal(
+      //TODO change as [requestType]
+      const createProposal = await sdk.createProposal(
         formParams.data,
         formParams.options,
       );

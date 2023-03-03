@@ -57,10 +57,8 @@ const RequestConversionComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const conversion = await sdk.requestConversion(
-        formParams.data,
-        formParams.options,
-      );
+      //TODO change as [requestType]
+      const conversion = await sdk.convert(formParams.data, formParams.options);
       setRequestResult(conversion);
       if (enableLogs) console.log({ conversion });
     } catch (error) {

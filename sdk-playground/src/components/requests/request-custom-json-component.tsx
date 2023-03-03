@@ -67,10 +67,8 @@ const RequestCustomJsonComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const customJson = await sdk.requestCustomJson(
-        formParams.data,
-        formParams.options,
-      );
+      //TODO change as [requestType]
+      const customJson = await sdk.custom(formParams.data, formParams.options);
       setRequestResult(customJson);
       if (enableLogs) console.log({ customJson });
     } catch (error) {

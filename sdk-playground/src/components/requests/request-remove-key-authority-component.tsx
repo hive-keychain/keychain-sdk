@@ -62,7 +62,8 @@ const RequestRemoveKeyAuthorityComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const removeKeyAuthority = await sdk.requestRemoveKeyAuthority(
+      //TODO change as [requestType]
+      const removeKeyAuthority = await sdk.removeKeyAuthority(
         formParams.data,
         formParams.options,
       );

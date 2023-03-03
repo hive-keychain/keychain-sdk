@@ -62,7 +62,8 @@ const RequestSignBufferComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const signBuffer = await sdk.requestSignBuffer(
+      //TODO change as [requestType]
+      const signBuffer = await sdk.signBuffer(
         formParams.data,
         formParams.options,
       );

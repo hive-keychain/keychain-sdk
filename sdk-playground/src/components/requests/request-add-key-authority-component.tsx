@@ -63,7 +63,8 @@ const RequestAddKeyAuthorityComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const addKeyAuthority = await sdk.requestAddKeyAuthority(
+      //TODO change as [requestType]
+      const addKeyAuthority = await sdk.addKeyAuthority(
         formParams.data,
         formParams.options,
       );

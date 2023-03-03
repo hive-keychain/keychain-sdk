@@ -53,7 +53,8 @@ const RequestPowerDownComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const powerDown = await sdk.requestPowerDown(
+      //TODO change as [requestType]
+      const powerDown = await sdk.powerDown(
         formParams.data,
         formParams.options,
       );

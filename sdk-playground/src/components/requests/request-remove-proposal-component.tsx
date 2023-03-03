@@ -60,7 +60,8 @@ const RequestRemoveProposalComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const removeProposal = await sdk.requestRemoveProposal(
+      //TODO change as [requestType]
+      const removeProposal = await sdk.removeProposal(
         formParams.data,
         formParams.options,
       );

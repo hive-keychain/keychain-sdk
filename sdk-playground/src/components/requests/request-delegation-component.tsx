@@ -58,7 +58,8 @@ const RequestDelegationComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const delegation = await sdk.requestDelegation(
+      //TODO change as [requestType]
+      const delegation = await sdk.delegation(
         formParams.data,
         formParams.options,
       );

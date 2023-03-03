@@ -168,7 +168,7 @@ class KeychainSDK {
          * @param {String} data.message Message to be encrypted, i.e: "#To encrypt message"
          * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
          */
-        this.requestEncodeMessage = (data) => __awaiter(this, void 0, void 0, function* () {
+        this.encode = (data) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     yield this.isKeyChainInstalled();
@@ -204,7 +204,7 @@ class KeychainSDK {
          * @param {String} data.message Message to be decoded by the account
          * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
          */
-        this.requestVerifyKey = (data) => __awaiter(this, void 0, void 0, function* () {
+        this.decode = (data) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     yield this.isKeyChainInstalled();
@@ -245,7 +245,7 @@ class KeychainSDK {
          * @param {String | undefined} data.title Override "Sign message" title
          * @param {String| undefined} options.rpc Override user's RPC settings
          */
-        this.requestSignBuffer = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.signBuffer = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _d, _e;
                 try {
@@ -288,7 +288,7 @@ class KeychainSDK {
          * @param {number} data.weight Weight of the authority
          * @param {String | undefined} options.rpc Override user's RPC settings
          */
-        this.requestAddAccountAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.addAccountAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _f, _g;
                 try {
@@ -329,7 +329,7 @@ class KeychainSDK {
          * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'
          * @param {String |  undefined} options.rpc Override user's RPC settings
          */
-        this.requestRemoveAccountAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.removeAccountAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _h, _j;
                 try {
@@ -372,7 +372,7 @@ class KeychainSDK {
          * @param {number} data.weight Weight of the key authority
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestAddKeyAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.addKeyAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _k, _l;
                 try {
@@ -413,7 +413,7 @@ class KeychainSDK {
          * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'.
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestRemoveKeyAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.removeKeyAuthority = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _m, _o;
                 try {
@@ -463,7 +463,7 @@ class KeychainSDK {
          * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestBroadcast = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.broadcast = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _p, _q;
                 try {
@@ -520,7 +520,7 @@ class KeychainSDK {
          * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestSignTx = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.signTx = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _r, _s;
                 try {
@@ -548,7 +548,7 @@ class KeychainSDK {
          * @param {String} data.key Type of key. Can be 'Posting','Active' or 'Memo'
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestSignedCall = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.signedCall = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     yield this.isKeyChainInstalled();
@@ -602,7 +602,7 @@ class KeychainSDK {
          * @param {String} data.comment_options Options attached to the blog post, must be stringyfied. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it. Note: Must be the same as data.permlink if is a Post.
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestPost = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.post = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _t, _u;
                 try {
@@ -644,7 +644,7 @@ class KeychainSDK {
          * @param {Number} data.weight Weight of the vote, comprised between -10,000 (-100%) and 10,000 (100%)
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.vote = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _v, _w;
                 try {
@@ -692,7 +692,7 @@ class KeychainSDK {
          * @param {String} data.display_msg Message to display to explain to the user what this broadcast is about
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestCustomJson = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.custom = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _x, _y;
                 try {
@@ -739,7 +739,7 @@ class KeychainSDK {
          * @param {String} data.currency Asset's symbol to transfer i.e: 'HIVE', 'HBD'.
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestTransfer = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.transfer = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _z, _0;
                 try {
@@ -783,7 +783,7 @@ class KeychainSDK {
          * @param {String} data.currency Token symbol to be sent, i.e: 'LEO'.
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestSendToken = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.sendToken = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _1, _2;
                 try {
@@ -825,7 +825,7 @@ class KeychainSDK {
          * @param {String} data.unit HP or VESTS. (For VESTS must be greater than minimum).
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestDelegation = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.delegation = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _3, _4;
                 try {
@@ -865,7 +865,7 @@ class KeychainSDK {
          * @param {boolean} data.vote Set to true to vote for the witness, false to unvote
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestWitnessVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.witnessVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _5, _6;
                 try {
@@ -903,7 +903,7 @@ class KeychainSDK {
          * @param {String} data.proxy Account to become the proxy. Empty string ('') to remove a proxy
          * @param {String | undefined} options.rpc Override user's RPC settings
          */
-        this.requestProxy = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.proxy = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _7, _8;
                 try {
@@ -943,7 +943,7 @@ class KeychainSDK {
          * @param {String} data.hive Amount of HIVE to be powered up, requires 3 decimals, i.e: '1.000'.
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestPowerUp = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.powerUp = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _9, _10;
                 try {
@@ -981,7 +981,7 @@ class KeychainSDK {
          * @param {String} data.hive_power Amount of HP(hive power), to be powered down
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestPowerDown = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.powerDown = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _11, _12;
                 try {
@@ -1010,7 +1010,7 @@ class KeychainSDK {
          * @param {String} data.memo public memo key
          * @param {String | undefined} options.rpc Override user's RPC settings
          */
-        this.requestCreateClaimedAccount = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.createClaimedAccount = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _13, _14;
                 try {
@@ -1042,7 +1042,7 @@ class KeychainSDK {
          * @param {String} data.extensions Stringified Array of extensions
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestCreateProposal = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.createProposal = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _15, _16;
                 try {
@@ -1068,7 +1068,7 @@ class KeychainSDK {
          * @param {String} data.extensions Stringified Array of extensions
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestRemoveProposal = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.removeProposal = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _17, _18;
                 try {
@@ -1095,7 +1095,7 @@ class KeychainSDK {
          * @param {String} data.extensions Stringified Array of extensions
          * @param {String} options.rpc Override user's RPC settings
          */
-        this.requestUpdateProposalVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.updateProposalVote = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _19, _20;
                 try {
@@ -1136,7 +1136,7 @@ class KeychainSDK {
          * @param {String} data.username username of the account to be added
          * @param {Object} data.keys private keys of the account : {active:'...',posting:'...',memo:'...'}. At least one must be specified.
          */
-        this.requestAddAccount = (data) => __awaiter(this, void 0, void 0, function* () {
+        this.addAccount = (data) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     yield this.isKeyChainInstalled();
@@ -1175,7 +1175,7 @@ class KeychainSDK {
          * @param {Boolean} data.collaterized true to convert HIVE to HBD. false to convert HBD to HIVE.
          * @param {String | undefined} optins.rpc  Override user's RPC settings
          */
-        this.requestConversion = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.convert = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _21, _22;
                 try {
@@ -1224,7 +1224,7 @@ class KeychainSDK {
          * @param {Number} data.executions The times the recurrent payment will be executed - minimum 2.
          * @param {String| undefined} options.rpc Override user's RPC settings
          */
-        this.requestRecurrentTransfer = (data, options) => __awaiter(this, void 0, void 0, function* () {
+        this.recurrentTransfer = (data, options) => __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _23, _24;
                 try {

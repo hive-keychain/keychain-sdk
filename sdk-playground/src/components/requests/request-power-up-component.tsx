@@ -54,10 +54,8 @@ const RequestPowerUpComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const powerUp = await sdk.requestPowerUp(
-        formParams.data,
-        formParams.options,
-      );
+      //TODO change as [requestType]
+      const powerUp = await sdk.powerUp(formParams.data, formParams.options);
       setRequestResult(powerUp);
       if (enableLogs) console.log({ powerUp });
     } catch (error) {

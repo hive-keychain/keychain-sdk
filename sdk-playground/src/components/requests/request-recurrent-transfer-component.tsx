@@ -64,7 +64,8 @@ const RequestRecurrentTransferComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const conversion = await sdk.requestRecurrentTransfer(
+      //TODO change as [requestType]
+      const conversion = await sdk.recurrentTransfer(
         formParams.data,
         formParams.options,
       );

@@ -3,6 +3,7 @@ import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
   KeychainKeyTypes,
+  KeychainRequestTypes,
   RequestEncode,
 } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
@@ -10,6 +11,7 @@ import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 type Props = {
   setRequestResult: any;
   enableLogs: boolean;
+  requestType: KeychainRequestTypes;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestEncode> = {
@@ -22,6 +24,7 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestEncode> = {
 const RequestEncodeMessageComponent = ({
   setRequestResult,
   enableLogs,
+  requestType,
 }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] =
@@ -38,7 +41,8 @@ const RequestEncodeMessageComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process: ', { formParams });
     try {
-      const encodeMessage = await sdk.requestEncodeMessage(formParams);
+      //TODO change as [requestType]
+      const encodeMessage = await sdk.encode(formParams);
       setRequestResult(encodeMessage);
       if (enableLogs) console.log({ encodeMessage });
     } catch (error) {

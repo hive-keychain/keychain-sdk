@@ -61,7 +61,8 @@ const RequestUpdateProposalVoteComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const updateProposalVote = await sdk.requestUpdateProposalVote(
+      //TODO change as [requestType]
+      const updateProposalVote = await sdk.updateProposalVote(
         formParams.data,
         formParams.options,
       );

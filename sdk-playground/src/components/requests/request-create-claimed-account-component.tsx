@@ -64,7 +64,8 @@ const RequestCreateClaimedAccountComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const createClaimedAccount = await sdk.requestCreateClaimedAccount(
+      //TODO change as [requestType]
+      const createClaimedAccount = await sdk.createClaimedAccount(
         formParams.data,
         formParams.options,
       );

@@ -57,10 +57,8 @@ const RequestTransferComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const transfer = await sdk.requestTransfer(
-        formParams.data,
-        formParams.options,
-      );
+      //TODO change as [requestType]
+      const transfer = await sdk.transfer(formParams.data, formParams.options);
       setRequestResult(transfer);
       if (enableLogs) console.log({ transfer });
     } catch (error) {

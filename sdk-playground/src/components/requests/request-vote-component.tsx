@@ -55,10 +55,8 @@ const RequestVoteComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const signBuffer = await sdk.requestVote(
-        formParams.data,
-        formParams.options,
-      );
+      //TODO change as [requestType]
+      const signBuffer = await sdk.vote(formParams.data, formParams.options);
       setRequestResult(signBuffer);
       if (enableLogs) console.log({ signBuffer });
     } catch (error) {

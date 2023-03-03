@@ -34,7 +34,8 @@ const RequestVerifyKeyComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process: ', { formParams });
     try {
-      const verifyKey = await sdk.requestVerifyKey(formParams);
+      //TODO change as [requestType]
+      const verifyKey = await sdk.decode(formParams);
       setRequestResult(verifyKey);
       if (enableLogs) console.log({ verifyKey });
     } catch (error) {

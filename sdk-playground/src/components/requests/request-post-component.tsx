@@ -71,7 +71,8 @@ const RequestPostComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const post = await sdk.requestPost(formParams.data, formParams.options);
+      //TODO change as [requestType]
+      const post = await sdk.post(formParams.data, formParams.options);
       setRequestResult(post);
       if (enableLogs) console.log({ post });
     } catch (error) {

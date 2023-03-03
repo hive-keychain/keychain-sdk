@@ -238,7 +238,7 @@ export class KeychainSDK {
    * @param {String} data.message Message to be encrypted, i.e: "#To encrypt message"
    * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
    */
-  requestEncodeMessage = async (
+  encode = async (
     data: ExcludeCommonParams<RequestEncode>,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -281,7 +281,7 @@ export class KeychainSDK {
    * @param {String} data.message Message to be decoded by the account
    * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
    */
-  requestVerifyKey = async (
+  decode = async (
     data: ExcludeCommonParams<RequestDecode>,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -328,7 +328,7 @@ export class KeychainSDK {
    * @param {String | undefined} data.title Override "Sign message" title
    * @param {String| undefined} options.rpc Override user's RPC settings
    */
-  requestSignBuffer = async (
+  signBuffer = async (
     data: ExcludeCommonParams<RequestSignBuffer>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -379,7 +379,7 @@ export class KeychainSDK {
    * @param {number} data.weight Weight of the authority
    * @param {String | undefined} options.rpc Override user's RPC settings
    */
-  requestAddAccountAuthority = async (
+  addAccountAuthority = async (
     data: ExcludeCommonParams<RequestAddAccountAuthority>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -428,7 +428,7 @@ export class KeychainSDK {
    * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'
    * @param {String |  undefined} options.rpc Override user's RPC settings
    */
-  requestRemoveAccountAuthority = async (
+  removeAccountAuthority = async (
     data: ExcludeCommonParams<RequestRemoveAccountAuthority>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -478,7 +478,7 @@ export class KeychainSDK {
    * @param {number} data.weight Weight of the key authority
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestAddKeyAuthority = async (
+  addKeyAuthority = async (
     data: ExcludeCommonParams<RequestAddKeyAuthority>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -527,7 +527,7 @@ export class KeychainSDK {
    * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'.
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestRemoveKeyAuthority = async (
+  removeKeyAuthority = async (
     data: ExcludeCommonParams<RequestRemoveKeyAuthority>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -584,7 +584,7 @@ export class KeychainSDK {
    * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestBroadcast = async (
+  broadcast = async (
     data: ExcludeCommonParams<RequestBroadcast>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -648,7 +648,7 @@ export class KeychainSDK {
    * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestSignTx = async (
+  signTx = async (
     data: ExcludeCommonParams<RequestSignTx>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -683,7 +683,7 @@ export class KeychainSDK {
    * @param {String} data.key Type of key. Can be 'Posting','Active' or 'Memo'
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestSignedCall = async (
+  signedCall = async (
     data: ExcludeCommonParams<RequestSignedCall>,
     options: KeychainOptions,
   ): Promise<string> => {
@@ -740,7 +740,7 @@ export class KeychainSDK {
    * @param {String} data.comment_options Options attached to the blog post, must be stringyfied. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it. Note: Must be the same as data.permlink if is a Post.
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestPost = async (
+  post = async (
     data: ExcludeCommonParams<RequestPost>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -794,7 +794,7 @@ export class KeychainSDK {
    * @param {Number} data.weight Weight of the vote, comprised between -10,000 (-100%) and 10,000 (100%)
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestVote = async (
+  vote = async (
     data: ExcludeCommonParams<RequestVote>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -850,7 +850,7 @@ export class KeychainSDK {
    * @param {String} data.display_msg Message to display to explain to the user what this broadcast is about
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestCustomJson = async (
+  custom = async (
     data: ExcludeCommonParams<RequestCustomJSON>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -906,7 +906,7 @@ export class KeychainSDK {
    * @param {String} data.currency Asset's symbol to transfer i.e: 'HIVE', 'HBD'.
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestTransfer = async (
+  transfer = async (
     data: ExcludeCommonParams<RequestTransfer>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -960,7 +960,7 @@ export class KeychainSDK {
    * @param {String} data.currency Token symbol to be sent, i.e: 'LEO'.
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestSendToken = async (
+  sendToken = async (
     data: ExcludeCommonParams<RequestSendToken>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1011,7 +1011,7 @@ export class KeychainSDK {
    * @param {String} data.unit HP or VESTS. (For VESTS must be greater than minimum).
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestDelegation = async (
+  delegation = async (
     data: ExcludeCommonParams<RequestDelegation>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1059,7 +1059,7 @@ export class KeychainSDK {
    * @param {boolean} data.vote Set to true to vote for the witness, false to unvote
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestWitnessVote = async (
+  witnessVote = async (
     data: ExcludeCommonParams<RequestWitnessVote>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1104,7 +1104,7 @@ export class KeychainSDK {
    * @param {String} data.proxy Account to become the proxy. Empty string ('') to remove a proxy
    * @param {String | undefined} options.rpc Override user's RPC settings
    */
-  requestProxy = async (
+  proxy = async (
     data: ExcludeCommonParams<RequestProxy>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1150,7 +1150,7 @@ export class KeychainSDK {
    * @param {String} data.hive Amount of HIVE to be powered up, requires 3 decimals, i.e: '1.000'.
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestPowerUp = async (
+  powerUp = async (
     data: ExcludeCommonParams<RequestPowerUp>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1195,7 +1195,7 @@ export class KeychainSDK {
    * @param {String} data.hive_power Amount of HP(hive power), to be powered down
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestPowerDown = async (
+  powerDown = async (
     data: ExcludeCommonParams<RequestPowerDown>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1230,7 +1230,7 @@ export class KeychainSDK {
    * @param {String} data.memo public memo key
    * @param {String | undefined} options.rpc Override user's RPC settings
    */
-  requestCreateClaimedAccount = async (
+  createClaimedAccount = async (
     data: ExcludeCommonParams<RequestCreateClaimedAccount>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1272,7 +1272,7 @@ export class KeychainSDK {
    * @param {String} data.extensions Stringified Array of extensions
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestCreateProposal = async (
+  createProposal = async (
     data: ExcludeCommonParams<RequestCreateProposal>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1310,7 +1310,7 @@ export class KeychainSDK {
    * @param {String} data.extensions Stringified Array of extensions
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestRemoveProposal = async (
+  removeProposal = async (
     data: ExcludeCommonParams<RequestRemoveProposal>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1344,7 +1344,7 @@ export class KeychainSDK {
    * @param {String} data.extensions Stringified Array of extensions
    * @param {String} options.rpc Override user's RPC settings
    */
-  requestUpdateProposalVote = async (
+  updateProposalVote = async (
     data: ExcludeCommonParams<RequestUpdateProposalVote>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1393,7 +1393,7 @@ export class KeychainSDK {
    * @param {String} data.username username of the account to be added
    * @param {Object} data.keys private keys of the account : {active:'...',posting:'...',memo:'...'}. At least one must be specified.
    */
-  requestAddAccount = async (
+  addAccount = async (
     data: ExcludeCommonParams<RequestAddAccount>,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1437,7 +1437,7 @@ export class KeychainSDK {
    * @param {Boolean} data.collaterized true to convert HIVE to HBD. false to convert HBD to HIVE.
    * @param {String | undefined} optins.rpc  Override user's RPC settings
    */
-  requestConversion = async (
+  convert = async (
     data: ExcludeCommonParams<RequestConvert>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
@@ -1493,7 +1493,7 @@ export class KeychainSDK {
    * @param {Number} data.executions The times the recurrent payment will be executed - minimum 2.
    * @param {String| undefined} options.rpc Override user's RPC settings
    */
-  requestRecurrentTransfer = async (
+  recurrentTransfer = async (
     data: ExcludeCommonParams<RequestRecurrentTransfer>,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {

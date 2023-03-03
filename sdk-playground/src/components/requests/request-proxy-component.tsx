@@ -53,7 +53,8 @@ const RequestProxyComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const proxy = await sdk.requestProxy(formParams.data, formParams.options);
+      //TODO change as [requestType]
+      const proxy = await sdk.proxy(formParams.data, formParams.options);
       setRequestResult(proxy);
       if (enableLogs) console.log({ proxy });
     } catch (error) {

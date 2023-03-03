@@ -36,49 +36,49 @@ import RequestAddAccountComponent from './requests/request-add-account-component
 import RequestConversionComponent from './requests/request-conversion-component';
 import RequestRecurrentTransferComponent from './requests/request-recurrent-transfer-component';
 import { CopyBlock, solarizedDark } from 'react-code-blocks';
-
-export enum SDKRequestType {
-  //TODO change to uppercase on left.
-  //REQUEST_LOGIN = 'REQUEST_LOGIN',
-  REQUEST_LOGIN = 'REQUEST_LOGIN',
-  Request_Encode_Message = 'Request_Encode_Message',
-  Request_Verify_Key = 'Request_Verify_Key',
-  Request_Sign_Buffer = 'Request_Sign_Buffer',
-  Request_Add_Account_Authority = 'Request_Add_Account_Authority',
-  Request_Remove_Account_Authority = 'Request_Remove_Account_Authority',
-  Request_Add_Key_Authority = 'Request_Add_Key_Authority',
-  Request_Remove_Key_Authority = 'Request_Remove_Key_Authority',
-  Request_Broadcast = 'Request_Broadcast',
-  Request_Sign_Tx = 'Request_Sign_Tx',
-  Request_Post = 'Request_Post',
-  Request_Vote = 'Request_Vote',
-  Request_Custom_Json = 'Request_Custom_Json',
-  Request_Transfer = 'Request_Transfer',
-  Request_Send_Token = 'Request_Send_Token',
-  Request_Delegation = 'Request_Delegation',
-  Request_Witness_Vote = 'Request_Witness_Vote',
-  Request_Proxy = 'Request_Proxy',
-  Request_Power_Up = 'Request_Power_Up',
-  Request_Power_Down = 'Request_Power_Down',
-  Request_Create_Claimed_Account = 'Request_Create_Claimed_Account',
-  Request_Create_Proposal = 'Request_Create_Proposal',
-  Request_Remove_Proposal = 'Request_Remove_Proposal',
-  Request_Update_Proposal_Vote = 'Request_Update_Proposal_Vote',
-  Request_Add_Account = 'Request_Add_Account',
-  Request_Conversion = 'Request_Conversion',
-  Request_Recurrent_Transfer = 'Request_Recurrent_Transfer',
-}
+import { KeychainRequestTypes } from 'hive-keychain-commons';
+//TODO clean up
+// export enum SDKRequestType {
+//   //TODO change to uppercase on both sides.
+//   //REQUEST_LOGIN = 'REQUEST_LOGIN',
+//   REQUEST_LOGIN = 'REQUEST_LOGIN',
+//   Request_Encode_Message = 'Request_Encode_Message',
+//   Request_Verify_Key = 'Request_Verify_Key',
+//   Request_Sign_Buffer = 'Request_Sign_Buffer',
+//   Request_Add_Account_Authority = 'Request_Add_Account_Authority',
+//   Request_Remove_Account_Authority = 'Request_Remove_Account_Authority',
+//   Request_Add_Key_Authority = 'Request_Add_Key_Authority',
+//   Request_Remove_Key_Authority = 'Request_Remove_Key_Authority',
+//   Request_Broadcast = 'Request_Broadcast',
+//   Request_Sign_Tx = 'Request_Sign_Tx',
+//   Request_Post = 'Request_Post',
+//   Request_Vote = 'Request_Vote',
+//   Request_Custom_Json = 'Request_Custom_Json',
+//   Request_Transfer = 'Request_Transfer',
+//   Request_Send_Token = 'Request_Send_Token',
+//   Request_Delegation = 'Request_Delegation',
+//   Request_Witness_Vote = 'Request_Witness_Vote',
+//   Request_Proxy = 'Request_Proxy',
+//   Request_Power_Up = 'Request_Power_Up',
+//   Request_Power_Down = 'Request_Power_Down',
+//   Request_Create_Claimed_Account = 'Request_Create_Claimed_Account',
+//   Request_Create_Proposal = 'Request_Create_Proposal',
+//   Request_Remove_Proposal = 'Request_Remove_Proposal',
+//   Request_Update_Proposal_Vote = 'Request_Update_Proposal_Vote',
+//   Request_Add_Account = 'Request_Add_Account',
+//   Request_Conversion = 'Request_Conversion',
+//   Request_Recurrent_Transfer = 'Request_Recurrent_Transfer',
+// }
 
 //TODO
 // 	- remove select on main -> change as something as the algolia search
 //   - showing all categories if nothing to search
 
 //TODO move to utils maybe?
-const fromCodeToText = (params: {}) => {
-  return `
-try {\n
-    const params = ${JSON.stringify(params)};\n
-    const encodeMessage = await sdk.requestEncodeMessage(formParams);\n
+const fromCodeToText = (formParams: {}) => {
+  return `try {
+    const paramsStringifyed = ${JSON.stringify(formParams)};
+    const encodeMessage = await sdk.requestEncodeMessage(formParams);
     setRequestResult(encodeMessage);
     if (enableLogs) console.log({ encodeMessage });
   } catch (error) {
@@ -107,24 +107,28 @@ const RequestSelectorComponent = ({
   const [requestCard, setRequestCard] = useState<ReactNode>();
 
   useEffect(() => {
+    if (!request) return;
     switch (request) {
-      case SDKRequestType.REQUEST_LOGIN:
-        setRequestCard(
-          <RequestLoginComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
-        break;
-      case SDKRequestType.Request_Encode_Message:
+      //TODO ask quentin how to solve this as requestLogin do not exist in
+      //    hive_commons -> export declare enum KeychainRequestTypes
+      // case SDKRequestType.REQUEST_LOGIN:
+      //   setRequestCard(
+      //     <RequestLoginComponent
+      //       setRequestResult={setRequestResult}
+      //       enableLogs={enableLogs}
+      //     />,
+      //   );
+      //   break;
+      case KeychainRequestTypes.encode:
         setRequestCard(
           <RequestEncodeMessageComponent
             setRequestResult={setRequestResult}
             enableLogs={enableLogs}
+            requestType={request}
           />,
         );
         break;
-      case SDKRequestType.Request_Verify_Key:
+      case KeychainRequestTypes.decode:
         setRequestCard(
           <RequestVerifyKeyComponent
             setRequestResult={setRequestResult}
@@ -132,7 +136,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Sign_Buffer:
+      case KeychainRequestTypes.signBuffer:
         setRequestCard(
           <RequestSignBufferComponent
             setRequestResult={setRequestResult}
@@ -140,7 +144,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Add_Account_Authority:
+      case KeychainRequestTypes.addAccountAuthority:
         setRequestCard(
           <RequestAddAccountAuthorityComponent
             setRequestResult={setRequestResult}
@@ -148,7 +152,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Remove_Account_Authority:
+      case KeychainRequestTypes.removeAccountAuthority:
         setRequestCard(
           <RequestRemoveAccountAuthorityComponent
             setRequestResult={setRequestResult}
@@ -156,7 +160,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Add_Key_Authority:
+      case KeychainRequestTypes.addKeyAuthority:
         setRequestCard(
           <RequestAddKeyAuthorityComponent
             setRequestResult={setRequestResult}
@@ -164,7 +168,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Remove_Key_Authority:
+      case KeychainRequestTypes.removeKeyAuthority:
         setRequestCard(
           <RequestRemoveKeyAuthorityComponent
             setRequestResult={setRequestResult}
@@ -172,7 +176,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Broadcast:
+      case KeychainRequestTypes.broadcast:
         setRequestCard(
           <RequestBroadcastComponent
             setRequestResult={setRequestResult}
@@ -180,7 +184,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Sign_Tx:
+      case KeychainRequestTypes.signTx:
         setRequestCard(
           <RequestSignTxComponent
             setRequestResult={setRequestResult}
@@ -188,7 +192,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Post:
+      case KeychainRequestTypes.post:
         setRequestCard(
           <RequestPostComponent
             setRequestResult={setRequestResult}
@@ -196,7 +200,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Vote:
+      case KeychainRequestTypes.vote:
         setRequestCard(
           <RequestVoteComponent
             setRequestResult={setRequestResult}
@@ -204,7 +208,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Custom_Json:
+      case KeychainRequestTypes.custom:
         setRequestCard(
           <RequestCustomJsonComponent
             setRequestResult={setRequestResult}
@@ -212,7 +216,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Transfer:
+      case KeychainRequestTypes.transfer:
         setRequestCard(
           <RequestTransferComponent
             setRequestResult={setRequestResult}
@@ -220,7 +224,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Send_Token:
+      case KeychainRequestTypes.sendToken:
         setRequestCard(
           <RequestSendTokenComponent
             setRequestResult={setRequestResult}
@@ -228,7 +232,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Delegation:
+      case KeychainRequestTypes.delegation:
         setRequestCard(
           <RequestDelegationComponent
             setRequestResult={setRequestResult}
@@ -236,7 +240,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Witness_Vote:
+      case KeychainRequestTypes.witnessVote:
         setRequestCard(
           <RequestWitnessVoteComponent
             setRequestResult={setRequestResult}
@@ -244,7 +248,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Proxy:
+      case KeychainRequestTypes.proxy:
         setRequestCard(
           <RequestProxyComponent
             setRequestResult={setRequestResult}
@@ -252,7 +256,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Power_Up:
+      case KeychainRequestTypes.powerUp:
         setRequestCard(
           <RequestPowerUpComponent
             setRequestResult={setRequestResult}
@@ -260,7 +264,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Power_Down:
+      case KeychainRequestTypes.powerDown:
         setRequestCard(
           <RequestPowerDownComponent
             setRequestResult={setRequestResult}
@@ -268,7 +272,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Create_Claimed_Account:
+      case KeychainRequestTypes.createClaimedAccount:
         setRequestCard(
           <RequestCreateClaimedAccountComponent
             setRequestResult={setRequestResult}
@@ -276,7 +280,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Create_Proposal:
+      case KeychainRequestTypes.createProposal:
         setRequestCard(
           <RequestCreateProposalComponent
             setRequestResult={setRequestResult}
@@ -284,7 +288,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Remove_Proposal:
+      case KeychainRequestTypes.removeProposal:
         setRequestCard(
           <RequestRemoveProposalComponent
             setRequestResult={setRequestResult}
@@ -292,7 +296,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Update_Proposal_Vote:
+      case KeychainRequestTypes.updateProposalVote:
         setRequestCard(
           <RequestUpdateProposalVoteComponent
             setRequestResult={setRequestResult}
@@ -300,7 +304,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Add_Account:
+      case KeychainRequestTypes.addAccount:
         setRequestCard(
           <RequestAddAccountComponent
             setRequestResult={setRequestResult}
@@ -308,7 +312,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Conversion:
+      case KeychainRequestTypes.convert:
         setRequestCard(
           <RequestConversionComponent
             setRequestResult={setRequestResult}
@@ -316,7 +320,7 @@ const RequestSelectorComponent = ({
           />,
         );
         break;
-      case SDKRequestType.Request_Recurrent_Transfer:
+      case KeychainRequestTypes.recurrentTransfer:
         setRequestCard(
           <RequestRecurrentTransferComponent
             setRequestResult={setRequestResult}
@@ -350,17 +354,19 @@ const RequestSelectorComponent = ({
                   aria-label="Default select example"
                   onChange={handleChange}>
                   <option>Please select a Request</option>
-                  {(Object.keys(SDKRequestType) as Array<SDKRequestType>).map(
-                    (_type) => {
-                      return (
-                        <option
-                          value={SDKRequestType[_type]}
-                          key={`${_type}-rq-type`}>
-                          {_type.split('_').join(' ')}
-                        </option>
-                      );
-                    },
-                  )}
+                  {(
+                    Object.keys(
+                      KeychainRequestTypes,
+                    ) as Array<KeychainRequestTypes>
+                  ).map((_type) => {
+                    return (
+                      <option
+                        value={KeychainRequestTypes[_type]}
+                        key={`${_type}-rq-type`}>
+                        {_type}
+                      </option>
+                    );
+                  })}
                 </Form.Select>
               </Form>
               <Container className="mt-2">

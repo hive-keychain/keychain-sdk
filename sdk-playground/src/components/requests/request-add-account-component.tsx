@@ -48,7 +48,8 @@ const RequestAddAccountComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const addAccount = await sdk.requestAddAccount(formParams);
+      //TODO change as [requestType]
+      const addAccount = await sdk.addAccount(formParams);
       setRequestResult(addAccount);
       if (enableLogs) console.log({ addAccount });
     } catch (error) {

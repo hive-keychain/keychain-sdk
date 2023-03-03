@@ -63,7 +63,8 @@ const RequestAddAccountAuthorityComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const addAccountAuthority = await sdk.requestAddAccountAuthority(
+      //TODO change as [requestType]
+      const addAccountAuthority = await sdk.addAccountAuthority(
         formParams.data,
         formParams.options,
       );

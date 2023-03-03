@@ -57,7 +57,8 @@ const RequestWitnessVoteComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      const witnessVote = await sdk.requestWitnessVote(
+      //TODO change as [requestType]
+      const witnessVote = await sdk.witnessVote(
         formParams.data,
         formParams.options,
       );
