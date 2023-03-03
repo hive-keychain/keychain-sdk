@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
   KeychainKeyTypes,
-  KeychainRequestTypes,
   RequestEncode,
 } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
@@ -11,7 +10,7 @@ import { Button, Card, Form, InputGroup } from 'react-bootstrap';
 type Props = {
   setRequestResult: any;
   enableLogs: boolean;
-  requestType: KeychainRequestTypes;
+  setFormParamsToShow: React.Dispatch<React.SetStateAction<{}>>; //TODO check if need proper types.
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestEncode> = {
@@ -24,11 +23,15 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestEncode> = {
 const RequestEncodeMessageComponent = ({
   setRequestResult,
   enableLogs,
-  requestType,
+  setFormParamsToShow,
 }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] =
     useState<ExcludeCommonParams<RequestEncode>>(DEFAULT_PARAMS);
+
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
 
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;

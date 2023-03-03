@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
@@ -11,6 +11,7 @@ import { KeychainOptions } from '../request-selector-component';
 type Props = {
   setRequestResult: any;
   enableLogs: boolean;
+  setFormParamsToShow: React.Dispatch<React.SetStateAction<{}>>; //TODO check if need proper types.
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestAddAccountAuthority> = {
@@ -27,6 +28,7 @@ const undefinedParamsToValidate = ['']; //none to check
 const RequestAddAccountAuthorityComponent = ({
   setRequestResult,
   enableLogs,
+  setFormParamsToShow,
 }: Props) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
@@ -36,6 +38,10 @@ const RequestAddAccountAuthorityComponent = ({
     data: DEFAULT_PARAMS,
     options: DEFAULT_OPTIONS,
   });
+
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
 
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;

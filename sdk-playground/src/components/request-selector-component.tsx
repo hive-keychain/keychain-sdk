@@ -37,6 +37,7 @@ import RequestConversionComponent from './requests/request-conversion-component'
 import RequestRecurrentTransferComponent from './requests/request-recurrent-transfer-component';
 import { CopyBlock, solarizedDark } from 'react-code-blocks';
 import { KeychainRequestTypes } from 'hive-keychain-commons';
+import CodeTester from './code-tester/code-tester';
 //TODO clean up
 // export enum SDKRequestType {
 //   //TODO change to uppercase on both sides.
@@ -75,20 +76,38 @@ import { KeychainRequestTypes } from 'hive-keychain-commons';
 //   - showing all categories if nothing to search
 
 //TODO move to utils maybe?
-const fromCodeToText = (formParams: {}) => {
+
+//TODO move to somewhere
+const fromCodeToText = (formParams: {}, requestType: KeychainRequestTypes) => {
+  //TODO fix this validation
+  if (!requestType) return;
+
+  //TODO ideas.
+  //  - check if data/options to be sure the form of paramsAsObject.
+  //    i.e: when having data & options, must form:
+  //    const requestAddAccountAuthority = await sdk.addAccountAuthority(formParamsAsObject.data as ExcludeCommonParams<RequestAddAccountAuthority>, formParamsAsObject.options);
+  const capitalized =
+    requestType[0].toUpperCase() + requestType.substring(1, requestType.length);
+  const requestCapitalizedName = `Request${capitalized}`;
+  const requestConstName = `request${capitalized}`;
   return `try {
-    const paramsStringifyed = ${JSON.stringify(formParams)};
-    const encodeMessage = await sdk.requestEncodeMessage(formParams);
-    setRequestResult(encodeMessage);
-    if (enableLogs) console.log({ encodeMessage });
+    const sdk = new KeychainSDK(window);
+    const formParamsAsObject = ${JSON.stringify(formParams)};
+    const ${requestConstName} = await sdk.${requestType}(formParamsAsObject as ExcludeCommonParams<${requestCapitalizedName}>);
+    console.log({ ${requestConstName} });
   } catch (error) {
-    setRequestResult(error);
+    console.log({ error });
   }`;
 };
+//END move to somewhere
 
 export interface KeychainOptions {
   rpc?: string;
 }
+
+// export type CommonProps = {
+//   formParams: KeychainRequestTypes;
+// };
 
 type Props = {
   setRequestResult: any;
@@ -105,6 +124,7 @@ const RequestSelectorComponent = ({
 }: Props) => {
   const [request, setRequest] = useState<string>();
   const [requestCard, setRequestCard] = useState<ReactNode>();
+  const [formParamsToShow, setFormParamsToShow] = useState({}); //TODO need types?
 
   useEffect(() => {
     if (!request) return;
@@ -124,7 +144,7 @@ const RequestSelectorComponent = ({
           <RequestEncodeMessageComponent
             setRequestResult={setRequestResult}
             enableLogs={enableLogs}
-            requestType={request}
+            setFormParamsToShow={setFormParamsToShow}
           />,
         );
         break;
@@ -149,6 +169,7 @@ const RequestSelectorComponent = ({
           <RequestAddAccountAuthorityComponent
             setRequestResult={setRequestResult}
             enableLogs={enableLogs}
+            setFormParamsToShow={setFormParamsToShow}
           />,
         );
         break;
@@ -380,7 +401,10 @@ const RequestSelectorComponent = ({
             <Card.Header as={'h4'}>Code Sample</Card.Header>
             <Card.Body>
               <CopyBlock
-                text={fromCodeToText({ one: 1, two: 2 })} //JSON.stringify([1, 2, 3])
+                text={fromCodeToText(
+                  formParamsToShow,
+                  request as KeychainRequestTypes,
+                )} //JSON.stringify([1, 2, 3])
                 language={'typescript'}
                 showLineNumbers={false}
                 startingLineNumber={1}
@@ -391,6 +415,10 @@ const RequestSelectorComponent = ({
           </Card>
         </Col>
       </Row>
+      {/* //TODO to remove this? ask cedric. */}
+      {/* TESTING to have executable & tested code */}
+      <CodeTester />
+      {/* END testing */}
     </Container>
   );
 };
