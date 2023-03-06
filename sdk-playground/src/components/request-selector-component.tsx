@@ -56,6 +56,8 @@ type Props = {
   requestResult: any;
   enabledKeychain: boolean;
   enableLogs: boolean;
+  request: any;
+  setRequest: any;
 };
 
 const RequestSelectorComponent = ({
@@ -63,8 +65,9 @@ const RequestSelectorComponent = ({
   requestResult,
   enabledKeychain,
   enableLogs,
+  request,
+  setRequest,
 }: Props) => {
-  const [request, setRequest] = useState<string>();
   const [requestCard, setRequestCard] = useState<ReactNode>();
   const [formParamsToShow, setFormParamsToShow] = useState({});
   const commonProps: CommonProps = {
@@ -190,7 +193,8 @@ const RequestSelectorComponent = ({
           <Card className="d-flex justify-content-center">
             <Card.Header as={'h4'}>SDK Playground</Card.Header>
             <Card.Body>
-              <Form>
+              {/* //TODO remove when final clean up */}
+              {/* <Form>
                 <Form.Select
                   disabled={!enabledKeychain}
                   aria-label="Default select example"
@@ -214,7 +218,7 @@ const RequestSelectorComponent = ({
                     );
                   })}
                 </Form.Select>
-              </Form>
+              </Form> */}
               <Container className="mt-2">
                 {requestCard ? requestCard : null}
               </Container>

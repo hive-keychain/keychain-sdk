@@ -927,7 +927,7 @@ export class KeychainSDK {
             }
           },
           data.enforce,
-          options.rpc ?? this.options?.rpc,
+          options.rpc ? options.rpc : this.options?.rpc,
         );
       } catch (error) {
         throw error;

@@ -62,7 +62,6 @@ const RequestTransferComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      //TODO change as [requestType]
       const transfer = await sdk.transfer(formParams.data, formParams.options);
       setRequestResult(transfer);
       if (enableLogs) console.log({ transfer });
@@ -125,6 +124,7 @@ const RequestTransferComponent = ({
             <Form.Check
               className="ms-5"
               type="checkbox"
+              title="If set to true, user cannot chose to make the transfer from another account"
               name="enforce"
               value={formParams.data.enforce ? 'true' : 'false'}
               onChange={(e) =>

@@ -32,28 +32,7 @@ const CodeTester = (props: Props) => {
     e.preventDefault();
     //////////////////////
     //copy & paste here///
-    try {
-      const sdk = new KeychainSDK(window);
-      const formParamsAsObject = {
-        data: {
-          username: 'keychain.tests',
-          to: 'theghost1980',
-          amount: '1.000',
-          currency: 'HIVE',
-          memo: '#Encrypted memo sample',
-          recurrence: 24,
-          executions: 2,
-        },
-        options: {},
-      };
-      const requestRecurrentTransfer = await sdk.recurrentTransfer(
-        formParamsAsObject.data as ExcludeCommonParams<RequestRecurrentTransfer>,
-        formParamsAsObject.options,
-      );
-      console.log({ requestRecurrentTransfer });
-    } catch (error) {
-      console.log({ error });
-    }
+
     //end copy/paste//////
     //////////////////////
   };
