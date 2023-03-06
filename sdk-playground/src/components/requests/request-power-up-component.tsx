@@ -1,13 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import { ExcludeCommonParams, RequestPowerUp } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup, Stack } from 'react-bootstrap';
-import { KeychainOptions } from '../request-selector-component';
+import { CommonProps, KeychainOptions } from '../request-selector-component';
 
-type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
-};
+type Props = {};
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestPowerUp> = {
   username: 'keychain.tests',
@@ -18,7 +15,11 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
-const RequestPowerUpComponent = ({ setRequestResult, enableLogs }: Props) => {
+const RequestPowerUpComponent = ({
+  setRequestResult,
+  enableLogs,
+  setFormParamsToShow,
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestPowerUp>;
@@ -27,6 +28,10 @@ const RequestPowerUpComponent = ({ setRequestResult, enableLogs }: Props) => {
     data: DEFAULT_PARAMS,
     options: DEFAULT_OPTIONS,
   });
+
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
 
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
@@ -54,7 +59,6 @@ const RequestPowerUpComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      //TODO change as [requestType]
       const powerUp = await sdk.powerUp(formParams.data, formParams.options);
       setRequestResult(powerUp);
       if (enableLogs) console.log({ powerUp });

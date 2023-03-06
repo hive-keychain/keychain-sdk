@@ -1,24 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
   RequestCreateProposal,
 } from 'hive-keychain-commons';
-import { Button, Card, Form, InputGroup, Stack } from 'react-bootstrap';
-import { KeychainOptions } from '../request-selector-component';
+import { Button, Card, Form, InputGroup } from 'react-bootstrap';
+import { CommonProps, KeychainOptions } from '../request-selector-component';
 
-type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
-};
+type Props = {};
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestCreateProposal> = {
   username: 'keychain.tests',
   receiver: 'keychain.tests',
   subject: 'The New proposal title',
   permlink: 'proposal-keychain-dev-permlink',
-  start: '2023-02-25',
-  end: '2024-02-25',
+  start: '2023-02-25T00:00:00',
+  end: '2024-02-25T00:00:00',
   daily_pay: '390.000 HBD',
   extensions: JSON.stringify([]),
 };
@@ -29,7 +26,8 @@ const undefinedParamsToValidate = ['rpc'];
 const RequestCreateProposalComponent = ({
   setRequestResult,
   enableLogs,
-}: Props) => {
+  setFormParamsToShow,
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestCreateProposal>;
@@ -38,6 +36,10 @@ const RequestCreateProposalComponent = ({
     data: DEFAULT_PARAMS,
     options: DEFAULT_OPTIONS,
   });
+
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
 
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
@@ -65,9 +67,6 @@ const RequestCreateProposalComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      formParams.data['start'] = `${formParams.data['start']}T00:00:00`;
-      formParams.data['end'] = `${formParams.data['end']}T00:00:00`;
-      //TODO change as [requestType]
       const createProposal = await sdk.createProposal(
         formParams.data,
         formParams.options,
@@ -127,9 +126,8 @@ const RequestCreateProposalComponent = ({
           <InputGroup className="mb-3">
             <InputGroup.Text>Start</InputGroup.Text>
             <Form.Control
-              type={'date'}
-              title="Starting date"
-              placeholder="Starting date"
+              title="Starting date, requires format: YYYY-DD-MMTHH:MM:SS"
+              placeholder="Starting date i.e: 2023-02-25T00:00:00"
               name="start"
               value={formParams.data.start}
               onChange={handleFormParams}
@@ -138,9 +136,8 @@ const RequestCreateProposalComponent = ({
           <InputGroup className="mb-3">
             <InputGroup.Text>End</InputGroup.Text>
             <Form.Control
-              type={'date'}
-              title="Ending date"
-              placeholder="Ending date"
+              title="Ending date, requires format: YYYY-DD-MMTHH:MM:SS"
+              placeholder="Ending date i.e: 2024-02-25T00:00:00"
               name="end"
               value={formParams.data.end}
               onChange={handleFormParams}

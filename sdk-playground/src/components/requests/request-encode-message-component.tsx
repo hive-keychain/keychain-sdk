@@ -6,12 +6,9 @@ import {
   RequestEncode,
 } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
+import { CommonProps } from '../request-selector-component';
 
-type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
-  setFormParamsToShow: React.Dispatch<React.SetStateAction<{}>>; //TODO check if need proper types.
-};
+type Props = {};
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestEncode> = {
   username: '',
@@ -24,7 +21,7 @@ const RequestEncodeMessageComponent = ({
   setRequestResult,
   enableLogs,
   setFormParamsToShow,
-}: Props) => {
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] =
     useState<ExcludeCommonParams<RequestEncode>>(DEFAULT_PARAMS);

@@ -1,13 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import { ExcludeCommonParams, RequestSendToken } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
-import { KeychainOptions } from '../request-selector-component';
+import { CommonProps, KeychainOptions } from '../request-selector-component';
 
-type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
-};
+type Props = {};
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestSendToken> = {
   username: 'keychain.tests',
@@ -20,7 +17,11 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['rpc'];
 
-const RequestSendTokenComponent = ({ setRequestResult, enableLogs }: Props) => {
+const RequestSendTokenComponent = ({
+  setRequestResult,
+  enableLogs,
+  setFormParamsToShow,
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestSendToken>;
@@ -29,6 +30,10 @@ const RequestSendTokenComponent = ({ setRequestResult, enableLogs }: Props) => {
     data: DEFAULT_PARAMS,
     options: DEFAULT_OPTIONS,
   });
+
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
 
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
@@ -56,7 +61,6 @@ const RequestSendTokenComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      //TODO change as [requestType]
       const sendToken = await sdk.sendToken(
         formParams.data,
         formParams.options,

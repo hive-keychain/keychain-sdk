@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
@@ -6,12 +6,9 @@ import {
   RequestSignBuffer,
 } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
-import { KeychainOptions } from '../request-selector-component';
+import { CommonProps, KeychainOptions } from '../request-selector-component';
 
-type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
-};
+type Props = {};
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestSignBuffer> = {
   username: undefined,
@@ -26,7 +23,8 @@ const undefinedParamsToValidate = ['username', 'title', 'rpc'];
 const RequestSignBufferComponent = ({
   setRequestResult,
   enableLogs,
-}: Props) => {
+  setFormParamsToShow,
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestSignBuffer>;
@@ -35,6 +33,10 @@ const RequestSignBufferComponent = ({
     data: DEFAULT_PARAMS,
     options: DEFAULT_OPTIONS,
   });
+
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
 
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
@@ -62,7 +64,6 @@ const RequestSignBufferComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      //TODO change as [requestType]
       const signBuffer = await sdk.signBuffer(
         formParams.data,
         formParams.options,

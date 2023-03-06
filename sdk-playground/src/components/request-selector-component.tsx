@@ -38,76 +38,18 @@ import RequestRecurrentTransferComponent from './requests/request-recurrent-tran
 import { CopyBlock, solarizedDark } from 'react-code-blocks';
 import { KeychainRequestTypes } from 'hive-keychain-commons';
 import CodeTester from './code-tester/code-tester';
-//TODO clean up
-// export enum SDKRequestType {
-//   //TODO change to uppercase on both sides.
-//   //REQUEST_LOGIN = 'REQUEST_LOGIN',
-//   REQUEST_LOGIN = 'REQUEST_LOGIN',
-//   Request_Encode_Message = 'Request_Encode_Message',
-//   Request_Verify_Key = 'Request_Verify_Key',
-//   Request_Sign_Buffer = 'Request_Sign_Buffer',
-//   Request_Add_Account_Authority = 'Request_Add_Account_Authority',
-//   Request_Remove_Account_Authority = 'Request_Remove_Account_Authority',
-//   Request_Add_Key_Authority = 'Request_Add_Key_Authority',
-//   Request_Remove_Key_Authority = 'Request_Remove_Key_Authority',
-//   Request_Broadcast = 'Request_Broadcast',
-//   Request_Sign_Tx = 'Request_Sign_Tx',
-//   Request_Post = 'Request_Post',
-//   Request_Vote = 'Request_Vote',
-//   Request_Custom_Json = 'Request_Custom_Json',
-//   Request_Transfer = 'Request_Transfer',
-//   Request_Send_Token = 'Request_Send_Token',
-//   Request_Delegation = 'Request_Delegation',
-//   Request_Witness_Vote = 'Request_Witness_Vote',
-//   Request_Proxy = 'Request_Proxy',
-//   Request_Power_Up = 'Request_Power_Up',
-//   Request_Power_Down = 'Request_Power_Down',
-//   Request_Create_Claimed_Account = 'Request_Create_Claimed_Account',
-//   Request_Create_Proposal = 'Request_Create_Proposal',
-//   Request_Remove_Proposal = 'Request_Remove_Proposal',
-//   Request_Update_Proposal_Vote = 'Request_Update_Proposal_Vote',
-//   Request_Add_Account = 'Request_Add_Account',
-//   Request_Conversion = 'Request_Conversion',
-//   Request_Recurrent_Transfer = 'Request_Recurrent_Transfer',
-// }
+import { Utils } from '../utils/utils';
 
-//TODO
-// 	- remove select on main -> change as something as the algolia search
-//   - showing all categories if nothing to search
-
-//TODO move to utils maybe?
-
-//TODO move to somewhere
-const fromCodeToText = (formParams: {}, requestType: KeychainRequestTypes) => {
-  //TODO fix this validation
-  if (!requestType) return;
-
-  //TODO ideas.
-  //  - check if data/options to be sure the form of paramsAsObject.
-  //    i.e: when having data & options, must form:
-  //    const requestAddAccountAuthority = await sdk.addAccountAuthority(formParamsAsObject.data as ExcludeCommonParams<RequestAddAccountAuthority>, formParamsAsObject.options);
-  const capitalized =
-    requestType[0].toUpperCase() + requestType.substring(1, requestType.length);
-  const requestCapitalizedName = `Request${capitalized}`;
-  const requestConstName = `request${capitalized}`;
-  return `try {
-    const sdk = new KeychainSDK(window);
-    const formParamsAsObject = ${JSON.stringify(formParams)};
-    const ${requestConstName} = await sdk.${requestType}(formParamsAsObject as ExcludeCommonParams<${requestCapitalizedName}>);
-    console.log({ ${requestConstName} });
-  } catch (error) {
-    console.log({ error });
-  }`;
-};
-//END move to somewhere
-
+const requestsNameToFilter = [KeychainRequestTypes.signedCall];
 export interface KeychainOptions {
   rpc?: string;
 }
 
-// export type CommonProps = {
-//   formParams: KeychainRequestTypes;
-// };
+export type CommonProps = {
+  setFormParamsToShow: React.Dispatch<React.SetStateAction<{}>>;
+  setRequestResult: any;
+  enableLogs: boolean;
+};
 
 type Props = {
   setRequestResult: any;
@@ -124,7 +66,12 @@ const RequestSelectorComponent = ({
 }: Props) => {
   const [request, setRequest] = useState<string>();
   const [requestCard, setRequestCard] = useState<ReactNode>();
-  const [formParamsToShow, setFormParamsToShow] = useState({}); //TODO need types?
+  const [formParamsToShow, setFormParamsToShow] = useState({});
+  const commonProps: CommonProps = {
+    enableLogs,
+    setFormParamsToShow,
+    setRequestResult,
+  };
 
   useEffect(() => {
     if (!request) return;
@@ -140,214 +87,88 @@ const RequestSelectorComponent = ({
       //   );
       //   break;
       case KeychainRequestTypes.encode:
-        setRequestCard(
-          <RequestEncodeMessageComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-            setFormParamsToShow={setFormParamsToShow}
-          />,
-        );
+        setRequestCard(<RequestEncodeMessageComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.decode:
-        setRequestCard(
-          <RequestVerifyKeyComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestVerifyKeyComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.signBuffer:
-        setRequestCard(
-          <RequestSignBufferComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestSignBufferComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.addAccountAuthority:
         setRequestCard(
-          <RequestAddAccountAuthorityComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-            setFormParamsToShow={setFormParamsToShow}
-          />,
+          <RequestAddAccountAuthorityComponent {...commonProps} />,
         );
         break;
       case KeychainRequestTypes.removeAccountAuthority:
         setRequestCard(
-          <RequestRemoveAccountAuthorityComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
+          <RequestRemoveAccountAuthorityComponent {...commonProps} />,
         );
         break;
       case KeychainRequestTypes.addKeyAuthority:
-        setRequestCard(
-          <RequestAddKeyAuthorityComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestAddKeyAuthorityComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.removeKeyAuthority:
-        setRequestCard(
-          <RequestRemoveKeyAuthorityComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestRemoveKeyAuthorityComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.broadcast:
-        setRequestCard(
-          <RequestBroadcastComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestBroadcastComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.signTx:
-        setRequestCard(
-          <RequestSignTxComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestSignTxComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.post:
-        setRequestCard(
-          <RequestPostComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestPostComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.vote:
-        setRequestCard(
-          <RequestVoteComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestVoteComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.custom:
-        setRequestCard(
-          <RequestCustomJsonComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestCustomJsonComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.transfer:
-        setRequestCard(
-          <RequestTransferComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestTransferComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.sendToken:
-        setRequestCard(
-          <RequestSendTokenComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestSendTokenComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.delegation:
-        setRequestCard(
-          <RequestDelegationComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestDelegationComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.witnessVote:
-        setRequestCard(
-          <RequestWitnessVoteComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestWitnessVoteComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.proxy:
-        setRequestCard(
-          <RequestProxyComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestProxyComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.powerUp:
-        setRequestCard(
-          <RequestPowerUpComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestPowerUpComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.powerDown:
-        setRequestCard(
-          <RequestPowerDownComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestPowerDownComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.createClaimedAccount:
         setRequestCard(
-          <RequestCreateClaimedAccountComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
+          <RequestCreateClaimedAccountComponent {...commonProps} />,
         );
         break;
       case KeychainRequestTypes.createProposal:
-        setRequestCard(
-          <RequestCreateProposalComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestCreateProposalComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.removeProposal:
-        setRequestCard(
-          <RequestRemoveProposalComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestRemoveProposalComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.updateProposalVote:
-        setRequestCard(
-          <RequestUpdateProposalVoteComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestUpdateProposalVoteComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.addAccount:
-        setRequestCard(
-          <RequestAddAccountComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestAddAccountComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.convert:
-        setRequestCard(
-          <RequestConversionComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestConversionComponent {...commonProps} />);
         break;
       case KeychainRequestTypes.recurrentTransfer:
-        setRequestCard(
-          <RequestRecurrentTransferComponent
-            setRequestResult={setRequestResult}
-            enableLogs={enableLogs}
-          />,
-        );
+        setRequestCard(<RequestRecurrentTransferComponent {...commonProps} />);
         break;
       default:
         setRequestCard(null);
@@ -380,6 +201,10 @@ const RequestSelectorComponent = ({
                       KeychainRequestTypes,
                     ) as Array<KeychainRequestTypes>
                   ).map((_type) => {
+                    if (
+                      requestsNameToFilter.find((request) => request === _type)
+                    )
+                      return null;
                     return (
                       <option
                         value={KeychainRequestTypes[_type]}
@@ -401,10 +226,10 @@ const RequestSelectorComponent = ({
             <Card.Header as={'h4'}>Code Sample</Card.Header>
             <Card.Body>
               <CopyBlock
-                text={fromCodeToText(
+                text={Utils.fromCodeToText(
                   formParamsToShow,
                   request as KeychainRequestTypes,
-                )} //JSON.stringify([1, 2, 3])
+                )}
                 language={'typescript'}
                 showLineNumbers={false}
                 startingLineNumber={1}
@@ -415,9 +240,8 @@ const RequestSelectorComponent = ({
           </Card>
         </Col>
       </Row>
-      {/* //TODO to remove this? ask cedric. */}
-      {/* TESTING to have executable & tested code */}
-      <CodeTester />
+      {/* TESTING to test code. Uncomment to use */}
+      {/* <CodeTester /> */}
       {/* END testing */}
     </Container>
   );

@@ -6,13 +6,9 @@ import {
   RequestAddAccountAuthority,
 } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
-import { KeychainOptions } from '../request-selector-component';
+import { CommonProps, KeychainOptions } from '../request-selector-component';
 
-type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
-  setFormParamsToShow: React.Dispatch<React.SetStateAction<{}>>; //TODO check if need proper types.
-};
+type Props = {};
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestAddAccountAuthority> = {
   username: '',
@@ -29,7 +25,7 @@ const RequestAddAccountAuthorityComponent = ({
   setRequestResult,
   enableLogs,
   setFormParamsToShow,
-}: Props) => {
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestAddAccountAuthority>;
@@ -69,7 +65,6 @@ const RequestAddAccountAuthorityComponent = ({
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      //TODO change as [requestType]
       const addAccountAuthority = await sdk.addAccountAuthority(
         formParams.data,
         formParams.options,

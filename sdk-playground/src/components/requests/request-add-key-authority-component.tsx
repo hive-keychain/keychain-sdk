@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
@@ -6,12 +6,9 @@ import {
   RequestAddKeyAuthority,
 } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
-import { KeychainOptions } from '../request-selector-component';
+import { CommonProps, KeychainOptions } from '../request-selector-component';
 
-type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
-};
+type Props = {};
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestAddKeyAuthority> = {
   username: '',
@@ -27,7 +24,8 @@ const undefinedParamsToValidate = ['']; //none to check
 const RequestAddKeyAuthorityComponent = ({
   setRequestResult,
   enableLogs,
-}: Props) => {
+  setFormParamsToShow,
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestAddKeyAuthority>;
@@ -36,6 +34,10 @@ const RequestAddKeyAuthorityComponent = ({
     data: DEFAULT_PARAMS,
     options: DEFAULT_OPTIONS,
   });
+
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
 
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
@@ -13,13 +13,13 @@ import {
   InputGroup,
   ListGroup,
 } from 'react-bootstrap';
-import { KeychainOptions } from '../request-selector-component';
-import { Operation } from '@hiveio/dhive';
+import { CommonProps, KeychainOptions } from '../request-selector-component';
+import { Operation, OperationName, VirtualOperationName } from '@hiveio/dhive';
 import json5 from 'json5';
 
 type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
+  // setRequestResult: any;
+  // enableLogs: boolean;
 };
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestBroadcast> = {
@@ -28,12 +28,21 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestBroadcast> = {
   method: KeychainKeyTypes.active,
 };
 const DEFAULT_OPTIONS: KeychainOptions = {};
-const DEFAULT_OPERATION: [
-  string,
-  {
-    [key: string]: any;
-  },
-] = [
+// const DEFAULT_OPERATION: [
+//   string,
+//   {
+//     [key: string]: any;
+//   },
+// ] = [
+//   'transfer',
+//   {
+//     from: 'keychain.tests',
+//     to: 'theghost1980',
+//     amount: '0.001 HIVE',
+//     memo: 'testing keychain SDK - requestBroadcast',
+//   },
+// ];
+const DEFAULT_OPERATION: Operation = [
   'transfer',
   {
     from: 'keychain.tests',
@@ -45,18 +54,14 @@ const DEFAULT_OPERATION: [
 
 const undefinedParamsToValidate = ['']; //none to check
 
-const RequestBroadcastComponent = ({ setRequestResult, enableLogs }: Props) => {
+const RequestBroadcastComponent = ({
+  setRequestResult,
+  enableLogs,
+  setFormParamsToShow,
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
-  const [operation, setOperation] =
-    useState<[string, object]>(DEFAULT_OPERATION);
-  const [arrayOperations, setArrayOperations] = useState<
-    [
-      string,
-      {
-        [key: string]: any;
-      },
-    ][]
-  >([]);
+  const [operation, setOperation] = useState<Operation>(DEFAULT_OPERATION);
+  const [arrayOperations, setArrayOperations] = useState<Operation[]>([]);
 
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestBroadcast>;
@@ -66,10 +71,17 @@ const RequestBroadcastComponent = ({ setRequestResult, enableLogs }: Props) => {
     options: DEFAULT_OPTIONS,
   });
 
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
+
   const handleOperation = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === 'operation_name') {
-      setOperation([value, operation[1]]);
+      setOperation([
+        value as OperationName | VirtualOperationName,
+        operation[1],
+      ]);
     } else {
       if (String(value).trim() === '') return;
       try {
@@ -91,11 +103,22 @@ const RequestBroadcastComponent = ({ setRequestResult, enableLogs }: Props) => {
     }
   };
 
+  useEffect(() => {
+    if (arrayOperations) {
+      handleFormParams({
+        target: {
+          value: arrayOperations,
+          name: 'operations',
+        },
+      });
+    }
+  }, [arrayOperations]);
+
   const handleResetList = () => {
     setArrayOperations([]);
   };
 
-  const handleFormParams = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFormParams = (e: any) => {
     const { name, value } = e.target;
     let tempValue =
       undefinedParamsToValidate.findIndex((param) => param === name) !== -1 &&
@@ -119,10 +142,8 @@ const RequestBroadcastComponent = ({ setRequestResult, enableLogs }: Props) => {
 
   const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-    formParams['data']['operations'] = arrayOperations as Operation[];
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      //TODO change as [requestType]
       const broadcast = await sdk.broadcast(
         formParams.data,
         formParams.options,

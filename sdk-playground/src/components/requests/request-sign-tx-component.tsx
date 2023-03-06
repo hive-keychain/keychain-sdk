@@ -13,8 +13,14 @@ import {
   InputGroup,
   ListGroup,
 } from 'react-bootstrap';
-import { KeychainOptions } from '../request-selector-component';
-import { DynamicGlobalProperties, Operation, Transaction } from '@hiveio/dhive';
+import { CommonProps, KeychainOptions } from '../request-selector-component';
+import {
+  DynamicGlobalProperties,
+  Operation,
+  OperationName,
+  Transaction,
+  VirtualOperationName,
+} from '@hiveio/dhive';
 import json5 from 'json5';
 import { Buffer } from 'buffer';
 import { Client } from '@hiveio/dhive';
@@ -24,30 +30,9 @@ import { Client } from '@hiveio/dhive';
 // WARNING in ./node_modules/@hiveio/dhive/dist/dhive.js
 // Module Warning (from ./node_modules/source-map-loader/dist/cjs.js):
 // Failed to parse source map from 'C:\cygwin64\home\Saturno\KeyChain\keychain-sdk\sdk-playground\node_modules\@hiveio\dhive\dist\src\utils.ts' file: Error: ENOENT: no such file or directory, open 'C:\cygwin64\home\Saturno\KeyChain\keychain-sdk\sdk-playground\node_modules\@hiveio\dhive\dist\src\utils.ts'
-type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
-};
+type Props = {};
 
-const DEFAULT_PARAMS: ExcludeCommonParams<RequestSignTx> = {
-  username: '',
-  tx: {
-    ref_block_num: 1,
-    ref_block_prefix: 1,
-    expiration: new Date(Date.now() + 60000).toISOString(),
-    operations: [],
-    extensions: [],
-  } as Transaction,
-  method: KeychainKeyTypes.memo,
-};
-const DEFAULT_OPTIONS: KeychainOptions = {};
-
-const DEFAULT_OPERATION: [
-  string,
-  {
-    [key: string]: any;
-  },
-] = [
+const DEFAULT_OPERATION: Operation = [
   'transfer',
   {
     from: 'keychain.tests',
@@ -56,6 +41,21 @@ const DEFAULT_OPERATION: [
     memo: 'testing keychain SDK - requestBroadcast',
   },
 ];
+
+const DEFAULT_TX: Transaction = {
+  ref_block_num: 1,
+  ref_block_prefix: 1,
+  expiration: new Date(Date.now() + 60000).toISOString(),
+  operations: [],
+  extensions: [],
+};
+
+const DEFAULT_PARAMS: ExcludeCommonParams<RequestSignTx> = {
+  username: 'keychain.tests',
+  tx: DEFAULT_TX,
+  method: KeychainKeyTypes.memo,
+};
+const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const client = new Client([
   'https://api.hive.blog',
@@ -68,18 +68,14 @@ const undefinedParamsToValidate = ['']; //none to check
 //TODO Cannot properly test:
 //    1. errors when trying to fetch data from hive(console warnings about dHive package)
 //    2. error when sending the request but no description about that error.
-const RequestSignTxComponent = ({ setRequestResult, enableLogs }: Props) => {
+const RequestSignTxComponent = ({
+  setRequestResult,
+  enableLogs,
+  setFormParamsToShow,
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
-  const [operation, setOperation] =
-    useState<[string, object]>(DEFAULT_OPERATION);
-  const [arrayOperations, setArrayOperations] = useState<
-    [
-      string,
-      {
-        [key: string]: any;
-      },
-    ][]
-  >([]);
+  const [operation, setOperation] = useState<Operation>(DEFAULT_OPERATION);
+  const [arrayOperations, setArrayOperations] = useState<Operation[]>([]);
 
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestSignTx>;
@@ -88,6 +84,10 @@ const RequestSignTxComponent = ({ setRequestResult, enableLogs }: Props) => {
     data: DEFAULT_PARAMS,
     options: DEFAULT_OPTIONS,
   });
+
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
 
   const [dHiveprops, setDHiveProps] = useState<DynamicGlobalProperties>();
 
@@ -122,7 +122,10 @@ const RequestSignTxComponent = ({ setRequestResult, enableLogs }: Props) => {
   const handleOperation = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === 'operation_name') {
-      setOperation([value, operation[1]]);
+      setOperation([
+        value as OperationName | VirtualOperationName,
+        operation[1],
+      ]);
     } else {
       if (String(value).trim() === '') return;
       try {
@@ -144,6 +147,20 @@ const RequestSignTxComponent = ({ setRequestResult, enableLogs }: Props) => {
     }
   };
 
+  useEffect(() => {
+    if (arrayOperations) {
+      //TODO clean up
+      //testing to set here instead of onSubmit
+      handleFormParams({
+        target: {
+          value: arrayOperations,
+          name: 'operations',
+        },
+      });
+      //end testing
+    }
+  }, [arrayOperations]);
+
   const handleResetList = () => {
     setArrayOperations([]);
   };
@@ -162,10 +179,18 @@ const RequestSignTxComponent = ({ setRequestResult, enableLogs }: Props) => {
         ...prevFormParams,
         data: { ...prevFormParams.data, [name]: tempValue },
       }));
-    } else {
+    } else if (name === 'options') {
       setFormParams((prevFormParams) => ({
         ...prevFormParams,
         options: { ...prevFormParams.options, [name]: tempValue },
+      }));
+    } else if (name === 'operations') {
+      setFormParams((prevFormParams) => ({
+        ...prevFormParams,
+        data: {
+          ...prevFormParams.data,
+          tx: { ...prevFormParams.data.tx, operations: tempValue },
+        },
       }));
     }
   };
@@ -173,7 +198,7 @@ const RequestSignTxComponent = ({ setRequestResult, enableLogs }: Props) => {
   const handleSubmit = async (e: React.ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    formParams['data']['tx']['operations'] = arrayOperations as Operation[]; //As common types require
+    // formParams['data']['tx']['operations'] = arrayOperations as Operation[]; //As common types require
 
     // //@ts-ignore
     // formParams['data']['tx']['operations'] = JSON.stringify(
@@ -182,7 +207,6 @@ const RequestSignTxComponent = ({ setRequestResult, enableLogs }: Props) => {
 
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      //TODO change as [requestType]
       const broadcast = await sdk.signTx(formParams.data, formParams.options);
       setRequestResult(broadcast);
       if (enableLogs) console.log({ broadcast });

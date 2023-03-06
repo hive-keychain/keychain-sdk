@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import {
   ExcludeCommonParams,
@@ -6,11 +6,9 @@ import {
   RequestDecode,
 } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
+import { CommonProps } from '../request-selector-component';
 
-type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
-};
+type Props = {};
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestDecode> = {
   username: '',
@@ -18,10 +16,18 @@ const DEFAULT_PARAMS: ExcludeCommonParams<RequestDecode> = {
   method: KeychainKeyTypes.active,
 };
 
-const RequestVerifyKeyComponent = ({ setRequestResult, enableLogs }: Props) => {
+const RequestVerifyKeyComponent = ({
+  setRequestResult,
+  enableLogs,
+  setFormParamsToShow,
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] =
     useState<ExcludeCommonParams<RequestDecode>>(DEFAULT_PARAMS);
+
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
 
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
@@ -34,7 +40,6 @@ const RequestVerifyKeyComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process: ', { formParams });
     try {
-      //TODO change as [requestType]
       const verifyKey = await sdk.decode(formParams);
       setRequestResult(verifyKey);
       if (enableLogs) console.log({ verifyKey });

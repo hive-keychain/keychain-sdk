@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { KeychainSDK } from 'keychain-sdk';
 import { ExcludeCommonParams, RequestPost } from 'hive-keychain-commons';
 import { Button, Card, Form, InputGroup } from 'react-bootstrap';
-import { KeychainOptions } from '../request-selector-component';
+import { CommonProps, KeychainOptions } from '../request-selector-component';
 
-type Props = {
-  setRequestResult: any;
-  enableLogs: boolean;
-};
+type Props = {};
 
 const DEFAULT_PARAMS: ExcludeCommonParams<RequestPost> = {
   username: 'keychain.tests',
@@ -35,7 +32,11 @@ const DEFAULT_OPTIONS: KeychainOptions = {};
 
 const undefinedParamsToValidate = ['title', 'parent_username', 'rpc'];
 
-const RequestPostComponent = ({ setRequestResult, enableLogs }: Props) => {
+const RequestPostComponent = ({
+  setRequestResult,
+  enableLogs,
+  setFormParamsToShow,
+}: Props & CommonProps) => {
   const sdk = new KeychainSDK(window);
   const [formParams, setFormParams] = useState<{
     data: ExcludeCommonParams<RequestPost>;
@@ -44,6 +45,10 @@ const RequestPostComponent = ({ setRequestResult, enableLogs }: Props) => {
     data: DEFAULT_PARAMS,
     options: DEFAULT_OPTIONS,
   });
+
+  useEffect(() => {
+    setFormParamsToShow(formParams);
+  }, [formParams]);
 
   const handleFormParams = (e: any) => {
     const { name, value } = e.target;
@@ -71,7 +76,6 @@ const RequestPostComponent = ({ setRequestResult, enableLogs }: Props) => {
     e.preventDefault();
     if (enableLogs) console.log('about to process ...: ', { formParams });
     try {
-      //TODO change as [requestType]
       const post = await sdk.post(formParams.data, formParams.options);
       setRequestResult(post);
       if (enableLogs) console.log({ post });
