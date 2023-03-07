@@ -112,31 +112,36 @@ export class KeychainSDK {
     data: ExcludeCommonParams<RequestSignBuffer>,
     options: KeychainOptions,
   ): Promise<any> => {
-    //TODO working on this
+    //TODO add option to generate random message.
+    //    - there is a detail in hive_commons: in signBuffer, message is not optional, so how do I use it here on login?
     return new Promise(async (resolve, reject) => {
-      resolve({
-        success: true,
-        message: 'testing',
-      });
-      // try {
-      //   await this.isKeyChainInstalled();
-      //   this.window.hive_keychain.requestSignBuffer(
-      //     data.username,
-      //     data.message,
-      //     data.method,
-      //     (response: KeychainRequestResponse) => {
-      //       if (response.error) {
-      //         reject(response);
-      //       } else {
-      //         resolve(response);
-      //       }
-      //     },
-      //     options.rpc ?? this.options?.rpc,
-      //     data.title,
-      //   );
-      // } catch (error) {
-      //   throw error;
-      // }
+      try {
+        await this.isKeyChainInstalled();
+        this.window.hive_keychain.requestSignBuffer(
+          data.username,
+          data.message,
+          data.method,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              const sig = Dhive.Signature.fromString(response.result);
+              const key = Dhive.PublicKey.fromString(response.publicKey);
+              const result = key.verify(
+                Dhive.cryptoUtils.sha256(response.data.message),
+                sig,
+              );
+              resolve({
+                result,
+              });
+            }
+          },
+          options.rpc ?? this.options?.rpc,
+          data.title,
+        );
+      } catch (error) {
+        throw error;
+      }
     });
   };
 
