@@ -35,7 +35,14 @@ import {
 } from './interfaces/keychain.interface';
 import { Utils } from './utils/utils';
 import { Buffer } from 'buffer';
+import { Client } from '@hiveio/dhive';
 const Dhive = require('@hiveio/dhive');
+
+const client = new Client([
+  'https://api.hive.blog',
+  'https://anyx.io',
+  'https://api.openhive.network',
+]);
 
 export class KeychainSDK {
   window: Window;
@@ -121,18 +128,21 @@ export class KeychainSDK {
           data.username,
           data.message,
           data.method,
-          (response: KeychainRequestResponse) => {
+          async (response: KeychainRequestResponse) => {
             if (response.error) {
               reject(response);
             } else {
-              const sig = Dhive.Signature.fromString(response.result);
-              const key = Dhive.PublicKey.fromString(response.publicKey);
-              const result = key.verify(
-                Dhive.cryptoUtils.sha256(response.data.message),
-                sig,
-              );
+              const account = await client.keys.getKeyReferences([
+                response.publicKey!,
+              ]);
+              // const sig = Dhive.Signature.fromString(response.result);
+              // const key = Dhive.PublicKey.fromString(response.publicKey);
+              // const result = key.verify(
+              //   Dhive.cryptoUtils.sha256(response.data.message),
+              //   sig,
+              // );
               resolve({
-                result,
+                result: account,
               });
             }
           },

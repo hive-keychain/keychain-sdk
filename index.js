@@ -10,7 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KeychainSDK = void 0;
+const dhive_1 = require("@hiveio/dhive");
 const Dhive = require('@hiveio/dhive');
+const client = new dhive_1.Client([
+    'https://api.hive.blog',
+    'https://anyx.io',
+    'https://api.openhive.network',
+]);
 class KeychainSDK {
     constructor(window, options) {
         /**
@@ -70,19 +76,25 @@ class KeychainSDK {
                 var _a, _b;
                 try {
                     yield this.isKeyChainInstalled();
-                    this.window.hive_keychain.requestSignBuffer(data.username, data.message, data.method, (response) => {
+                    this.window.hive_keychain.requestSignBuffer(data.username, data.message, data.method, (response) => __awaiter(this, void 0, void 0, function* () {
                         if (response.error) {
                             reject(response);
                         }
                         else {
-                            const sig = Dhive.Signature.fromString(response.result);
-                            const key = Dhive.PublicKey.fromString(response.publicKey);
-                            const result = key.verify(Dhive.cryptoUtils.sha256(response.data.message), sig);
+                            const account = yield client.keys.getKeyReferences([
+                                response.publicKey,
+                            ]);
+                            // const sig = Dhive.Signature.fromString(response.result);
+                            // const key = Dhive.PublicKey.fromString(response.publicKey);
+                            // const result = key.verify(
+                            //   Dhive.cryptoUtils.sha256(response.data.message),
+                            //   sig,
+                            // );
                             resolve({
-                                result,
+                                result: account,
                             });
                         }
-                    }, (_a = options.rpc) !== null && _a !== void 0 ? _a : (_b = this.options) === null || _b === void 0 ? void 0 : _b.rpc, data.title);
+                    }), (_a = options.rpc) !== null && _a !== void 0 ? _a : (_b = this.options) === null || _b === void 0 ? void 0 : _b.rpc, data.title);
                 }
                 catch (error) {
                     throw error;
