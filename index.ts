@@ -121,21 +121,20 @@ export class KeychainSDK {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
-        resolve('Hi there!!! new version here!'); //TODO to remove
-        // this.window.hive_keychain.requestSignBuffer(
-        //   data.username,
-        //   data.message,
-        //   data.method,
-        //   (response: KeychainRequestResponse) => {
-        //     if (response.error) {
-        //       reject(response);
-        //     } else {
-        //       resolve(response);
-        //     }
-        //   },
-        //   options.rpc ?? this.options?.rpc,
-        //   data.title,
-        // );
+        this.window.hive_keychain.requestSignBuffer(
+          data.username,
+          data.message,
+          data.method,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+          options.rpc ?? this.options?.rpc,
+          data.title,
+        );
       } catch (error) {
         throw error;
       }
