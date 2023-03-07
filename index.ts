@@ -108,7 +108,7 @@ export class KeychainSDK {
    * @param {String | undefined} options.rpc Override user's RPC settings
    */
   login = async (
-    data: ExcludeCommonParams<RequestSignBuffer>,
+    data: ExcludeCommonParams<RequestSignBuffer & { message?: string }>,
     options: KeychainOptions,
   ): Promise<any> => {
     //TODO working on this
