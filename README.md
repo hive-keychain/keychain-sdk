@@ -1,6 +1,6 @@
 ## keychain-sdk
 
-This class is a way to handle hive-keychain requests, using Typescript. The porpouse is to make it easy for devs and reducing lines of code and complexity.
+This class is a way to handle hive-keychain requests, using Typescript. The purpose is to make it easy for devs and reduce lines of code and complexity.
 
 ### Installation
 
