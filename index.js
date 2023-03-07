@@ -10,11 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KeychainSDK = void 0;
-const buffer_1 = require("buffer");
 const Dhive = require('@hiveio/dhive');
-//TODO check if needed, added to handle buffer error message on login.
-// @ts-ignore
-window.Buffer = buffer_1.Buffer;
 class KeychainSDK {
     constructor(window, options) {
         /**
@@ -67,7 +63,7 @@ class KeychainSDK {
          * @param {String | undefined} data.title Title to be shown on popup
          * @param {String | undefined} options.rpc Override user's RPC settings
          */
-        this.login = (data, options, test) => __awaiter(this, void 0, void 0, function* () {
+        this.login = (data, options) => __awaiter(this, void 0, void 0, function* () {
             //TODO working on this
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 var _a, _b;

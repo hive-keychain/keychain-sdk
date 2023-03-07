@@ -1,5 +1,3 @@
-import { PublicKey, Signature } from '@hiveio/dhive';
-import { verify, Verify } from 'crypto';
 import { ExcludeCommonParams } from 'hive-keychain-commons';
 import {
   RequestAddAccount,
@@ -37,10 +35,6 @@ import {
 import { Utils } from './utils/utils';
 import { Buffer } from 'buffer';
 const Dhive = require('@hiveio/dhive');
-
-//TODO check if needed, added to handle buffer error message on login.
-// @ts-ignore
-window.Buffer = Buffer;
 
 export class KeychainSDK {
   window: Window;
@@ -116,7 +110,6 @@ export class KeychainSDK {
   login = async (
     data: ExcludeCommonParams<RequestSignBuffer>,
     options: KeychainOptions,
-    test: boolean,
   ): Promise<any> => {
     //TODO working on this
     return new Promise(async (resolve, reject) => {
