@@ -116,6 +116,7 @@ export class KeychainSDK {
   login = async (
     data: ExcludeCommonParams<RequestSignBuffer>,
     options: KeychainOptions,
+    test: boolean,
   ): Promise<any> => {
     //TODO working on this
     return new Promise(async (resolve, reject) => {
