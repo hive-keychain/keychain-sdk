@@ -36,6 +36,7 @@ import {
 } from './interfaces/keychain.interface';
 import { Utils } from './utils/utils';
 import { Buffer } from 'buffer';
+const Dhive = require('@hiveio/dhive');
 
 //TODO check if needed, added to handle buffer error message on login.
 // @ts-ignore
@@ -116,101 +117,25 @@ export class KeychainSDK {
     data: ExcludeCommonParams<RequestSignBuffer>,
     options: KeychainOptions,
   ): Promise<any> => {
-    //TODO here add proper output types
+    //TODO working on this
     return new Promise(async (resolve, reject) => {
       try {
-        //sample response signBuffer:
-        //   {
-        //     "signBuffer": {
-        //         "success": true,
-        //         "error": null,
-        //         "result": "1f063f670ab689292a826fa845205d681e04f4651755e3bf21ddafc7fd2c244b9871895576c6b9f1b6bea16125193e05e8ebca4da3335873b6f8f3ba036df0d452",
-        //         "data": {
-        //             "type": "signBuffer",
-        //             "message": "message!!",
-        //             "method": "Active",
-        //             "title": "Login in Into Saturnoman.com\nProceed?",
-        //             "username": "theghost1980"
-        //         },
-        //         "message": "Message signed succesfully.",
-        //         "request_id": 2,
-        //         "publicKey": "STM8RET8exknjBbc76n45iEk1sZd5dS7FEhrs3pKuVg4sUKezozg8"
-        //     }
-        // }
-        //reusing class method
-        // const response = await this.requestSignBuffer(data, options);
-        // if (response.publicKey && response.result) {
-        //   const signatureClass = Signature;
-
-        //   resolve({ recoveredPublickKey });
-        // }
-
+        await this.isKeyChainInstalled();
+        resolve('Hi there!!! new version here!'); //TODO to remove
         // this.window.hive_keychain.requestSignBuffer(
         //   data.username,
-        //   data.message ?? utils.generateRandomString(),
+        //   data.message,
         //   data.method,
         //   (response: KeychainRequestResponse) => {
         //     if (response.error) {
-        //       reject({
-        //         ...response,
-        //         success: false,
-        //         result: data.title ? `Cannot login into: ${data.title}` : null,
-        //       });
+        //       reject(response);
         //     } else {
-        //       resolve({
-        //         ...response,
-        //         success: true,
-        //         result: data.title ? `Login successful: ${data.title}` : null,
-        //       });
+        //       resolve(response);
         //     }
         //   },
         //   options.rpc ?? this.options?.rpc,
         //   data.title,
         // );
-
-        //Tying from here. //TODO finish this part... to remove comments
-
-        await this.isKeyChainInstalled();
-        //steps. Make the signBuffer here using the callBack, to get the response.
-        const randomMessage = Utils.generateRandomString();
-        this.window.hive_keychain.requestSignBuffer(
-          data.username,
-          data.message ?? randomMessage,
-          data.method,
-          (response: any) => {
-            if (response.error) {
-              reject({
-                ...response,
-                success: false,
-                result: data.title ? `Cannot login into: ${data.title}` : null,
-              });
-            } else {
-              //test
-              // resolve({ response });
-              //end test
-
-              /////
-              //"STM7KKUZb1CzwRiaN2RQcGeJUpcHM5BmCNudxXW21xqktBe91RpD8"
-              const pubKeyClass = new PublicKey(
-                Buffer.from(
-                  'STM7KKUZb1CzwRiaN2RQcGeJUpcHM5BmCNudxXW21xqktBe91RpD8',
-                ),
-                'STM',
-              );
-              const verification = pubKeyClass.verify(
-                Buffer.from(data.message),
-                response.result,
-              );
-              resolve({
-                success: true,
-                verification,
-              });
-              /////
-            }
-          },
-          options.rpc ?? this.options?.rpc,
-          data.title,
-        );
       } catch (error) {
         throw error;
       }
