@@ -1,5 +1,6 @@
 import { ExcludeCommonParams } from 'hive-keychain-commons';
 import {
+  KeychainKeyTypes,
   RequestAddAccount,
   RequestAddAccountAuthority,
   RequestAddKeyAuthority,
@@ -108,30 +109,34 @@ export class KeychainSDK {
    * @param {String | undefined} options.rpc Override user's RPC settings
    */
   login = async (
-    data: ExcludeCommonParams<RequestSignBuffer & { message?: string }>,
+    data: ExcludeCommonParams<RequestSignBuffer>,
     options: KeychainOptions,
   ): Promise<any> => {
     //TODO working on this
     return new Promise(async (resolve, reject) => {
-      try {
-        await this.isKeyChainInstalled();
-        this.window.hive_keychain.requestSignBuffer(
-          data.username,
-          data.message,
-          data.method,
-          (response: KeychainRequestResponse) => {
-            if (response.error) {
-              reject(response);
-            } else {
-              resolve(response);
-            }
-          },
-          options.rpc ?? this.options?.rpc,
-          data.title,
-        );
-      } catch (error) {
-        throw error;
-      }
+      resolve({
+        success: true,
+        message: 'testing',
+      });
+      // try {
+      //   await this.isKeyChainInstalled();
+      //   this.window.hive_keychain.requestSignBuffer(
+      //     data.username,
+      //     data.message,
+      //     data.method,
+      //     (response: KeychainRequestResponse) => {
+      //       if (response.error) {
+      //         reject(response);
+      //       } else {
+      //         resolve(response);
+      //       }
+      //     },
+      //     options.rpc ?? this.options?.rpc,
+      //     data.title,
+      //   );
+      // } catch (error) {
+      //   throw error;
+      // }
     });
   };
 
