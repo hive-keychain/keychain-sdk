@@ -34,7 +34,7 @@ import {
   KeychainOptions,
   KeychainRequestResponse,
 } from './interfaces/keychain.interface';
-import { Login } from './interfaces/keychain-sdk.interface';
+import { Encode, Login } from './interfaces/keychain-sdk.interface';
 import { getLoginError } from './utils/login';
 import { v4 as uuidv4 } from 'uuid';
 const Dhive = require('@hiveio/dhive');
@@ -181,9 +181,7 @@ export class KeychainSDK {
    * @param {String} data.message Message to be encrypted, i.e: "#To encrypt message"
    * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
    */
-  encode = async (
-    data: ExcludeCommonParams<RequestEncode>,
-  ): Promise<KeychainRequestResponse> => {
+  encode = async (data: Encode): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
