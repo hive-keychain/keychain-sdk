@@ -1,3 +1,4 @@
+import { Client } from '@hiveio/dhive';
 import { ExcludeCommonParams } from 'hive-keychain-commons';
 import {
   KeychainKeyTypes,
@@ -33,9 +34,6 @@ import {
   KeychainOptions,
   KeychainRequestResponse,
 } from './interfaces/keychain.interface';
-import { Utils } from './utils/utils';
-import { Buffer } from 'buffer';
-import { Client } from '@hiveio/dhive';
 const Dhive = require('@hiveio/dhive');
 
 const client = new Client([

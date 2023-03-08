@@ -10,3 +10,4 @@ stats.json
 coverage
 *.code-workspace
 _releases
+dist
