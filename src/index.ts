@@ -204,6 +204,7 @@ export class KeychainSDK {
     });
   };
 
+  //TODO from here, change all Exclude... for its new type.
   /**
    * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
    * @example
