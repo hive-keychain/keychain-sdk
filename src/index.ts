@@ -34,6 +34,7 @@ import {
   KeychainOptions,
   KeychainRequestResponse,
 } from './interfaces/keychain.interface';
+import { getLoginError } from './utils/login';
 const Dhive = require('@hiveio/dhive');
 
 const client = new Client([
@@ -130,18 +131,32 @@ export class KeychainSDK {
             if (response.error) {
               reject(response);
             } else {
-              const account = await client.keys.getKeyReferences([
-                response.publicKey!,
-              ]);
-              // const sig = Dhive.Signature.fromString(response.result);
-              // const key = Dhive.PublicKey.fromString(response.publicKey);
-              // const result = key.verify(
-              //   Dhive.cryptoUtils.sha256(response.data.message),
-              //   sig,
-              // );
-              resolve({
-                result: account,
-              });
+              const accounts = (
+                await client.keys.getKeyReferences([response.publicKey!])
+              )?.accounts;
+              if (accounts?.[0]?.includes(data.username!)) {
+                const signature = Dhive.Signature.fromString(response.result);
+                const key = Dhive.PublicKey.fromString(response.publicKey);
+                const result = key.verify(
+                  Dhive.cryptoUtils.sha256(response.data.message),
+                  signature,
+                );
+                if (result) {
+                  resolve(response);
+                } else
+                  reject(
+                    getLoginError(
+                      response,
+                      'The signature could not be verified',
+                    ),
+                  );
+              } else
+                reject(
+                  getLoginError(
+                    response,
+                    'The signature could not be verified',
+                  ),
+                );
             }
           },
           options.rpc ?? this.options?.rpc,
