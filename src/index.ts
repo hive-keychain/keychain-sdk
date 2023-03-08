@@ -34,7 +34,9 @@ import {
   KeychainOptions,
   KeychainRequestResponse,
 } from './interfaces/keychain.interface';
+import { Login } from './interfaces/keychain-sdk.interface';
 import { getLoginError } from './utils/login';
+import { v4 as uuidv4 } from 'uuid';
 const Dhive = require('@hiveio/dhive');
 
 const client = new Client([
@@ -84,14 +86,9 @@ export class KeychainSDK {
     });
   };
 
-  //TODO remove help comments
-  // Once receiving the signed buffer, it needs to verify the signature in two steps:
-  // 1) Verify that the publicKey returned in the response belongs to the user and
-  // 2) Verified that the signed buffer corresponds to that key.
-  //end to remove
-
   /**
    * Keychain SDK utils functions.
+   * //TODO update this documentation example + params
    * Call this function to perform an easy login function by trying to sign a message.
    * @example
    * try {
@@ -114,18 +111,13 @@ export class KeychainSDK {
    * @param {String | undefined} data.title Title to be shown on popup
    * @param {String | undefined} options.rpc Override user's RPC settings
    */
-  login = async (
-    data: ExcludeCommonParams<RequestSignBuffer>,
-    options: KeychainOptions,
-  ): Promise<any> => {
-    //TODO add option to generate random message.
-    //    - there is a detail in hive_commons: in signBuffer, message is not optional, so how do I use it here on login?
+  login = async (data: Login, options: KeychainOptions): Promise<any> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
         this.window.hive_keychain.requestSignBuffer(
           data.username,
-          data.message,
+          data.message ?? uuidv4(),
           data.method,
           async (response: KeychainRequestResponse) => {
             if (response.error) {
