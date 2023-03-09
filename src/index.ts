@@ -34,7 +34,35 @@ import {
   KeychainOptions,
   KeychainRequestResponse,
 } from './interfaces/keychain.interface';
-import { Encode, Login } from './interfaces/keychain-sdk.interface';
+import {
+  AddAccount,
+  AddAccountAuthority,
+  AddKeyAuthority,
+  Broadcast,
+  Convert,
+  CreateClaimedAccount,
+  CreateProposal,
+  Custom,
+  Decode,
+  Delegation,
+  Encode,
+  Login,
+  Post,
+  PowerDown,
+  PowerUp,
+  Proxy,
+  RecurrentTransfer,
+  RemoveAccountAuthority,
+  RemoveKeyAuthority,
+  RemoveProposal,
+  SendToken,
+  SignBuffer,
+  SignTx,
+  Transfer,
+  UpdateProposalVote,
+  Vote,
+  WitnessVote,
+} from './interfaces/keychain-sdk.interface';
 import { getLoginError } from './utils/login';
 import { v4 as uuidv4 } from 'uuid';
 const Dhive = require('@hiveio/dhive');
@@ -88,16 +116,15 @@ export class KeychainSDK {
 
   /**
    * Keychain SDK utils functions.
-   * //TODO update this documentation example + params
    * Call this function to perform an easy login function by trying to sign a message.
    * @example
    * try {
    *     const login = await KeyChainSDK.login(
    *       {
-   *         username: undefined,
-   *         message: 'Log into my website',
+   *         username: 'keychain.tests',
+   *         message: '{"login":"123"}',
    *         method: 'posting',
-   *         title: 'Saturnoman.com',
+   *         title: 'LOGIN',
    *       },
    *       {},
    *     );
@@ -163,13 +190,13 @@ export class KeychainSDK {
   //////END utils///////
 
   /**
-   * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
+   * This function is called to encode a message, using certain key
    * @example
    * try {
-   *     const encodeMessage = await KeyChainSDK.requestEncodeMessage({
+   *     const encodeMessage = await KeyChainSDK.encode({
    *       username: 'keychain.tests',
-   *       receiver: 'theghost1980',
-   *       message: '#Hi there man!',
+   *       receiver: 'keychain.tests',
+   *       message: '#Message to encode, # is required to encrypt',
    *       method: 'Memo',
    *     });
    *     console.log({ encodeMessage });
@@ -204,12 +231,11 @@ export class KeychainSDK {
     });
   };
 
-  //TODO from here, change all Exclude... for its new type.
   /**
    * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
    * @example
    *try {
-   *     const verifyKey = await KeyChainSDK.requestVerifyKey({
+   *     const verifyKey = await KeyChainSDK.decode({
    *       username: 'keychain.tests',
    *       message:
    *         '#JnyQbbpLdRBT8ev7SALsNru6c4bftPCf4c6AkTN42YTc52aDvcRqKVqK6yMhRAGhW8fbasR8xz14ofs63WXLP6nxDndKsBMkmg7UsAS9ucTDrKFoZkuJFCyvLmksyCYgD',
@@ -223,9 +249,7 @@ export class KeychainSDK {
    * @param {String} data.message Message to be decoded by the account
    * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
    */
-  decode = async (
-    data: ExcludeCommonParams<RequestDecode>,
-  ): Promise<KeychainRequestResponse> => {
+  decode = async (data: Decode): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -251,9 +275,9 @@ export class KeychainSDK {
    * Requests a message to be signed with proper authority
    * @example
    * try {
-   *     const signBuffer = await KeyChainSDK.requestSignBuffer(
+   *     const signBuffer = await KeyChainSDK.signBuffer(
    *       {
-   *         username: undefined,
+   *         username: 'keychain.tests',
    *         message: 'message!!',
    *         method: 'Active',
    *         title: 'Login in Into Saturnoman.com\nProceed?',
@@ -271,7 +295,7 @@ export class KeychainSDK {
    * @param {String| undefined} options.rpc Override user's RPC settings
    */
   signBuffer = async (
-    data: ExcludeCommonParams<RequestSignBuffer>,
+    data: SignBuffer,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -301,10 +325,10 @@ export class KeychainSDK {
    * Requests to add account authority over another account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @example
    * try {
-   *     const addAccountAuthority = await KeyChainSDK.requestAddAccountAuthority(
+   *     const addAccountAuthority = await KeyChainSDK.addAccountAuthority(
    *       {
    *         username: 'keychain.tests',
-   *         authorizedUsername: 'sexosentido',
+   *         authorizedUsername: 'keychain.tests',
    *         role: 'posting',
    *         weight: 1,
    *       },
@@ -322,7 +346,7 @@ export class KeychainSDK {
    * @param {String | undefined} options.rpc Override user's RPC settings
    */
   addAccountAuthority = async (
-    data: ExcludeCommonParams<RequestAddAccountAuthority>,
+    data: AddAccountAuthority,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -353,10 +377,10 @@ export class KeychainSDK {
    * @example
    * try {
    *     const removeAccountAuthority =
-   *       await KeyChainSDK.requestRemoveAccountAuthority(
+   *       await KeyChainSDK.removeAccountAuthority(
    *         {
    *           username: 'keychain.tests',
-   *           authorizedUsername: 'sexosentido',
+   *           authorizedUsername: 'keychain.tests',
    *           role: 'posting',
    *         },
    *         {},
@@ -371,7 +395,7 @@ export class KeychainSDK {
    * @param {String |  undefined} options.rpc Override user's RPC settings
    */
   removeAccountAuthority = async (
-    data: ExcludeCommonParams<RequestRemoveAccountAuthority>,
+    data: RemoveAccountAuthority,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -400,7 +424,7 @@ export class KeychainSDK {
    * Requests to add a new key authority to an account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @example
    * try {
-   *     const addKeyAuthority = await KeyChainSDK.requestAddKeyAuthority(
+   *     const addKeyAuthority = await KeyChainSDK.addKeyAuthority(
    *       {
    *         username: 'keychain.tests',
    *         authorizedKey:
@@ -421,7 +445,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   addKeyAuthority = async (
-    data: ExcludeCommonParams<RequestAddKeyAuthority>,
+    data: AddKeyAuthority,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -451,7 +475,7 @@ export class KeychainSDK {
    * Requests to remove a key to an account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @example
    *   try {
-   *     const removeKeyAuthority = await KeyChainSDK.requestRemoveKeyAuthority(
+   *     const removeKeyAuthority = await KeyChainSDK.removeKeyAuthority(
    *       {
    *         username: 'keychain.tests',
    *         authorizedKey:
@@ -470,7 +494,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   removeKeyAuthority = async (
-    data: ExcludeCommonParams<RequestRemoveKeyAuthority>,
+    data: RemoveKeyAuthority,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -499,7 +523,7 @@ export class KeychainSDK {
    * Generic broadcast request
    * @example
    * try {
-   *     const broadcast = await KeyChainSDK.requestBroadcast(
+   *     const broadcast = await KeyChainSDK.broadcast(
    *       {
    *         username: 'keychain.tests',
    *         operations: [
@@ -507,7 +531,7 @@ export class KeychainSDK {
    *             'transfer',
    *             {
    *               from: 'keychain.tests',
-   *               to: 'theghost1980',
+   *               to: 'keychain.tests',
    *               amount: '0.001 HIVE',
    *               memo: 'testing keychain SDK - requestBroadcast',
    *             },
@@ -527,7 +551,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   broadcast = async (
-    data: ExcludeCommonParams<RequestBroadcast>,
+    data: Broadcast,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -564,16 +588,16 @@ export class KeychainSDK {
    * const client = new dhive.Client(['https://api.hive.blog', 'https://anyx.io', 'https://api.openhive.network']);
    * const props = await client.database.getDynamicGlobalProperties();
    * const headBlockNumber = props.head_block_number;
-   * const headBlockId = props.head_block_id;\
+   * const headBlockId = props.head_block_id;
    * const expireTime = 600000;
    * const op = {
    *  ref_block_num: headBlockNumber & 0xffff,
    *  ref_block_prefix: Buffer.from(headBlockId, 'hex').readUInt32LE(4),
-   *  expiration: new Date(Date.now() + expireTime).toISOString(),
+   *  expiration: new Date(Date.now() + 600000).toISOString().slice(0, -5),
    *  operations: [...] // Add operations here
    * };
    *  try {
-   *     const signTx = await KeyChainSDK.requestSignTx(
+   *     const signTx = await KeyChainSDK.signTx(
    *       {
    *         username: 'keychain.tests',
    *         tx: op,
@@ -591,7 +615,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   signTx = async (
-    data: ExcludeCommonParams<RequestSignTx>,
+    data: SignTx,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -643,7 +667,7 @@ export class KeychainSDK {
    * Requests to broadcast a blog post/comment
    * @example
    * try {
-   *     const post = await KeyChainSDK.requestPost(
+   *     const post = await KeyChainSDK.post(
    *       {
    *         username: 'keychain.tests',
    *         title: 'Keychain SDK 2!',
@@ -683,7 +707,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   post = async (
-    data: ExcludeCommonParams<RequestPost>,
+    data: Post,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -717,7 +741,7 @@ export class KeychainSDK {
    * Requests a vote
    * @example
    *   try {
-   *     const vote = await KeyChainSDK.requestVote(
+   *     const vote = await KeyChainSDK.vote(
    *       {
    *         username: 'keychain.tests',
    *         author: 'keychain.tests',
@@ -737,7 +761,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   vote = async (
-    data: ExcludeCommonParams<RequestVote>,
+    data: Vote,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -767,9 +791,9 @@ export class KeychainSDK {
    * Requests a custom JSON broadcast
    * @example
    *    try {
-   *     const custom_json = await KeyChainSDK.requestCustomJson(
+   *     const custom_json = await KeyChainSDK.custom(
    *       {
-   *         username: undefined,
+   *         username: 'keychain.tests',
    *         id: '1',
    *         method: 'Posting',
    *         json: JSON.stringify({
@@ -793,7 +817,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   custom = async (
-    data: ExcludeCommonParams<RequestCustomJSON>,
+    data: Custom,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -824,9 +848,9 @@ export class KeychainSDK {
    * Requests a transfer
    * @example
    * try {
-   *   const transfer = await KeyChainSDK.requestTransfer(
+   *   const transfer = await KeyChainSDK.transfer(
    *       {
-   *          username: 'theghost1980',
+   *          username: 'keychain.tests',
    *          to: 'keychain.tests',
    *          amount: '1.000',
    *          memo: 'Test Keychain SDK transfer',
@@ -849,7 +873,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   transfer = async (
-    data: ExcludeCommonParams<RequestTransfer>,
+    data: Transfer,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -881,10 +905,10 @@ export class KeychainSDK {
    * Requests a token transfer
    * @example
    *   try {
-   *     const sendToken = await KeyChainSDK.requestSendToken(
+   *     const sendToken = await KeyChainSDK.sendToken(
    *       {
    *         username: 'keychain.tests',
-   *         to: 'theghost1980',
+   *         to: 'keychain.tests',
    *         amount: '0.001',
    *         memo: 'frescos',
    *         currency: 'LEO',
@@ -903,7 +927,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   sendToken = async (
-    data: ExcludeCommonParams<RequestSendToken>,
+    data: SendToken,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -934,9 +958,9 @@ export class KeychainSDK {
    * Requests a delegation broadcast
    * @example
    *   try {
-   *     const delegation = await KeyChainSDK.requestDelegation(
+   *     const delegation = await KeyChainSDK.delegation(
    *       {
-   *         username: undefined,
+   *         username: 'keychain.tests',
    *         delegatee: 'keychain.tests',
    *         amount: '1.000',
    *         unit: 'HP',
@@ -954,7 +978,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   delegation = async (
-    data: ExcludeCommonParams<RequestDelegation>,
+    data: Delegation,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -981,13 +1005,13 @@ export class KeychainSDK {
   };
 
   /**
-   * Requests a delegation broadcast
+   * Requests a witness vote
    * @example
    *  try {
-   *     const witnessVote = await KeyChainSDK.requestWitnessVote(
+   *     const witnessVote = await KeyChainSDK.witnessVote(
    *       {
    *         username: 'keychain.tests',
-   *         witness: 'stoodkev',
+   *         witness: 'keychain',
    *         vote: true,
    *       },
    *       {},
@@ -1002,7 +1026,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   witnessVote = async (
-    data: ExcludeCommonParams<RequestWitnessVote>,
+    data: WitnessVote,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1031,10 +1055,10 @@ export class KeychainSDK {
    * Select an account as proxy
    * @example
    *  try {
-   *     const proxy = await KeyChainSDK.requestProxy(
+   *     const proxy = await KeyChainSDK.proxy(
    *       {
    *         username: 'keychain.tests',
-   *         proxy: 'stoodkev',
+   *         proxy: 'keychain',
    *       },
    *       {},
    *     );
@@ -1047,7 +1071,7 @@ export class KeychainSDK {
    * @param {String | undefined} options.rpc Override user's RPC settings
    */
   proxy = async (
-    data: ExcludeCommonParams<RequestProxy>,
+    data: Proxy,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1075,7 +1099,7 @@ export class KeychainSDK {
    * Request a power up
    * @example
    *  try {
-   *     const powerUp = await KeyChainSDK.requestPowerUp(
+   *     const powerUp = await KeyChainSDK.powerUp(
    *       {
    *         username: 'keychain.tests',
    *         recipient: 'keychain.tests',
@@ -1093,7 +1117,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   powerUp = async (
-    data: ExcludeCommonParams<RequestPowerUp>,
+    data: PowerUp,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1122,7 +1146,7 @@ export class KeychainSDK {
    * Request a power down
    * @example
    *  try {
-   *     const powerDown = await KeyChainSDK.requestPowerDown(
+   *     const powerDown = await KeyChainSDK.powerDown(
    *       {
    *         username: 'keychain.tests',
    *         hive_power: '0.001',
@@ -1138,7 +1162,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   powerDown = async (
-    data: ExcludeCommonParams<RequestPowerDown>,
+    data: PowerDown,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1164,6 +1188,22 @@ export class KeychainSDK {
 
   /**
    * Request the creation of an account using claimed tokens
+   * @example
+   * try {
+   *  const createclaimedaccount = await KeyChainSDK.createClaimedAccount(
+   *    {
+   *     "username": "keychain.tests",
+   *     "new_account": "keychain.tests",
+   *     "owner": "{}",
+   *     "active": "{}",
+   *     "posting": "{}",
+   *     "memo": "STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF"
+   *     },
+   *     {});
+   *  console.log({ createclaimedaccount });
+   *} catch (error) {
+   *  console.log({ error });
+   *}
    * @param {String} data.username Hive account to perform the request
    * @param {String} data.new_account New account to be created
    * @param {object} data.owner owner authority object
@@ -1173,7 +1213,7 @@ export class KeychainSDK {
    * @param {String | undefined} options.rpc Override user's RPC settings
    */
   createClaimedAccount = async (
-    data: ExcludeCommonParams<RequestCreateClaimedAccount>,
+    data: CreateClaimedAccount,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1204,6 +1244,30 @@ export class KeychainSDK {
   //HF21
   /**
    * Request the creation of a DHF proposal
+   * @example
+   * try
+   *  {
+   *    const keychain = new KeychainSDK(window);
+   *    const formParamsAsObject = {
+   *    "data": {
+   *        "username": "keychain.tests",
+   *        "receiver": "keychain.tests",
+   *        "subject": "The New proposal title",
+   *        "permlink": "proposal-keychain-dev-permlink",
+   *        "start": "2023-02-25T00:00:00",
+   *        "end": "2024-02-25T00:00:00",
+   *        "daily_pay": "390.000 HBD",
+   *        "extensions": "[]"
+   *    },
+   *    "options": {}
+   *};
+   *    const createproposal = await keychain
+   *             .createProposal(formParamsAsObject.data as CreateProposal,
+   *              formParamsAsObject.options);
+   *    console.log({ createproposal });
+   *  } catch (error) {
+   *    console.log({ error });
+   *  }
    * @param {String} data.username Hive account to perform the request
    * @param {String} data.receiver Account receiving the funding if the proposal is voted
    * @param {String} data.subject Title of the DAO
@@ -1215,7 +1279,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   createProposal = async (
-    data: ExcludeCommonParams<RequestCreateProposal>,
+    data: CreateProposal,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1247,13 +1311,31 @@ export class KeychainSDK {
 
   /**
    * Request the removal of a DHF proposal
+   * @example
+   * try
+   *  {
+   *    const keychain = new KeychainSDK(window);
+   *    const formParamsAsObject = {
+   *    "data": {
+   *        "username": "keychain.tests",
+   *        "proposal_ids": "[1,2,3]",
+   *        "extensions": "[]"
+   *    },
+   *    "options": {}};
+   *    const removeproposal = await keychain
+   *              .removeProposal(formParamsAsObject.data as RemoveProposal,
+   *              formParamsAsObject.options);
+   *    console.log({ removeproposal });
+   *  } catch (error) {
+   *    console.log({ error });
+   *  }
    * @param {String} data.username Hive account to perform the request
    * @param {String} data.proposal_ids Stringified Array of ids of the proposals to be removed
    * @param {String} data.extensions Stringified Array of extensions
    * @param {String} options.rpc Override user's RPC settings
    */
   removeProposal = async (
-    data: ExcludeCommonParams<RequestRemoveProposal>,
+    data: RemoveProposal,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1280,6 +1362,25 @@ export class KeychainSDK {
 
   /**
    * Vote/Unvote a DHF proposal
+   * @example
+   * try
+   *  {
+   *    const keychain = new KeychainSDK(window);
+   *    const formParamsAsObject = {
+   *    "data": {
+   *        "username": "keychain.tests",
+   *        "proposal_ids": "[1,2,3]",
+   *        "approve": false,
+   *        "extensions": "[]"
+   *    },
+   *    "options": {}};
+   *    const updateproposalvote = await keychain
+   *              .updateProposalVote(formParamsAsObject.data as UpdateProposalVote,
+   *              formParamsAsObject.options);
+   *    console.log({ updateproposalvote });
+   *  } catch (error) {
+   *    console.log({ error });
+   *  }
    * @param {String} data.username Hive account to perform the request
    * @param {String} data.proposal_ids Stringified Array of Ids of the proposals to be voted
    * @param {boolean} data.approve Set to true to support the proposal, false to remove a vote
@@ -1287,7 +1388,7 @@ export class KeychainSDK {
    * @param {String} options.rpc Override user's RPC settings
    */
   updateProposalVote = async (
-    data: ExcludeCommonParams<RequestUpdateProposalVote>,
+    data: UpdateProposalVote,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1317,7 +1418,7 @@ export class KeychainSDK {
    * Add a new account to Keychain
    * @example
    *  try {
-   *     const addAccount = await KeyChainSDK.requestAddAccount(
+   *     const addAccount = await KeyChainSDK.addAccount(
    *       {
    *         username: 'keychain.tests',
    *         keys: {
@@ -1335,9 +1436,7 @@ export class KeychainSDK {
    * @param {String} data.username username of the account to be added
    * @param {Object} data.keys private keys of the account : {active:'...',posting:'...',memo:'...'}. At least one must be specified.
    */
-  addAccount = async (
-    data: ExcludeCommonParams<RequestAddAccount>,
-  ): Promise<KeychainRequestResponse> => {
+  addAccount = async (data: AddAccount): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -1362,7 +1461,7 @@ export class KeychainSDK {
    * Request currency conversion
    * @example
    *  try {
-   *     const conversionCollateralized = await KeyChainSDK.requestConversion(
+   *     const conversionCollateralized = await KeyChainSDK.convert(
    *       {
    *         username: 'keychain.tests',
    *         amount: '1.000',
@@ -1380,7 +1479,7 @@ export class KeychainSDK {
    * @param {String | undefined} optins.rpc  Override user's RPC settings
    */
   convert = async (
-    data: ExcludeCommonParams<RequestConvert>,
+    data: Convert,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1409,7 +1508,7 @@ export class KeychainSDK {
    * Request recurrent transfer
    * @example
    *  try {
-   *     const recurrentTransfer = await KeyChainSDK.requestRecurrentTransfer(
+   *     const recurrentTransfer = await KeyChainSDK.recurrentTransfer(
    *       {
    *         username: 'keychain.tests',
    *         to: 'theghost1980',
@@ -1436,7 +1535,7 @@ export class KeychainSDK {
    * @param {String| undefined} options.rpc Override user's RPC settings
    */
   recurrentTransfer = async (
-    data: ExcludeCommonParams<RequestRecurrentTransfer>,
+    data: RecurrentTransfer,
     options: KeychainOptions,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
