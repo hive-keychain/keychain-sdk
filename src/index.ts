@@ -118,6 +118,11 @@ export class KeychainSDK {
    * Keychain SDK utils functions.
    * Call this function to perform an easy login function by trying to sign a message.
    * @example
+   * //Under the hood, this login request is:
+   * //1. Signing the message/buffer.
+   * //2. Checking if publicKey belongs to that user.
+   * //3. Verifying the signature.
+   * //note: Point to the login requests to see the code process.
    * try {
    *     const login = await KeyChainSDK.login(
    *       {
