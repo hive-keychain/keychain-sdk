@@ -72,7 +72,7 @@ const client = new Client([
   'https://anyx.io',
   'https://api.openhive.network',
 ]);
-
+//TODO here generate auto documentation
 export class KeychainSDK {
   window: Window;
   options?: KeychainOptions;
