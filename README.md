@@ -9,10 +9,18 @@ This class is a way to handle hive-keychain requests, using Typescript. The purp
 ### Basic Usage
 
 As any class, you can create a new instance using:
-`const keychain = new KeychainSDK(window);`
+
+```
+const keychain = new KeychainSDK(window);
+```
+
 The keychain-sdk allows you to set an options parameter, when you need to override RPC node by default, which is used by the keychain extension.
 In that case you can do:
-`const keychain = new KeychainSDK(window, { rpc: 'https://rpc-url-here' });`
+
+```
+const keychain = new KeychainSDK(window, { rpc: 'https://rpc-url-here' });
+```
+
 You can also add the override option later on, when processing the request.
 A full code sample, to encode a message would be:
 
