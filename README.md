@@ -54,7 +54,7 @@ Sample of Generic Broadcast, using Rpc override:
 
 ```
 import { KeychainSDK } from 'keychain-sdk';
-const keychain = new KeychainSDK(window. { rpc: 'https://www.rpc-node-url.com'});
+const keychain = new KeychainSDK(window, { rpc: 'https://www.rpc-node-url.com'});
 try {
       const broadcast = await keychain.requestBroadcast(
       {
