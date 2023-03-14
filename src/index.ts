@@ -72,7 +72,35 @@ const client = new Client([
   'https://anyx.io',
   'https://api.openhive.network',
 ]);
-//TODO here generate auto documentation
+
+/**
+ * @description
+ * KeychainSDK Class.
+ * Contains utils methods & easy Keychain requests to perform operations/requests on HIVE network.
+ * @example
+ * //To create and use in a file.
+ * import { KeychainSDK } from "keychain-sdk";
+ *
+ * const keychain = new KeychainSDK(window);
+ * //After instantiated, is ready to use, for example in a login request
+ *   try {
+ *     const login = await keychain.login(
+ *       {
+ *         username: 'keychain.tests',
+ *         message: '{"login":"123"}',
+ *         method: 'posting',
+ *         title: 'LOGIN',
+ *       },
+ *       {},
+ *     );
+ *     console.log({ login });
+ *   } catch (error) {
+ *     console.log({ error });
+ *   }
+ * @see KeyChainSDK.login function documentation for details of this member method.
+ * @export KeyChainSDK class
+ * @class KeychainSDK
+ */
 export class KeychainSDK {
   window: Window;
   options?: KeychainOptions;
@@ -84,8 +112,20 @@ export class KeychainSDK {
 
   //////utils////////
   /**
-   *
-   * Note: Will return actual configuration of windows object.
+   * @description
+   * Keychain SDK utils functions.
+   * Will return actual configuration of windows object + rpc options.
+   * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
+   * try {
+   *     const configObject = await keychain.getConfig();
+   *     console.log({ configObject });
+   *   } catch (error) {
+   *     console.log({ configObject });
+   *   }
+   * @returns Object as {window,options}
+   * @memberof KeychainSDK
    */
   getConfig() {
     return {
@@ -95,8 +135,20 @@ export class KeychainSDK {
   }
 
   /**
-   *
-   * Note: will check if window object set + keychain extension detected!
+   * @description
+   * Keychain SDK utils functions.
+   * Will check if window object set & keychain extension installed/detected
+   * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
+   * try {
+   *     const installed = await keychain.isKeyChainInstalled();
+   *     console.log({ installed });
+   *   } catch (error) {
+   *     console.log({ installed });
+   *   }
+   * @memberof KeychainSDK
+   * @returns Promise, true if installed/detected
    */
   isKeyChainInstalled = async (): Promise<boolean> => {
     return new Promise((resolve, reject) => {
@@ -115,16 +167,19 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Keychain SDK utils functions.
-   * Call this function to perform an easy login function by trying to sign a message.
+   * Call this function to perform an easy login function doing a full signing/verification process.
    * @example
-   * //Under the hood, this login request is:
-   * //1. Signing the message/buffer.
-   * //2. Checking if publicKey belongs to that user.
-   * //3. Verifying the signature.
-   * //note: Point to the login requests to see the code process.
+   * // Under the hood, this login request is:
+   * // 1. Signing the message/buffer.
+   * // 2. Checking if publicKey belongs to that user.
+   * // 3. Verifying the signature.
+   * // Note: Check the login method bellow to see the whole code process.
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * try {
-   *     const login = await KeyChainSDK.login(
+   *     const login = await keychain.login(
    *       {
    *         username: 'keychain.tests',
    *         message: '{"login":"123"}',
@@ -137,11 +192,11 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String | undefined} data.username Hive account to perform the login, if undefined, Keychain extension will show a dropdown to choose an account.
-   * @param {String | undefined} data.message Message to sign, if undefined, random message will be generated.
-   * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
-   * @param {String | undefined} data.title Title to be shown on popup
-   * @param {String | undefined} options.rpc Override user's RPC settings
+   *
+   * @param {Login} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
+   * @returns Promise<any>
    */
   login = async (data: Login, options: KeychainOptions): Promise<any> => {
     return new Promise(async (resolve, reject) => {
@@ -195,10 +250,13 @@ export class KeychainSDK {
   //////END utils///////
 
   /**
+   * @description
    * This function is called to encode a message, using certain key
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * try {
-   *     const encodeMessage = await KeyChainSDK.encode({
+   *     const encodeMessage = await keychain.encode({
    *       username: 'keychain.tests',
    *       receiver: 'keychain.tests',
    *       message: '#Message to encode, # is required to encrypt',
@@ -208,10 +266,8 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.receiver Account that will decode the string
-   * @param {String} data.message Message to be encrypted, i.e: "#To encrypt message"
-   * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
+   * @param {Encode} data
+   * @memberof KeychainSDK
    */
   encode = async (data: Encode): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -237,10 +293,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * This function is called to verify that the user has a certain authority over an account, by requesting to decode a message
    * @example
-   *try {
-   *     const verifyKey = await KeyChainSDK.decode({
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
+   * try {
+   *     const verifyKey = await keychain.decode({
    *       username: 'keychain.tests',
    *       message:
    *         '#JnyQbbpLdRBT8ev7SALsNru6c4bftPCf4c6AkTN42YTc52aDvcRqKVqK6yMhRAGhW8fbasR8xz14ofs63WXLP6nxDndKsBMkmg7UsAS9ucTDrKFoZkuJFCyvLmksyCYgD',
@@ -250,9 +309,8 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.message Message to be decoded by the account
-   * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
+   * @param {Decode} data
+   * @memberof KeychainSDK
    */
   decode = async (data: Decode): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -277,10 +335,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Requests a message to be signed with proper authority
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * try {
-   *     const signBuffer = await KeyChainSDK.signBuffer(
+   *     const signBuffer = await keychain.signBuffer(
    *       {
    *         username: 'keychain.tests',
    *         message: 'message!!',
@@ -293,11 +354,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String| undefined} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
-   * @param {String} data.message Message to be signed by the account
-   * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
-   * @param {String | undefined} data.title Override "Sign message" title
-   * @param {String| undefined} options.rpc Override user's RPC settings
+   * @param {SignBuffer} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   signBuffer = async (
     data: SignBuffer,
@@ -327,10 +386,14 @@ export class KeychainSDK {
   };
 
   /**
-   * Requests to add account authority over another account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
+   * @description
+   * Requests to add account authority over another account. For more information about multisig
+   * @see Website read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * try {
-   *     const addAccountAuthority = await KeyChainSDK.addAccountAuthority(
+   *     const addAccountAuthority = await keychain.addAccountAuthority(
    *       {
    *         username: 'keychain.tests',
    *         authorizedUsername: 'keychain.tests',
@@ -344,11 +407,9 @@ export class KeychainSDK {
    *     console.log({ error });
    *
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.authorizedUsername Authorized account
-   * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'
-   * @param {number} data.weight Weight of the authority
-   * @param {String | undefined} options.rpc Override user's RPC settings
+   * @param {AddAccountAuthority} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   addAccountAuthority = async (
     data: AddAccountAuthority,
@@ -378,11 +439,15 @@ export class KeychainSDK {
   };
 
   /**
-   * Requests to remove an account authority over another account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
+   * @description
+   * Requests to remove an account authority over another account.
+   * @see Website For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * try {
    *     const removeAccountAuthority =
-   *       await KeyChainSDK.removeAccountAuthority(
+   *       await keychain.removeAccountAuthority(
    *         {
    *           username: 'keychain.tests',
    *           authorizedUsername: 'keychain.tests',
@@ -394,10 +459,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.authorizedUsername Account to lose authority
-   * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'
-   * @param {String |  undefined} options.rpc Override user's RPC settings
+   * @param {RemoveAccountAuthority} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   removeAccountAuthority = async (
     data: RemoveAccountAuthority,
@@ -426,10 +490,14 @@ export class KeychainSDK {
   };
 
   /**
-   * Requests to add a new key authority to an account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
+   * @description
+   * Requests to add a new key authority to an account.
+   * @see Website For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * try {
-   *     const addKeyAuthority = await KeyChainSDK.addKeyAuthority(
+   *     const addKeyAuthority = await keychain.addKeyAuthority(
    *       {
    *         username: 'keychain.tests',
    *         authorizedKey:
@@ -443,11 +511,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.authorizedKey New public key to be associated with the account
-   * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'
-   * @param {number} data.weight Weight of the key authority
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {AddKeyAuthority} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   addKeyAuthority = async (
     data: AddKeyAuthority,
@@ -477,10 +543,14 @@ export class KeychainSDK {
   };
 
   /**
-   * Requests to remove a key to an account. For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
+   * @description
+   * Requests to remove a key to an account.
+   * @see Website For more information about multisig, please read https://peakd.com/utopian-io/@stoodkev/how-to-set-up-and-use-multisignature-accounts-on-steem-blockchain
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *   try {
-   *     const removeKeyAuthority = await KeyChainSDK.removeKeyAuthority(
+   *     const removeKeyAuthority = await keychain.removeKeyAuthority(
    *       {
    *         username: 'keychain.tests',
    *         authorizedKey:
@@ -493,10 +563,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.authorizedKey Key to be removed (public key).
-   * @param {String} data.role Type of authority. Can be 'Posting','Active' or 'Memo'.
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {RemoveKeyAuthority} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   removeKeyAuthority = async (
     data: RemoveKeyAuthority,
@@ -525,10 +594,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Generic broadcast request
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * try {
-   *     const broadcast = await KeyChainSDK.broadcast(
+   *     const broadcast = await keychain.broadcast(
    *       {
    *         username: 'keychain.tests',
    *         operations: [
@@ -550,10 +622,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {Array} data.operations Array of operations to be broadcasted
-   * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {Broadcast} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   broadcast = async (
     data: Broadcast,
@@ -584,12 +655,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Requests to sign a transaction with a given authority
    * @example
-   *
-   * //This example would be done much easier with requestBroadcast
-   *
+   * //Note: This example would be done much easier with requestBroadcast
    * import dhive from '@hiveio/dhive';
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * const client = new dhive.Client(['https://api.hive.blog', 'https://anyx.io', 'https://api.openhive.network']);
    * const props = await client.database.getDynamicGlobalProperties();
    * const headBlockNumber = props.head_block_number;
@@ -599,10 +671,20 @@ export class KeychainSDK {
    *  ref_block_num: headBlockNumber & 0xffff,
    *  ref_block_prefix: Buffer.from(headBlockId, 'hex').readUInt32LE(4),
    *  expiration: new Date(Date.now() + 600000).toISOString().slice(0, -5),
-   *  operations: [...] // Add operations here
+   *  operations: [
+        [
+          "transfer",
+          {
+            "from": "keychain.tests",
+            "to": "keychain.tests",
+            "amount": "0.001 HIVE",
+            "memo": "Keychain SDK - requestSignTx & broadcast"
+          }
+        ]
+      ]
    * };
    *  try {
-   *     const signTx = await KeyChainSDK.signTx(
+   *     const signTx = await keychain.signTx(
    *       {
    *         username: 'keychain.tests',
    *         tx: op,
@@ -614,10 +696,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {Object} data.tx Unsigned transaction
-   * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {SignTx} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   signTx = async (
     data: SignTx,
@@ -646,13 +727,12 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Requests a signed call
    * @deprecated
-   * @param {String} data.account Hive account to perform the request
-   * @param {String} data.method Method of the call
-   * @param {String} data.params Parameters of the call
-   * @param {String} data.key Type of key. Can be 'Posting','Active' or 'Memo'
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {ExcludeCommonParams<RequestSignedCall>} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   signedCall = async (
     data: ExcludeCommonParams<RequestSignedCall>,
@@ -669,10 +749,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Requests to broadcast a blog post/comment
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * try {
-   *     const post = await KeyChainSDK.post(
+   *     const post = await keychain.post(
    *       {
    *         username: 'keychain.tests',
    *         title: 'Keychain SDK 2!',
@@ -701,15 +784,10 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.title Title of the blog post
-   * @param {String} data.body Content of the blog post
-   * @param {String} data.parent_perm Permlink of the parent post. Main tag for a root post
-   * @param {String} data.parent_username Author of the parent post. Pass null for root post
-   * @param {String} data.json_metadata Parameters of the call, must pass stringyfied.
-   * @param {String} data.permlink Permlink of the blog post. Note: must be same as in comment_options if is a HIVE Post.
-   * @param {String} data.comment_options Options attached to the blog post, must be stringyfied. Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about it. Note: Must be the same as data.permlink if is a Post.
-   * @param {String} options.rpc Override user's RPC settings
+   * @see Website Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about comment_options
+   * @param {Post} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   post = async (
     data: Post,
@@ -743,10 +821,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Requests a vote
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *   try {
-   *     const vote = await KeyChainSDK.vote(
+   *     const vote = await keychain.vote(
    *       {
    *         username: 'keychain.tests',
    *         author: 'keychain.tests',
@@ -759,11 +840,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.author Author of the blog post
-   * @param {String} data.permlink Permlink of the blog post
-   * @param {Number} data.weight Weight of the vote, comprised between -10,000 (-100%) and 10,000 (100%)
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {Vote} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   vote = async (
     data: Vote,
@@ -793,10 +872,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Requests a custom JSON broadcast
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *    try {
-   *     const custom_json = await KeyChainSDK.custom(
+   *     const custom_json = await keychain.custom(
    *       {
    *         username: 'keychain.tests',
    *         id: '1',
@@ -814,12 +896,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log('error custom_json: ', error);
    *   }
-   * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
-   * @param {String} data.id Type of custom_json to be broadcasted
-   * @param {KeychainKeyTypes} data.method Type of key. Can be 'Posting','Active' or 'Memo'
-   * @param {String} data.json Stringified custom json
-   * @param {String} data.display_msg Message to display to explain to the user what this broadcast is about
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {Custom} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   custom = async (
     data: Custom,
@@ -850,10 +929,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Requests a transfer
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * try {
-   *   const transfer = await KeyChainSDK.transfer(
+   *   const transfer = await keychain.transfer(
    *       {
    *          username: 'keychain.tests',
    *          to: 'keychain.tests',
@@ -868,14 +950,9 @@ export class KeychainSDK {
    * } catch (error) {
    *  console.log('error transfer: ', error);
    * }
-   *
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.to Hive account to receive the transfer
-   * @param {String} data.amount Amount to be transfered. Requires 3 decimals i.e: '1.000', '10.000'.
-   * @param {String} data.memo The memo will be automatically encrypted if starting by '#' and the memo key is available on Keychain. It will also overrule the account to be enforced, regardless of the 'enforce' parameter
-   * @param {boolean} data.enforce If set to true, user cannot chose to make the transfer from another account
-   * @param {String} data.currency Asset's symbol to transfer i.e: 'HIVE', 'HBD'.
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {Transfer} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   transfer = async (
     data: Transfer,
@@ -907,10 +984,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Requests a token transfer
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *   try {
-   *     const sendToken = await KeyChainSDK.sendToken(
+   *     const sendToken = await keychain.sendToken(
    *       {
    *         username: 'keychain.tests',
    *         to: 'keychain.tests',
@@ -924,12 +1004,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.account Hive account to perform the request
-   * @param {String} data.to Hive account to receive the transfer
-   * @param {String} data.amount Amount to be transferred. Requires 3 decimals.
-   * @param {String} data.memo Memo attached to the transfer
-   * @param {String} data.currency Token symbol to be sent, i.e: 'LEO'.
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {SendToken} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   sendToken = async (
     data: SendToken,
@@ -960,10 +1037,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Requests a delegation broadcast
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *   try {
-   *     const delegation = await KeyChainSDK.delegation(
+   *     const delegation = await keychain.delegation(
    *       {
    *         username: 'keychain.tests',
    *         delegatee: 'keychain.tests',
@@ -976,11 +1056,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
-   * @param {String} data.delegatee Account to receive the delegation
-   * @param {String} data.amount Requires 3 decimals, i.e: '1.000'.
-   * @param {String} data.unit HP or VESTS. (For VESTS must be greater than minimum).
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {Delegation} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   delegation = async (
     data: Delegation,
@@ -1010,10 +1088,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Requests a witness vote
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *  try {
-   *     const witnessVote = await KeyChainSDK.witnessVote(
+   *     const witnessVote = await keychain.witnessVote(
    *       {
    *         username: 'keychain.tests',
    *         witness: 'keychain',
@@ -1025,10 +1106,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
-   * @param {String} data.witness Account to receive the witness vote
-   * @param {boolean} data.vote Set to true to vote for the witness, false to unvote
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {WitnessVote} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   witnessVote = async (
     data: WitnessVote,
@@ -1057,10 +1137,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Select an account as proxy
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *  try {
-   *     const proxy = await KeyChainSDK.proxy(
+   *     const proxy = await keychain.proxy(
    *       {
    *         username: 'keychain.tests',
    *         proxy: 'keychain',
@@ -1071,9 +1154,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String | undefined } data.username Hive account to perform the request. If undefined, user can choose the account from a dropdown
-   * @param {String} data.proxy Account to become the proxy. Empty string ('') to remove a proxy
-   * @param {String | undefined} options.rpc Override user's RPC settings
+   * @param {Proxy} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   proxy = async (
     data: Proxy,
@@ -1101,10 +1184,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Request a power up
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *  try {
-   *     const powerUp = await KeyChainSDK.powerUp(
+   *     const powerUp = await keychain.powerUp(
    *       {
    *         username: 'keychain.tests',
    *         recipient: 'keychain.tests',
@@ -1116,10 +1202,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.recipient Account to receive the power up
-   * @param {String} data.hive Amount of HIVE to be powered up, requires 3 decimals, i.e: '1.000'.
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {PowerUp} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   powerUp = async (
     data: PowerUp,
@@ -1148,10 +1233,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Request a power down
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *  try {
-   *     const powerDown = await KeyChainSDK.powerDown(
+   *     const powerDown = await keychain.powerDown(
    *       {
    *         username: 'keychain.tests',
    *         hive_power: '0.001',
@@ -1162,9 +1250,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.hive_power Amount of HP(hive power), to be powered down
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {PowerDown} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   powerDown = async (
     data: PowerDown,
@@ -1192,30 +1280,35 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Request the creation of an account using claimed tokens
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    * try {
-   *  const createclaimedaccount = await KeyChainSDK.createClaimedAccount(
+   * // Note: as an example the same Authority object is being used, to real test, use real data that apply.
+   * const DEFAULT_AUTHORITY = {
+   *   weight_threshold: 1,
+   *   account_auths: [],
+   *   key_auths: [["STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF", 1]],
+   * } as Authority;
+   *  const createclaimedaccount = await keychain.createClaimedAccount(
    *    {
    *     "username": "keychain.tests",
    *     "new_account": "keychain.tests",
-   *     "owner": "{}",
-   *     "active": "{}",
-   *     "posting": "{}",
+   *     "owner": JSON.stringify(DEFAULT_AUTHORITY),
+   *     "active": JSON.stringify(DEFAULT_AUTHORITY),
+   *     "posting": JSON.stringify(DEFAULT_AUTHORITY),
    *     "memo": "STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF"
    *     },
    *     {});
    *  console.log({ createclaimedaccount });
-   *} catch (error) {
+   * } catch (error) {
    *  console.log({ error });
-   *}
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.new_account New account to be created
-   * @param {object} data.owner owner authority object
-   * @param {object} data.active active authority object
-   * @param {object} data.posting posting authority object
-   * @param {String} data.memo public memo key
-   * @param {String | undefined} options.rpc Override user's RPC settings
+   * }
+   * @param {CreateClaimedAccount} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   createClaimedAccount = async (
     data: CreateClaimedAccount,
@@ -1248,40 +1341,32 @@ export class KeychainSDK {
 
   //HF21
   /**
+   * @description
    * Request the creation of a DHF proposal
    * @example
-   * try
-   *  {
-   *    const keychain = new KeychainSDK(window);
-   *    const formParamsAsObject = {
-   *    "data": {
-   *        "username": "keychain.tests",
-   *        "receiver": "keychain.tests",
-   *        "subject": "The New proposal title",
-   *        "permlink": "proposal-keychain-dev-permlink",
-   *        "start": "2023-02-25T00:00:00",
-   *        "end": "2024-02-25T00:00:00",
-   *        "daily_pay": "390.000 HBD",
-   *        "extensions": "[]"
-   *    },
-   *    "options": {}
-   *};
-   *    const createproposal = await keychain
-   *             .createProposal(formParamsAsObject.data as CreateProposal,
-   *              formParamsAsObject.options);
-   *    console.log({ createproposal });
-   *  } catch (error) {
-   *    console.log({ error });
-   *  }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.receiver Account receiving the funding if the proposal is voted
-   * @param {String} data.subject Title of the DAO
-   * @param {String} data.permlink Permlink to the proposal description
-   * @param {String} data.daily_pay Daily amount to be received by `receiver`
-   * @param {String} data.start Starting date
-   * @param {String} data.end Ending date
-   * @param {String} data.extensions Stringified Array of extensions
-   * @param {String} options.rpc Override user's RPC settings
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
+   * try {
+   *   const createproposal = await keychain.createProposal(
+   *     {
+   *       username: "keychain.tests",
+   *       receiver: "keychain.tests",
+   *       subject: "The New proposal title",
+   *       permlink: "proposal-keychain-dev-permlink",
+   *       start: "2023-02-25T00:00:00",
+   *       end: "2024-02-25T00:00:00",
+   *       daily_pay: "390.000 HBD",
+   *       extensions: "[]",
+   *     },
+   *     {}
+   *   );
+   *   console.log({ createproposal });
+   * } catch (error) {
+   *   console.log({ error });
+   * }
+   * @param {CreateProposal} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   createProposal = async (
     data: CreateProposal,
@@ -1317,23 +1402,21 @@ export class KeychainSDK {
   /**
    * Request the removal of a DHF proposal
    * @example
-   * try
-   *  {
-   *    const keychain = new KeychainSDK(window);
-   *    const formParamsAsObject = {
-   *    "data": {
-   *        "username": "keychain.tests",
-   *        "proposal_ids": "[1,2,3]",
-   *        "extensions": "[]"
-   *    },
-   *    "options": {}};
-   *    const removeproposal = await keychain
-   *              .removeProposal(formParamsAsObject.data as RemoveProposal,
-   *              formParamsAsObject.options);
-   *    console.log({ removeproposal });
-   *  } catch (error) {
-   *    console.log({ error });
-   *  }
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
+   * try {
+   *   const removeproposal = await keychain.removeProposal(
+   *     {
+   *       username: "keychain.tests",
+   *       proposal_ids: "[1,2,3]",
+   *       extensions: "[]",
+   *     },
+   *     {}
+   *   );
+   *   console.log({ removeproposal });
+   * } catch (error) {
+   *   console.log({ error });
+   * }
    * @param {String} data.username Hive account to perform the request
    * @param {String} data.proposal_ids Stringified Array of ids of the proposals to be removed
    * @param {String} data.extensions Stringified Array of extensions
@@ -1366,31 +1449,28 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Vote/Unvote a DHF proposal
    * @example
-   * try
-   *  {
-   *    const keychain = new KeychainSDK(window);
-   *    const formParamsAsObject = {
-   *    "data": {
-   *        "username": "keychain.tests",
-   *        "proposal_ids": "[1,2,3]",
-   *        "approve": false,
-   *        "extensions": "[]"
-   *    },
-   *    "options": {}};
-   *    const updateproposalvote = await keychain
-   *              .updateProposalVote(formParamsAsObject.data as UpdateProposalVote,
-   *              formParamsAsObject.options);
-   *    console.log({ updateproposalvote });
-   *  } catch (error) {
-   *    console.log({ error });
-   *  }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.proposal_ids Stringified Array of Ids of the proposals to be voted
-   * @param {boolean} data.approve Set to true to support the proposal, false to remove a vote
-   * @param {String} data.extensions Stringified Array of extensions
-   * @param {String} options.rpc Override user's RPC settings
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
+   * try {
+   *   const updateproposalvote = await keychain.updateProposalVote(
+   *     {
+   *       username: "keychain.tests",
+   *       proposal_ids: "[1,2,3]",
+   *       approve: false,
+   *       extensions: "[]",
+   *     },
+   *     {}
+   *   );
+   *   console.log({ updateproposalvote });
+   * } catch (error) {
+   *   console.log({ error });
+   * }
+   * @param {UpdateProposalVote} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   updateProposalVote = async (
     data: UpdateProposalVote,
@@ -1420,10 +1500,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Add a new account to Keychain
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *  try {
-   *     const addAccount = await KeyChainSDK.addAccount(
+   *     const addAccount = await keychain.addAccount(
    *       {
    *         username: 'keychain.tests',
    *         keys: {
@@ -1438,8 +1521,8 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username username of the account to be added
-   * @param {Object} data.keys private keys of the account : {active:'...',posting:'...',memo:'...'}. At least one must be specified.
+   * @param {AddAccount} data
+   * @memberof KeychainSDK
    */
   addAccount = async (data: AddAccount): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
@@ -1463,10 +1546,13 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Request currency conversion
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *  try {
-   *     const conversionCollateralized = await KeyChainSDK.convert(
+   *     const conversionCollateralized = await keychain.convert(
    *       {
    *         username: 'keychain.tests',
    *         amount: '1.000',
@@ -1478,10 +1564,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.amount amount to be converted. Requires 3 decimals, i.e: '1.000'.
-   * @param {Boolean} data.collaterized true to convert HIVE to HBD. false to convert HBD to HIVE.
-   * @param {String | undefined} optins.rpc  Override user's RPC settings
+   * @param {Convert} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   convert = async (
     data: Convert,
@@ -1510,13 +1595,16 @@ export class KeychainSDK {
   };
 
   /**
+   * @description
    * Request recurrent transfer
    * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
    *  try {
-   *     const recurrentTransfer = await KeyChainSDK.recurrentTransfer(
+   *     const recurrentTransfer = await keychain.recurrentTransfer(
    *       {
    *         username: 'keychain.tests',
-   *         to: 'theghost1980',
+   *         to: 'keychain.tests',
    *         amount: '1.000',
    *         currency: 'HIVE',
    *         memo: 'Keychain SDK tests rt',
@@ -1530,14 +1618,9 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error});
    *   }
-   * @param {String| undefined} data.username Hive account to perform the request
-   * @param {String} data.to Hive account receiving the transfers.
-   * @param {String} data.amount amount to be sent on each execution. Requires 3 decimals, i.e: '1.000'.
-   * @param {String} data.currency HIVE or HBD on mainnet.
-   * @param {String} data.memo transfer memo
-   * @param {Number} data.recurrence How often will the payment be triggered (in hours) - minimum 24.
-   * @param {Number} data.executions The times the recurrent payment will be executed - minimum 2.
-   * @param {String| undefined} options.rpc Override user's RPC settings
+   * @param {RecurrentTransfer} data
+   * @param {KeychainOptions} options
+   * @memberof KeychainSDK
    */
   recurrentTransfer = async (
     data: RecurrentTransfer,
