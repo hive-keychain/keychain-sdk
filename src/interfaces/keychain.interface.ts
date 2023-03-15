@@ -6,6 +6,9 @@ export interface KeychainRequestResponse {
   success: boolean;
   error: string;
   result?: HiveTxConfirmationResult | string | HiveEngineTransactionStatus;
+  //TODO testing each request to match with one of above types //TODO remove when done.
+  //    - login   -> results:
+  //    - encode  ->
   data: {
     key: string;
     message: string;
