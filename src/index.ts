@@ -34,13 +34,13 @@ import {
 import {
   KeychainOptions,
   KeychainRequestResponse,
+  KeychainSignTxRequestResponse,
 } from './interfaces/keychain.interface';
 import { getLoginError } from './utils/login';
 const Dhive = require('@hiveio/dhive');
 
 const client = new Client([
   'https://api.hive.blog',
-  'https://anyx.io',
   'https://api.openhive.network',
 ]);
 
@@ -633,7 +633,7 @@ export class KeychainSDK {
    * import dhive from '@hiveio/dhive';
    * import { KeychainSDK } from "keychain-sdk";
    * const keychain = new KeychainSDK(window);
-   * const client = new dhive.Client(['https://api.hive.blog', 'https://anyx.io', 'https://api.openhive.network']);
+   * const client = new dhive.Client(['https://api.hive.blog', 'https://api.openhive.network']);
    * const props = await client.database.getDynamicGlobalProperties();
    * const headBlockNumber = props.head_block_number;
    * const headBlockId = props.head_block_id;
@@ -674,7 +674,7 @@ export class KeychainSDK {
   signTx = async (
     data: SignTx,
     options: KeychainOptions,
-  ): Promise<KeychainRequestResponse> => {
+  ): Promise<KeychainSignTxRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeyChainInstalled();
@@ -682,7 +682,7 @@ export class KeychainSDK {
           data.username,
           data.tx,
           data.method,
-          (response: KeychainRequestResponse) => {
+          (response: KeychainSignTxRequestResponse) => {
             if (response.error) {
               reject(response);
             } else {

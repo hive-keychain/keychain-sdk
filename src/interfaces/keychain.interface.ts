@@ -1,3 +1,5 @@
+import { SignedTransaction } from '@hiveio/dhive';
+
 export interface KeychainOptions {
   rpc?: string;
 }
@@ -5,10 +7,7 @@ export interface KeychainOptions {
 export interface KeychainRequestResponse {
   success: boolean;
   error: string;
-  result?: HiveTxConfirmationResult | string | HiveEngineTransactionStatus;
-  //TODO testing each request to match with one of above types //TODO remove when done.
-  //    - login   -> results:
-  //    - encode  ->
+  result?: HiveTxConfirmationResult;
   data: {
     key: string;
     message: string;
@@ -21,6 +20,26 @@ export interface KeychainRequestResponse {
   message: string;
   request_id: number;
   publicKey?: string;
+}
+
+export interface KeychainSignTxRequestResponse
+  extends Omit<KeychainRequestResponse, 'result'> {
+  result: SignedTransaction;
+}
+
+export interface KeychainAddAccountRequestResponse
+  extends Omit<KeychainRequestResponse, 'result'> {
+  result: boolean;
+}
+
+export interface KeychainHiveEngineRequestResponse
+  extends Omit<KeychainRequestResponse, 'result'> {
+  result: HiveEngineTransactionStatus;
+}
+
+export interface KeychainRequestStringResponse
+  extends Omit<KeychainRequestResponse, 'result'> {
+  result: string;
 }
 
 export interface KeychainConfig {
