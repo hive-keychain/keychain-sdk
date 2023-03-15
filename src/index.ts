@@ -1,39 +1,7 @@
 import { Client } from '@hiveio/dhive';
 import { ExcludeCommonParams } from 'hive-keychain-commons';
-import {
-  KeychainKeyTypes,
-  RequestAddAccount,
-  RequestAddAccountAuthority,
-  RequestAddKeyAuthority,
-  RequestBroadcast,
-  RequestConvert,
-  RequestCreateClaimedAccount,
-  RequestCreateProposal,
-  RequestCustomJSON,
-  RequestDecode,
-  RequestDelegation,
-  RequestEncode,
-  RequestPost,
-  RequestPowerDown,
-  RequestPowerUp,
-  RequestProxy,
-  RequestRecurrentTransfer,
-  RequestRemoveAccountAuthority,
-  RequestRemoveKeyAuthority,
-  RequestRemoveProposal,
-  RequestSendToken,
-  RequestSignBuffer,
-  RequestSignedCall,
-  RequestSignTx,
-  RequestTransfer,
-  RequestUpdateProposalVote,
-  RequestVote,
-  RequestWitnessVote,
-} from 'hive-keychain-commons/lib/interfaces/keychain';
-import {
-  KeychainOptions,
-  KeychainRequestResponse,
-} from './interfaces/keychain.interface';
+import { RequestSignedCall } from 'hive-keychain-commons/lib/interfaces/keychain';
+import { v4 as uuidv4 } from 'uuid';
 import {
   AddAccount,
   AddAccountAuthority,
@@ -63,8 +31,11 @@ import {
   Vote,
   WitnessVote,
 } from './interfaces/keychain-sdk.interface';
+import {
+  KeychainOptions,
+  KeychainRequestResponse,
+} from './interfaces/keychain.interface';
 import { getLoginError } from './utils/login';
-import { v4 as uuidv4 } from 'uuid';
 const Dhive = require('@hiveio/dhive');
 
 const client = new Client([

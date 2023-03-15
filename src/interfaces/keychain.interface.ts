@@ -5,7 +5,7 @@ export interface KeychainOptions {
 export interface KeychainRequestResponse {
   success: boolean;
   error: string;
-  result: string | null;
+  result?: HiveTxConfirmationResult | string | HiveEngineTransactionStatus;
   data: {
     key: string;
     message: string;
@@ -23,4 +23,16 @@ export interface KeychainRequestResponse {
 export interface KeychainConfig {
   window: Window;
   options?: KeychainOptions;
+}
+
+export interface HiveTxConfirmationResult {
+  confirmed: boolean;
+  tx_id: string;
+  status: string;
+}
+
+export interface HiveEngineTransactionStatus {
+  broadcasted: boolean;
+  confirmed: boolean;
+  tx_id: string;
 }
