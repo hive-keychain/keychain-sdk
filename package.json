@@ -1,7 +1,7 @@
 {
   "name": "keychain-sdk",
   "version": "1.0.0",
-  "description": "A simpler and better way to handle HIVE keychain requests, using the keychain extension",
+  "description": "A simpler way to handle Hive Keychain requests",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
