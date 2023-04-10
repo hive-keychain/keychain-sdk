@@ -1,6 +1,6 @@
 ## keychain-sdk
 
-This class is a way to handle hive-keychain requests, using Typescript. The purpose is to make it easy for devs and reduce lines of code and complexity.
+This class is a way to handle Hive Keychain requests, with Typescript support. The purpose is to allow developers to integrate Keychain in a seemless manner.
 
 ### Installation
 
@@ -8,21 +8,21 @@ This class is a way to handle hive-keychain requests, using Typescript. The purp
 
 ### Basic Usage
 
-As any class, you can create a new instance using:
+Start by creating a new Keychain instance using:
 
 ```
 const keychain = new KeychainSDK(window);
 ```
 
-The keychain-sdk allows you to set an options parameter, when you need to override RPC node by default, which is used by the keychain extension.
-In that case you can do:
+The keychain-sdk allows you to set an options parameter, in which you can define an RPC node that will override the one normally determined within Keychain.
+
+This works as follows:
 
 ```
-const keychain = new KeychainSDK(window, { rpc: 'https://rpc-url-here' });
+const keychain = new KeychainSDK(window, { rpc: 'https://api.hive.blog' });
 ```
 
-You can also add the override option later on, when processing the request.
-A full code sample, to encode a message would be:
+After creating the instance you can use it to perform any action you'd need, here requesting for a message to be encoded :
 
 ```
 import { KeychainSDK } from "keychain-sdk";
@@ -40,21 +40,13 @@ try {
 }
 ```
 
-### Using override RPC option
+### Overriding the RPC node at the request level
 
-Some of the requests, give you the option to override the RPC.
-Some of them are:
-
-- addAccountAuthority
-- removeAccountAuthority
-- broadcast
-- among others.
-
-Sample of Generic Broadcast, using Rpc override:
+You can also override the RPC node at the request level, by adding it in the options
 
 ```
 import { KeychainSDK } from 'keychain-sdk';
-const keychain = new KeychainSDK(window, { rpc: 'https://www.rpc-node-url.com'});
+const keychain = new KeychainSDK(window, { rpc: 'https://api.hive.blog'}); // Default RPC at the instance level
 try {
       const broadcast = await keychain.requestBroadcast(
       {
@@ -72,7 +64,7 @@ try {
         ],
         method: 'active',
       },
-      {},
+      {rpc : 'https://api.deathwing.me'}, // For this particular broadcast, this rpc will be used
       );
       console.log({ broadcast });
     } catch (error) {
@@ -80,62 +72,44 @@ try {
     }
 ```
 
-### Login Utils Request
+### Utils
 
-We have provide an easy login function, to avoid extra code and processing. However here we expose an example to do the function step by step, so you can use it or understand what the login request is doing under the hood.
+#### Verifying
 
-This process will do 3 steps:
-
-- 1.  Signing the message/buffer.
-- 2.  Checking if publicKey belongs to that user.
-- 3.  Verifying the signature.
+Before making any Keychain request, you can check that Keychain is installed and ready to use, as follows:
 
 ```
-import { Client } from "@hiveio/dhive";
-import { KeychainSDK } from "keychain-sdk";
-const keychain = new KeychainSDK(window);
-const Dhive = require("@hiveio/dhive");
+const isKeychainInstalled = await keychain.isKeyChainInstalled();
+```
 
-const client = new Client([
-      "https://api.hive.blog",
-      "https://api.openhive.network",
-]);
-    try {
-    //  1. Sign the buffer.
-      const signBuffer = await sdk.signBuffer(
-        {
-          username: "keychain.tests",
-          message: "message!!",
-          method: KeychainKeyTypes.active,
-          title: "Login in Into Saturnoman.com\nProceed?",
-        },
-        {}
-      );
-    //  2. Check if publicKey belongs to that user.
-      const accounts = (
-        await client.keys.getKeyReferences([signBuffer.publicKey!])
-      )?.accounts;
-      if (accounts?.[0]?.includes(signBuffer.data.username!)) {
-    //  Success, it belongs, proceed to last step
-    //  3. Verify the signature.
-        const signature = Dhive.Signature.fromString(signBuffer.result);
-        const key = Dhive.PublicKey.fromString(signBuffer.publicKey);
-        const result = key.verify(
-          Dhive.cryptoUtils.sha256(signBuffer.data.message),
-          signature
-        );
-        if (result) {
-    //  Signature verified. Emit a successfull login or any other code you may need.
-          console.log("Login Successful", { signBuffer });
-        }
-    //  Signature could not be verified. Emit a unsuccessfull login or any other code you may need.
-        else console.log("The signature could not be verified");
-      } else {
-    //PublicKey cannot be verified
-        console.log("The signature could not be verified");
-      }
-    } catch (error) {
-      console.log("Error during the login process", { error });
-    }
+#### Login
+
+Handle logins easily with Keychain :
 
 ```
+ const keychain = new KeychainSDK(window);
+ const data= {
+        "username": "keychain.tests",
+        "message": "{\"login\":\"123\"}",
+        "method": "Posting",
+        "title": "Login"
+  };
+  const login = await keychain
+            .login(data as Login);
+```
+
+This saves you some time by taking care of the different steps that usually comprise a Hive login:
+
+- Requesting a buffer signature
+- Verifying this signature to ensure that the key is correct
+- Returning the public key corresponding to the key used for signing
+
+### Requests
+
+Keychain has a long list of available requests. Rather than giving you a boring documentation, we've set up a playground, in which you can discover the different requests, test them and see the corresponding code and results returned by Keychain.
+
+The playground is available [here](https://play.hive-keychain.com).
+
+### Contact us
+
+Should you need to contact us, please open an issue or join our [Discord](https://discord.gg/3EM6YfRrGv).
