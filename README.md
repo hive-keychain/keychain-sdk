@@ -4,7 +4,7 @@ This class is a way to handle Hive Keychain requests, with Typescript support. T
 
 ### Installation
 
-- `npm install hive-keychain/keychain-sdk`
+- `npm install keychain-sdk`
 
 ### Basic Usage
 
