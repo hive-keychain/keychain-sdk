@@ -79,7 +79,7 @@ try {
 Before making any Keychain request, you can check that Keychain is installed and ready to use, as follows:
 
 ```
-const isKeychainInstalled = await keychain.isKeyChainInstalled();
+const isKeychainInstalled = await keychain.isKeychainInstalled();
 ```
 
 #### Login
