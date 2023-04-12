@@ -114,7 +114,7 @@ export class KeychainSDK {
    * import { KeychainSDK } from "keychain-sdk";
    * const keychain = new KeychainSDK(window);
    * try {
-   *     const installed = await keychain.isKeyChainInstalled();
+   *     const installed = await keychain.isKeychainInstalled();
    *     console.log({ installed });
    *   } catch (error) {
    *     console.log({ installed });
