@@ -1,0 +1,19 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+
+This project adheres to [Semantic Versioning](http://semver.org/).
+
+## [0.0.2] - 2023-04-13
+
+### Added
+
+### Changed
+
+- [Commit #855522e](https://github.com/hive-keychain/keychain-sdk/commit/855522e6836173a8a0c8b30dd82b4022f6c6cec5)
+  Login, SignBuffer and SignTx no longer accept `options` as a second parameter.
+
+### Fixed
+
+- [[Commit #855522e](https://github.com/hive-keychain/keychain-sdk/commit/855522e6836173a8a0c8b30dd82b4022f6c6cec5)
+  All `options` parameters (mainly for handling RPC nodes) are now optional.
