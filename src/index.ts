@@ -158,7 +158,6 @@ export class KeychainSDK {
    *         method: 'posting',
    *         title: 'LOGIN',
    *       },
-   *       {},
    *     );
    *     console.log({ login });
    *   } catch (error) {
@@ -166,11 +165,10 @@ export class KeychainSDK {
    *   }
    *
    * @param {Login} data
-   * @param {KeychainOptions} options
    * @memberof KeychainSDK
    * @returns Promise<any>
    */
-  login = async (data: Login, options: KeychainOptions): Promise<any> => {
+  login = async (data: Login): Promise<any> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeychainInstalled();
@@ -210,7 +208,7 @@ export class KeychainSDK {
                 );
             }
           },
-          options.rpc ?? this.options?.rpc,
+          undefined,
           data.title,
         );
       } catch (error) {
@@ -320,20 +318,15 @@ export class KeychainSDK {
    *         method: 'Active',
    *         title: 'Login in Into Saturnoman.com\nProceed?',
    *       },
-   *       {},
    *     );
    *     console.log({ signBuffer });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {SignBuffer} data
-   * @param {KeychainOptions} options
    * @memberof KeychainSDK
    */
-  signBuffer = async (
-    data: SignBuffer,
-    options: KeychainOptions,
-  ): Promise<KeychainRequestResponse> => {
+  signBuffer = async (data: SignBuffer): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeychainInstalled();
@@ -348,7 +341,7 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          options.rpc ?? this.options?.rpc,
+          undefined,
           data.title,
         );
       } catch (error) {
@@ -372,7 +365,6 @@ export class KeychainSDK {
    *         role: 'posting',
    *         weight: 1,
    *       },
-   *       {},
    *     );
    *     console.log({ addAccountAuthority });
    *   } catch (error) {
@@ -380,12 +372,12 @@ export class KeychainSDK {
    *
    *   }
    * @param {AddAccountAuthority} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   addAccountAuthority = async (
     data: AddAccountAuthority,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -425,19 +417,18 @@ export class KeychainSDK {
    *           authorizedUsername: 'keychain.tests',
    *           role: 'posting',
    *         },
-   *         {},
    *       );
    *     console.log({ removeAccountAuthority });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {RemoveAccountAuthority} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   removeAccountAuthority = async (
     data: RemoveAccountAuthority,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -477,19 +468,18 @@ export class KeychainSDK {
    *         role: 'posting',
    *         weight: 1,
    *       },
-   *       {},
    *     );
    *     console.log({ addKeyAuthority });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {AddKeyAuthority} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   addKeyAuthority = async (
     data: AddKeyAuthority,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -529,19 +519,18 @@ export class KeychainSDK {
    *           'STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF',
    *         role: 'posting',
    *       },
-   *       {},
    *     );
    *     console.log({ removeKeyAuthority });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {RemoveKeyAuthority} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   removeKeyAuthority = async (
     data: RemoveKeyAuthority,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -588,19 +577,18 @@ export class KeychainSDK {
    *         ],
    *         method: 'active',
    *       },
-   *       {},
    *     );
    *     console.log({ broadcast });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {Broadcast} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   broadcast = async (
     data: Broadcast,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -630,7 +618,6 @@ export class KeychainSDK {
    * @description
    * Requests to sign a transaction with a given authority
    * @example
-   * //Note: This example would be done much easier with requestBroadcast
    * import dhive from '@hiveio/dhive';
    * import { KeychainSDK } from "keychain-sdk";
    * const keychain = new KeychainSDK(window);
@@ -661,21 +648,16 @@ export class KeychainSDK {
    *         username: 'keychain.tests',
    *         tx: op,
    *         method: 'Posting',
-   *       },
-   *       {},
+   *       }
    *     );
    *     console.log({ signTx });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {SignTx} data
-   * @param {KeychainOptions} options
    * @memberof KeychainSDK
    */
-  signTx = async (
-    data: SignTx,
-    options: KeychainOptions,
-  ): Promise<KeychainSignTxRequestResponse> => {
+  signTx = async (data: SignTx): Promise<KeychainSignTxRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeychainInstalled();
@@ -690,7 +672,6 @@ export class KeychainSDK {
               resolve(response);
             }
           },
-          options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
         throw error;
@@ -750,7 +731,6 @@ export class KeychainSDK {
    *           percent_hbd: 63,
    *         }),
    *       },
-   *       {},
    *     );
    *     console.log({ post });
    *   } catch (error) {
@@ -758,12 +738,12 @@ export class KeychainSDK {
    *   }
    * @see Website Consult Hive documentation at <https://developers.hive.io/apidefinitions/#broadcast_ops_comment_options> to learn more about comment_options
    * @param {Post} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   post = async (
     data: Post,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -806,19 +786,18 @@ export class KeychainSDK {
    *         permlink: 'a-post-by-keychaintests-fifth-part-post',
    *         weight: 10000,
    *       },
-   *       {},
    *     );
    *     console.log({ vote });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {Vote} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   vote = async (
     data: Vote,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -862,19 +841,18 @@ export class KeychainSDK {
    *         }),
    *         display_msg: 'rent a card man!',
    *       },
-   *       {},
    *     );
    *     console.log({ custom_json });
    *   } catch (error) {
    *     console.log('error custom_json: ', error);
    *   }
    * @param {Custom} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   custom = async (
     data: Custom,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -915,20 +893,19 @@ export class KeychainSDK {
    *          memo: 'Test Keychain SDK transfer',
    *          enforce: false,
    *          currency: 'HIVE',
-   *       },
-   *       {}
+   *       }
    *   );
    *  console.log({ transfer });
    * } catch (error) {
    *  console.log('error transfer: ', error);
    * }
    * @param {Transfer} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   transfer = async (
     data: Transfer,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -970,19 +947,18 @@ export class KeychainSDK {
    *         memo: 'frescos',
    *         currency: 'LEO',
    *       },
-   *       {},
    *     );
    *     console.log({ sendToken });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {SendToken} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   sendToken = async (
     data: SendToken,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1022,19 +998,18 @@ export class KeychainSDK {
    *         amount: '1.000',
    *         unit: 'HP',
    *       },
-   *       {},
    *     );
    *     console.log({ delegation });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {Delegation} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   delegation = async (
     data: Delegation,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1072,19 +1047,18 @@ export class KeychainSDK {
    *         witness: 'keychain',
    *         vote: true,
    *       },
-   *       {},
    *     );
    *     console.log({ witnessVote });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {WitnessVote} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   witnessVote = async (
     data: WitnessVote,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1120,19 +1094,18 @@ export class KeychainSDK {
    *         username: 'keychain.tests',
    *         proxy: 'keychain',
    *       },
-   *       {},
    *     );
    *     console.log({ proxy });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {Proxy} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   proxy = async (
     data: Proxy,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1168,19 +1141,18 @@ export class KeychainSDK {
    *         recipient: 'keychain.tests',
    *         hive: '0.001',
    *       },
-   *       {},
    *     );
    *     console.log({ powerUp });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {PowerUp} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   powerUp = async (
     data: PowerUp,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1216,19 +1188,18 @@ export class KeychainSDK {
    *         username: 'keychain.tests',
    *         hive_power: '0.001',
    *       },
-   *       {},
    *     );
    *     console.log({ powerDown });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {PowerDown} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   powerDown = async (
     data: PowerDown,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1273,18 +1244,18 @@ export class KeychainSDK {
    *     "posting": JSON.stringify(DEFAULT_AUTHORITY),
    *     "memo": "STM8eALyQwyb2C4XhXJ7eZfjfjfSeNeeZREaxPcJRApie1uwzzcuF"
    *     },
-   *     {});
+   * );
    *  console.log({ createclaimedaccount });
    * } catch (error) {
    *  console.log({ error });
    * }
    * @param {CreateClaimedAccount} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   createClaimedAccount = async (
     data: CreateClaimedAccount,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1319,7 +1290,7 @@ export class KeychainSDK {
    * import { KeychainSDK } from "keychain-sdk";
    * const keychain = new KeychainSDK(window);
    * try {
-   *   const createproposal = await keychain.createProposal(
+   *   const createProposal = await keychain.createProposal(
    *     {
    *       username: "keychain.tests",
    *       receiver: "keychain.tests",
@@ -1330,19 +1301,18 @@ export class KeychainSDK {
    *       daily_pay: "390.000 HBD",
    *       extensions: "[]",
    *     },
-   *     {}
    *   );
-   *   console.log({ createproposal });
+   *   console.log({ createProposal });
    * } catch (error) {
    *   console.log({ error });
    * }
    * @param {CreateProposal} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   createProposal = async (
     data: CreateProposal,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1383,20 +1353,17 @@ export class KeychainSDK {
    *       proposal_ids: "[1,2,3]",
    *       extensions: "[]",
    *     },
-   *     {}
    *   );
    *   console.log({ removeproposal });
    * } catch (error) {
    *   console.log({ error });
    * }
-   * @param {String} data.username Hive account to perform the request
-   * @param {String} data.proposal_ids Stringified Array of ids of the proposals to be removed
-   * @param {String} data.extensions Stringified Array of extensions
-   * @param {String} options.rpc Override user's RPC settings
+   * @param {RemoveProposal} data
+   * @param {KeychainOptions=} options
    */
   removeProposal = async (
     data: RemoveProposal,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1434,19 +1401,18 @@ export class KeychainSDK {
    *       approve: false,
    *       extensions: "[]",
    *     },
-   *     {}
    *   );
    *   console.log({ updateproposalvote });
    * } catch (error) {
    *   console.log({ error });
    * }
    * @param {UpdateProposalVote} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   updateProposalVote = async (
     data: UpdateProposalVote,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1487,7 +1453,6 @@ export class KeychainSDK {
    *           memo: '5rfD...',
    *         },
    *       },
-   *       {},
    *     );
    *     console.log({ addAccount });
    *   } catch (error) {
@@ -1530,19 +1495,18 @@ export class KeychainSDK {
    *         amount: '1.000',
    *         collaterized: true,
    *       },
-   *       {},
    *     );
    *     console.log({ conversionCollateralized });
    *   } catch (error) {
    *     console.log({ error });
    *   }
    * @param {Convert} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   convert = async (
     data: Convert,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -1584,19 +1548,18 @@ export class KeychainSDK {
    *         executions: 2,
    *         extensions: [],
    *       },
-   *       {},
    *     );
    *     console.log({ recurrentTransfer });
    *   } catch (error) {
    *     console.log({ error});
    *   }
    * @param {RecurrentTransfer} data
-   * @param {KeychainOptions} options
+   * @param {KeychainOptions=} options
    * @memberof KeychainSDK
    */
   recurrentTransfer = async (
     data: RecurrentTransfer,
-    options: KeychainOptions,
+    options: KeychainOptions = {},
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
