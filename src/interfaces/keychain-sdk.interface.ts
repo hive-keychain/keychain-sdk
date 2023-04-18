@@ -64,3 +64,8 @@ export type UpdateProposalVote = ExcludeCommonParams<RequestUpdateProposalVote>;
 export type AddAccount = ExcludeCommonParams<RequestAddAccount>;
 export type Convert = ExcludeCommonParams<RequestConvert>;
 export type RecurrentTransfer = ExcludeCommonParams<RequestRecurrentTransfer>;
+export {
+  KeychainKeyTypes,
+  KeychainRequestTypes,
+  RequestAddAccountKeys,
+} from 'hive-keychain-commons';
