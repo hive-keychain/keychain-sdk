@@ -1587,3 +1587,6 @@ export class KeychainSDK {
     });
   };
 }
+
+export * from './interfaces/keychain-sdk.interface';
+export * from './interfaces/keychain.interface';
