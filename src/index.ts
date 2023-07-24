@@ -1,6 +1,9 @@
 import { Client } from '@hiveio/dhive';
 import { ExcludeCommonParams } from 'hive-keychain-commons';
-import { RequestSignedCall } from 'hive-keychain-commons/lib/interfaces/keychain';
+import {
+  RequestEncodeMultisig,
+  RequestSignedCall,
+} from 'hive-keychain-commons/lib/interfaces/keychain';
 import { v4 as uuidv4 } from 'uuid';
 import {
   AddAccount,
@@ -246,6 +249,55 @@ export class KeychainSDK {
         this.window.hive_keychain.requestEncodeMessage(
           data.username,
           data.receiver,
+          data.message,
+          data.method,
+          (response: KeychainRequestResponse) => {
+            if (response.error) {
+              reject(response);
+            } else {
+              resolve(response);
+            }
+          },
+        );
+      } catch (error) {
+        throw error;
+      }
+    });
+  };
+  /**
+   * This function is called to allow encoding a message with multiple receivers. This is used in the case of multisig
+   *
+   * @param {String} username Hive account to perform the request
+   * @param {Array<String>} publicKeys Key that can decode the string
+   * @param {String} message Message to be encrypted
+   * @param {String} key Type of key. Can be 'Posting','Active' or 'Memo'
+   *
+   * @example
+   * import { KeychainSDK } from "keychain-sdk";
+   * const keychain = new KeychainSDK(window);
+   * try {
+   *     const encodeMessage = await keychain.encodeMultisig({
+   *       username: 'keychain.tests',
+   *       receiver: ['SMT1...', 'STM2...'],
+   *       message: '#Message to encode, # is required to encrypt',
+   *       method: 'Memo',
+   *     });
+   *     console.log({ encodeMessage });
+   *   } catch (error) {
+   *     console.log({ error });
+   *   }
+   * @param {EncodeMultisig} data
+   * @memberof KeychainSDK
+   */
+  encodeMultisig = async (
+    data: RequestEncodeMultisig,
+  ): Promise<KeychainRequestResponse> => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await this.isKeychainInstalled();
+        this.window.hive_keychain.requestEncodeMultisig(
+          data.username,
+          data.publicKeys,
           data.message,
           data.method,
           (response: KeychainRequestResponse) => {

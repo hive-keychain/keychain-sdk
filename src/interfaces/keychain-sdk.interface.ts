@@ -12,6 +12,7 @@ import {
   RequestDecode,
   RequestDelegation,
   RequestEncode,
+  RequestEncodeMultisig,
   RequestPost,
   RequestPowerDown,
   RequestPowerUp,
@@ -36,6 +37,7 @@ export type Login = {
   title?: string;
 };
 export type Encode = ExcludeCommonParams<RequestEncode>;
+export type Multisig = ExcludeCommonParams<RequestEncodeMultisig>;
 export type Decode = ExcludeCommonParams<RequestDecode>;
 export type SignBuffer = ExcludeCommonParams<RequestSignBuffer>;
 export type AddAccountAuthority =
