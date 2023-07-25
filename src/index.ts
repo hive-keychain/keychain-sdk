@@ -1,7 +1,7 @@
 import { Client } from '@hiveio/dhive';
 import { ExcludeCommonParams } from 'hive-keychain-commons';
 import {
-  RequestEncodeMultisig,
+  RequestEncodeWithKeys,
   RequestSignedCall,
 } from 'hive-keychain-commons/lib/interfaces/keychain';
 import { v4 as uuidv4 } from 'uuid';
@@ -276,9 +276,9 @@ export class KeychainSDK {
    * import { KeychainSDK } from "keychain-sdk";
    * const keychain = new KeychainSDK(window);
    * try {
-   *     const encodeMessage = await keychain.encodeMultisig({
+   *     const encodeMessages = await keychain.encodeWithKeys({
    *       username: 'keychain.tests',
-   *       receiver: ['SMT1...', 'STM2...'],
+   *       publicKeys: ['SMT1...', 'STM2...'],
    *       message: '#Message to encode, # is required to encrypt',
    *       method: 'Memo',
    *     });
@@ -286,16 +286,16 @@ export class KeychainSDK {
    *   } catch (error) {
    *     console.log({ error });
    *   }
-   * @param {EncodeMultisig} data
+   * @param {EncodeWithKeys} data
    * @memberof KeychainSDK
    */
-  encodeMultisig = async (
-    data: RequestEncodeMultisig,
+  encodeWithKeys = async (
+    data: RequestEncodeWithKeys,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
         await this.isKeychainInstalled();
-        this.window.hive_keychain.requestEncodeMultisig(
+        this.window.hive_keychain.requestEncodeWithKeys(
           data.username,
           data.publicKeys,
           data.message,
