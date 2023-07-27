@@ -1,9 +1,6 @@
 import { Client } from '@hiveio/dhive';
 import { ExcludeCommonParams } from 'hive-keychain-commons';
-import {
-  RequestEncodeWithKeys,
-  RequestSignedCall,
-} from 'hive-keychain-commons/lib/interfaces/keychain';
+import { RequestSignedCall } from 'hive-keychain-commons/lib/interfaces/keychain';
 import { v4 as uuidv4 } from 'uuid';
 import {
   AddAccount,
@@ -17,6 +14,7 @@ import {
   Decode,
   Delegation,
   Encode,
+  EncodeWithKeys,
   Login,
   Post,
   PowerDown,
@@ -290,7 +288,7 @@ export class KeychainSDK {
    * @memberof KeychainSDK
    */
   encodeWithKeys = async (
-    data: RequestEncodeWithKeys,
+    data: EncodeWithKeys,
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
