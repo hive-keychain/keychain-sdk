@@ -1,5 +1,5 @@
 import { Client } from '@hiveio/dhive';
-import { ExcludeCommonParams } from 'hive-keychain-commons';
+import { ExcludeCommonParams, IStep } from 'hive-keychain-commons';
 import { RequestSignedCall } from 'hive-keychain-commons/lib/interfaces/keychain';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -27,6 +27,7 @@ import {
   SendToken,
   SignBuffer,
   SignTx,
+  Swap,
   Transfer,
   UpdateProposalVote,
   Vote,
@@ -1636,7 +1637,44 @@ export class KeychainSDK {
       }
     });
   };
-}
 
+  swap = {
+    getEstimation: async (
+      amount: number,
+      startToken: string,
+      endToken: string,
+    ): Promise<IStep[]> => {
+      const res = await fetch(
+        `${SwapConfig.baseURL}/token-swap/estimate/${startToken}/${endToken}/${amount}`,
+      );
+      return res.json();
+    },
+    start: async (data: Swap, options: KeychainOptions = {}) => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await this.isKeychainInstalled();
+          this.window.hive_keychain.requestSwap(
+            data.username,
+            data.startToken,
+            data.endToken,
+            data.amount,
+            data.slippage,
+            data.steps,
+            (response: KeychainRequestResponse) => {
+              if (response.error) {
+                reject(response);
+              } else {
+                resolve(response);
+              }
+            },
+            options.rpc,
+          );
+        } catch (error) {
+          throw error;
+        }
+      });
+    },
+  };
+}
 export * from './interfaces/keychain-sdk.interface';
 export * from './interfaces/keychain.interface';

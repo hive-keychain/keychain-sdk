@@ -24,6 +24,7 @@ import {
   RequestSendToken,
   RequestSignBuffer,
   RequestSignTx,
+  RequestSwap,
   RequestTransfer,
   RequestUpdateProposalVote,
   RequestVote,
@@ -66,6 +67,7 @@ export type UpdateProposalVote = ExcludeCommonParams<RequestUpdateProposalVote>;
 export type AddAccount = ExcludeCommonParams<RequestAddAccount>;
 export type Convert = ExcludeCommonParams<RequestConvert>;
 export type RecurrentTransfer = ExcludeCommonParams<RequestRecurrentTransfer>;
+export type Swap = ExcludeCommonParams<RequestSwap>;
 export {
   KeychainKeyTypes,
   KeychainRequestTypes,
