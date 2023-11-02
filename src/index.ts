@@ -39,6 +39,7 @@ import {
   KeychainSignTxRequestResponse,
 } from './interfaces/keychain.interface';
 import { getLoginError } from './utils/login';
+import { SwapConfig } from './utils/swap';
 const Dhive = require('@hiveio/dhive');
 
 const client = new Client([
