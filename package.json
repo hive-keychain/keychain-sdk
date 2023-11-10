@@ -1,6 +1,6 @@
 {
   "name": "keychain-sdk",
-  "version": "0.5.0",
+  "version": "0.6",
   "description": "A simpler way to handle Hive Keychain requests",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

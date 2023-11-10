@@ -39,7 +39,7 @@ import {
   KeychainSignTxRequestResponse,
 } from './interfaces/keychain.interface';
 import { getLoginError } from './utils/login';
-import { SwapConfig } from './utils/swap';
+import { SwapConf, SwapConfig, getConfig, getServerStatus } from './utils/swap';
 const Dhive = require('@hiveio/dhive');
 
 const client = new Client([
@@ -1640,16 +1640,61 @@ export class KeychainSDK {
   };
 
   swap = {
+    /**
+     * @description
+     * Request a swap estimation
+     * @example
+     * import { KeychainSDK } from "keychain-sdk";
+     * const keychain = new KeychainSDK(window);
+     *  try {
+     *     const steps = await keychain.swaps.getEstimation(
+     *       {
+     *         username: 'keychain.tests',
+     *         to: 'keychain.tests',
+     *         amount: '1.000',
+     *         currency: 'HIVE',
+     *         memo: 'Keychain SDK tests rt',
+     *         recurrence: 24,
+     *         executions: 2,
+     *         extensions: [],
+     *       },
+     *     );
+     *     console.log({ recurrentTransfer });
+     *   } catch (error) {
+     *     console.log({ error});
+     *   }
+     * @param {RecurrentTransfer} data
+     * @param {KeychainOptions=} options
+     * @memberof KeychainSDK
+     */
     getEstimation: async (
       amount: number,
       startToken: string,
       endToken: string,
-    ): Promise<IStep[]> => {
-      const res = await fetch(
-        `${SwapConfig.baseURL}/token-swap/estimate/${startToken}/${endToken}/${amount}`,
-      );
-      return res.json();
+      swapConfig: SwapConfig,
+    ) => {
+      const req = await (
+        await fetch(
+          `${SwapConf.baseURL}/token-swap/estimate/${startToken}/${endToken}/${
+            amount + ''
+          }`,
+        )
+      ).json();
+      if (req.error) throw new Error(req.error.message);
+
+      const steps: IStep[] = req.result;
+      const estimationBeforeFee = steps[steps.length - 1].estimate;
+      const feePct = swapConfig.fee.amount;
+
+      return {
+        steps,
+        feePct,
+        estimationBeforeFee,
+        estimationAfterFee: estimationBeforeFee * (1 - feePct / 100),
+      };
     },
+    getConfig: getConfig,
+    getServerStatus: getServerStatus,
     start: async (data: Swap, options: KeychainOptions = {}) => {
       return new Promise(async (resolve, reject) => {
         try {
