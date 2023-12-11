@@ -1,6 +1,6 @@
 {
   "name": "keychain-sdk",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "A simpler way to handle Hive Keychain requests",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -37,7 +37,7 @@
   "dependencies": {
     "@types/node": "^18.11.18",
     "axios": "^1.3.0",
-    "hive-keychain-commons": "^1.2.3",
+    "hive-keychain-commons": "^1.2.4",
     "uuid": "^9.0.0"
   }
 }
