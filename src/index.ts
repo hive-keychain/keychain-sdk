@@ -37,6 +37,7 @@ import {
   KeychainOptions,
   KeychainRequestResponse,
   KeychainSignTxRequestResponse,
+  KeychainSwapRequestResponse,
 } from './interfaces/keychain.interface';
 import { getLoginError } from './utils/login';
 import { SwapConf, SwapConfig, getConfig, getServerStatus } from './utils/swap';
@@ -1695,7 +1696,10 @@ export class KeychainSDK {
     },
     getConfig: getConfig,
     getServerStatus: getServerStatus,
-    start: async (data: Swap, options: KeychainOptions = {}) => {
+    start: async (
+      data: Swap,
+      options: KeychainOptions = {},
+    ): Promise<KeychainSwapRequestResponse> => {
       return new Promise(async (resolve, reject) => {
         try {
           await this.isKeychainInstalled();
@@ -1706,7 +1710,7 @@ export class KeychainSDK {
             data.amount,
             data.slippage,
             data.steps,
-            (response: KeychainRequestResponse) => {
+            (response: KeychainSwapRequestResponse) => {
               if (response.error) {
                 reject(response);
               } else {

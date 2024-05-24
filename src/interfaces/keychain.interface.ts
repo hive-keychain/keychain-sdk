@@ -22,6 +22,10 @@ export interface KeychainRequestResponse {
   publicKey?: string;
 }
 
+export interface KeychainSwapRequestResponse extends KeychainRequestResponse {
+  result?: KeychainTransactionResult & { swap_id: string };
+}
+
 export interface KeychainSignTxRequestResponse
   extends Omit<KeychainRequestResponse, 'result'> {
   result: SignedTransaction;
