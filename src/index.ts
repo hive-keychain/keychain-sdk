@@ -1710,6 +1710,8 @@ export class KeychainSDK {
             data.amount,
             data.slippage,
             data.steps,
+            data.partnerUsername,
+            data.partnerFee,
             (response: KeychainSwapRequestResponse) => {
               if (response.error) {
                 reject(response);
