@@ -37,7 +37,7 @@
   "dependencies": {
     "@types/node": "^18.11.18",
     "axios": "^1.3.0",
-    "hive-keychain-commons": "^1.2.4",
+    "hive-keychain-commons": "^1.2.6",
     "uuid": "^9.0.0"
   }
 }
