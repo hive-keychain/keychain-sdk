@@ -1710,8 +1710,6 @@ export class KeychainSDK {
             data.amount,
             data.slippage,
             data.steps,
-            data.partnerUsername,
-            data.partnerFee,
             (response: KeychainSwapRequestResponse) => {
               if (response.error) {
                 reject(response);
@@ -1720,6 +1718,8 @@ export class KeychainSDK {
               }
             },
             options.rpc,
+            data.partnerUsername,
+            data.partnerFee,
           );
         } catch (error) {
           throw error;
