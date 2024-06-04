@@ -28,4 +28,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added swap requestests
+- Added swap requests
+
+## [0.7.0] - 2024-06-04
+
+### Changed
+
+- Swap requests now accept `partnerFee` and `partnerUsername` parameters
