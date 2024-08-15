@@ -1744,6 +1744,7 @@ export class KeychainSDK {
             data.contractId,
             data.action,
             data.payload,
+            data.method,
             (response: KeychainRequestResponse) => {
               if (response.error) {
                 reject(response);
