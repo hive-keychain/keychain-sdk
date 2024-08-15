@@ -35,3 +35,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Swap requests now accept `partnerFee` and `partnerUsername` parameters
+
+## [0.8.0] - 2024-08-15
+
+### Added
+
+- Added VSC contract call requests
