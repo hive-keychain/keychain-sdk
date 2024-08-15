@@ -28,6 +28,7 @@ import {
   RequestTransfer,
   RequestUpdateProposalVote,
   RequestVote,
+  RequestVscCallContract,
   RequestWitnessVote,
 } from 'hive-keychain-commons';
 
@@ -68,6 +69,7 @@ export type AddAccount = ExcludeCommonParams<RequestAddAccount>;
 export type Convert = ExcludeCommonParams<RequestConvert>;
 export type RecurrentTransfer = ExcludeCommonParams<RequestRecurrentTransfer>;
 export type Swap = ExcludeCommonParams<RequestSwap>;
+export type VscCallContract = ExcludeCommonParams<RequestVscCallContract>;
 export {
   KeychainKeyTypes,
   KeychainRequestTypes,

@@ -31,6 +31,7 @@ import {
   Transfer,
   UpdateProposalVote,
   Vote,
+  VscCallContract,
   WitnessVote,
 } from './interfaces/keychain-sdk.interface';
 import {
@@ -1720,6 +1721,37 @@ export class KeychainSDK {
             options.rpc,
             data.partnerUsername,
             data.partnerFee,
+          );
+        } catch (error) {
+          throw error;
+        }
+      });
+    },
+  };
+  vsc = {
+    callContract: async (
+      data: VscCallContract,
+      options: KeychainOptions = {},
+    ): Promise<KeychainRequestResponse> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          console.warn(
+            'BETA : vsc.callContract is in local Beta. Use `feature/vsc-requests branch of Keychain for testing. Do not use in production at this stage.',
+          );
+          await this.isKeychainInstalled();
+          this.window.hive_keychain.requestVscCallContract(
+            data.username,
+            data.contractId,
+            data.action,
+            data.payload,
+            (response: KeychainRequestResponse) => {
+              if (response.error) {
+                reject(response);
+              } else {
+                resolve(response);
+              }
+            },
+            options.rpc ?? this.options?.rpc,
           );
         } catch (error) {
           throw error;
