@@ -1770,7 +1770,7 @@ export class KeychainSDK {
             'BETA : vsc.callContract is in local Beta. Use `feature/vsc-requests branch of Keychain for testing. Do not use in production at this stage.',
           );
           await this.isKeychainInstalled();
-          this.window.hive_keychain.RequestVscDeposit(
+          this.window.hive_keychain.requestVscDeposit(
             data.username,
             data.address,
             data.address,
