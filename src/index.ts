@@ -1767,13 +1767,13 @@ export class KeychainSDK {
       return new Promise(async (resolve, reject) => {
         try {
           console.warn(
-            'BETA : vsc.callContract is in local Beta. Use `feature/vsc-requests branch of Keychain for testing. Do not use in production at this stage.',
+            'BETA : vsc.deposit is in local Beta. Use `feature/vsc-requests branch of Keychain for testing. Do not use in production at this stage.',
           );
           await this.isKeychainInstalled();
           this.window.hive_keychain.requestVscDeposit(
             data.username,
             data.address,
-            data.address,
+            data.amount,
             data.currency,
             (response: KeychainRequestResponse) => {
               if (response.error) {
