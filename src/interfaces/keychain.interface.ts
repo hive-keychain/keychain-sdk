@@ -4,6 +4,10 @@ export interface KeychainOptions {
   rpc?: string;
 }
 
+export interface VscOptions extends KeychainOptions {
+  netId?: string;
+}
+
 export interface KeychainRequestResponse {
   success: boolean;
   error: string;

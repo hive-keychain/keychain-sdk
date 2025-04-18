@@ -47,3 +47,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added VSC deposit requests
+
+## [0.9.0] - 2024-08-16
+
+### Added
+
+- Added VSC transfer, staking and withdrawal requests

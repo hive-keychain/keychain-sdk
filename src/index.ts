@@ -33,6 +33,9 @@ import {
   Vote,
   VscCallContract,
   VscDeposit,
+  VscStaking,
+  VscTransfer,
+  VscWithdrawal,
   WitnessVote,
 } from './interfaces/keychain-sdk.interface';
 import {
@@ -40,6 +43,7 @@ import {
   KeychainRequestResponse,
   KeychainSignTxRequestResponse,
   KeychainSwapRequestResponse,
+  VscOptions,
 } from './interfaces/keychain.interface';
 import { getLoginError } from './utils/login';
 import { SwapConf, SwapConfig, getConfig, getServerStatus } from './utils/swap';
@@ -1736,9 +1740,6 @@ export class KeychainSDK {
     ): Promise<KeychainRequestResponse> => {
       return new Promise(async (resolve, reject) => {
         try {
-          console.warn(
-            'BETA : vsc.callContract is in local Beta. Use `feature/vsc-requests branch of Keychain for testing. Do not use in production at this stage.',
-          );
           await this.isKeychainInstalled();
           this.window.hive_keychain.requestVscCallContract(
             data.username,
@@ -1766,13 +1767,9 @@ export class KeychainSDK {
     ): Promise<KeychainRequestResponse> => {
       return new Promise(async (resolve, reject) => {
         try {
-          console.warn(
-            'BETA : vsc.deposit is in local Beta. Use `feature/vsc-requests branch of Keychain for testing. Do not use in production at this stage.',
-          );
           await this.isKeychainInstalled();
           this.window.hive_keychain.requestVscDeposit(
             data.username,
-            data.address,
             data.amount,
             data.currency,
             (response: KeychainRequestResponse) => {
@@ -1782,6 +1779,92 @@ export class KeychainSDK {
                 resolve(response);
               }
             },
+            data.to,
+            options.rpc ?? this.options?.rpc,
+          );
+        } catch (error) {
+          throw error;
+        }
+      });
+    },
+
+    withdraw: async (
+      data: VscWithdrawal,
+      options: VscOptions = {},
+    ): Promise<KeychainRequestResponse> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await this.isKeychainInstalled();
+          this.window.hive_keychain.requestVscWithdrawal(
+            data.username,
+            data.to,
+            data.amount,
+            data.currency,
+            data.memo,
+            (response: KeychainRequestResponse) => {
+              if (response.error) {
+                reject(response);
+              } else {
+                resolve(response);
+              }
+            },
+            options.netId,
+            options.rpc ?? this.options?.rpc,
+          );
+        } catch (error) {
+          throw error;
+        }
+      });
+    },
+    transfer: async (
+      data: VscTransfer,
+      options: VscOptions = {},
+    ): Promise<KeychainRequestResponse> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await this.isKeychainInstalled();
+          this.window.hive_keychain.requestVscTransfer(
+            data.username,
+            data.to,
+            data.amount,
+            data.currency,
+            data.memo,
+            (response: KeychainRequestResponse) => {
+              if (response.error) {
+                reject(response);
+              } else {
+                resolve(response);
+              }
+            },
+            options.netId,
+            options.rpc ?? this.options?.rpc,
+          );
+        } catch (error) {
+          throw error;
+        }
+      });
+    },
+    staking: async (
+      data: VscStaking,
+      options: VscOptions = {},
+    ): Promise<KeychainRequestResponse> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await this.isKeychainInstalled();
+          this.window.hive_keychain.requestVscStaking(
+            data.username,
+            data.to,
+            data.amount,
+            data.currency,
+            data.operation,
+            (response: KeychainRequestResponse) => {
+              if (response.error) {
+                reject(response);
+              } else {
+                resolve(response);
+              }
+            },
+            options.netId,
             options.rpc ?? this.options?.rpc,
           );
         } catch (error) {

@@ -29,7 +29,10 @@ import {
   RequestUpdateProposalVote,
   RequestVote,
   RequestVscCallContract,
-  RequestVscCDeposit,
+  RequestVscDeposit,
+  RequestVscStaking,
+  RequestVscTransfer,
+  RequestVscWithdrawal,
   RequestWitnessVote,
 } from 'hive-keychain-commons';
 
@@ -71,9 +74,13 @@ export type Convert = ExcludeCommonParams<RequestConvert>;
 export type RecurrentTransfer = ExcludeCommonParams<RequestRecurrentTransfer>;
 export type Swap = ExcludeCommonParams<RequestSwap>;
 export type VscCallContract = ExcludeCommonParams<RequestVscCallContract>;
-export type VscDeposit = ExcludeCommonParams<RequestVscCDeposit>;
+export type VscDeposit = ExcludeCommonParams<RequestVscDeposit>;
+export type VscWithdrawal = ExcludeCommonParams<RequestVscWithdrawal>;
+export type VscTransfer = ExcludeCommonParams<RequestVscTransfer>;
+export type VscStaking = ExcludeCommonParams<RequestVscStaking>;
 export {
   KeychainKeyTypes,
   KeychainRequestTypes,
   RequestAddAccountKeys,
+  VscStakingOperation,
 } from 'hive-keychain-commons';
