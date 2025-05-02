@@ -1,6 +1,15 @@
 import { Client } from '@hiveio/dhive';
-import { ExcludeCommonParams, IStep } from 'hive-keychain-commons';
-import { RequestSignedCall } from 'hive-keychain-commons/lib/interfaces/keychain';
+import {
+  ExcludeCommonParams,
+  IStep,
+  VscHistoryType,
+  VscStatus,
+  VscUtils,
+} from 'hive-keychain-commons';
+import {
+  KeychainRequestTypes,
+  RequestSignedCall,
+} from 'hive-keychain-commons/lib/interfaces/keychain';
 import { v4 as uuidv4 } from 'uuid';
 import {
   AddAccount,
@@ -1870,6 +1879,38 @@ export class KeychainSDK {
         } catch (error) {
           throw error;
         }
+      });
+    },
+    awaitConfirmation: async (
+      response: KeychainRequestResponse,
+      timeoutSeconds = 60,
+    ): Promise<VscStatus> => {
+      return new Promise(async (resolve, reject) => {
+        let vscType = VscHistoryType.TRANSFER;
+        switch (response.data.type) {
+          case KeychainRequestTypes.vscDeposit:
+            vscType = VscHistoryType.DEPOSIT;
+            break;
+          case KeychainRequestTypes.vscWithdrawal:
+            vscType = VscHistoryType.WITHDRAW;
+            break;
+          case KeychainRequestTypes.vscTransfer:
+            vscType = VscHistoryType.TRANSFER;
+            break;
+          case KeychainRequestTypes.vscStaking:
+            vscType = VscHistoryType.STAKING;
+            break;
+          default:
+            break;
+        }
+        resolve(
+          await VscUtils.waitForStatus(
+            response.result?.tx_id!,
+            vscType,
+            timeoutSeconds,
+            VscStatus.CONFIRMED,
+          ),
+        );
       });
     },
   };
