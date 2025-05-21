@@ -145,7 +145,7 @@ export class KeychainSDK {
             resolve(true);
           });
         } catch (error) {
-          throw error;
+          resolve(false);
         }
       } else {
         resolve(false);
