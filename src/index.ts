@@ -1610,7 +1610,6 @@ export class KeychainSDK {
    *         memo: 'Keychain SDK tests rt',
    *         recurrence: 24,
    *         executions: 2,
-   *         extensions: [],
    *       },
    *     );
    *     console.log({ recurrentTransfer });
@@ -1644,6 +1643,7 @@ export class KeychainSDK {
             }
           },
           options.rpc ?? this.options?.rpc,
+          data.pair_id,
         );
       } catch (error) {
         throw error;
