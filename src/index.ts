@@ -186,7 +186,11 @@ export class KeychainSDK {
   login = async (data: Login): Promise<any> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestSignBuffer(
           data.username,
           data.message ?? uuidv4(),
@@ -227,7 +231,7 @@ export class KeychainSDK {
           data.title,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -257,7 +261,11 @@ export class KeychainSDK {
   encode = async (data: Encode): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestEncodeMessage(
           data.username,
           data.receiver,
@@ -272,7 +280,7 @@ export class KeychainSDK {
           },
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -306,7 +314,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestEncodeWithKeys(
           data.username,
           data.publicKeys,
@@ -321,7 +333,7 @@ export class KeychainSDK {
           },
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -349,7 +361,11 @@ export class KeychainSDK {
   decode = async (data: Decode): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestVerifyKey(
           data.username,
           data.message,
@@ -363,7 +379,7 @@ export class KeychainSDK {
           },
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -393,7 +409,11 @@ export class KeychainSDK {
   signBuffer = async (data: SignBuffer): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestSignBuffer(
           data.username,
           data.message,
@@ -409,7 +429,7 @@ export class KeychainSDK {
           data.title,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -445,7 +465,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestAddAccountAuthority(
           data.username,
           data.authorizedUsername,
@@ -461,7 +485,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -496,7 +520,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestRemoveAccountAuthority(
           data.username,
           data.authorizedUsername,
@@ -511,7 +539,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -547,7 +575,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestAddKeyAuthority(
           data.username,
           data.authorizedKey,
@@ -563,7 +595,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -598,7 +630,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestRemoveKeyAuthority(
           data.username,
           data.authorizedKey,
@@ -613,7 +649,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -656,7 +692,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestBroadcast(
           data.username,
           typeof data.operations === 'string'
@@ -673,7 +713,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -724,7 +764,11 @@ export class KeychainSDK {
   signTx = async (data: SignTx): Promise<KeychainSignTxRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestSignTx(
           data.username,
           data.tx,
@@ -738,7 +782,7 @@ export class KeychainSDK {
           },
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -757,10 +801,14 @@ export class KeychainSDK {
   ): Promise<string> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         resolve('requestSignedCall has been deprecated.');
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -811,7 +859,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestPost(
           data.username,
           data.title,
@@ -831,7 +883,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -865,7 +917,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestVote(
           data.username,
           data.permlink,
@@ -881,7 +937,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -920,7 +976,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestCustomJson(
           data.username,
           data.id,
@@ -937,7 +997,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -973,7 +1033,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestTransfer(
           data.username,
           data.to,
@@ -991,7 +1055,7 @@ export class KeychainSDK {
           options.rpc ? options.rpc : this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1026,7 +1090,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestSendToken(
           data.username,
           data.to,
@@ -1043,7 +1111,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1077,7 +1145,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestDelegation(
           data.username,
           data.delegatee,
@@ -1093,7 +1165,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1126,7 +1198,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestWitnessVote(
           data.username,
           data.witness,
@@ -1141,7 +1217,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1173,7 +1249,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestProxy(
           data.username,
           data.proxy,
@@ -1187,7 +1267,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1220,7 +1300,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestPowerUp(
           data.username,
           data.recipient,
@@ -1235,7 +1319,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1267,7 +1351,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestPowerDown(
           data.username,
           data.hive_power,
@@ -1281,7 +1369,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1323,7 +1411,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestCreateClaimedAccount(
           data.username,
           data.new_account,
@@ -1341,7 +1433,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1380,7 +1472,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestCreateProposal(
           data.username,
           data.receiver,
@@ -1400,7 +1496,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1431,7 +1527,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestRemoveProposal(
           data.username,
           data.proposal_ids,
@@ -1446,7 +1546,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1480,7 +1580,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestUpdateProposalVote(
           data.username,
           data.proposal_ids,
@@ -1496,7 +1600,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1528,7 +1632,11 @@ export class KeychainSDK {
   addAccount = async (data: AddAccount): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestAddAccount(
           data.username,
           data.keys,
@@ -1541,7 +1649,7 @@ export class KeychainSDK {
           },
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1574,7 +1682,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestConversion(
           data.username,
           data.amount,
@@ -1589,7 +1701,7 @@ export class KeychainSDK {
           options.rpc ?? this.options?.rpc,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1626,7 +1738,11 @@ export class KeychainSDK {
   ): Promise<KeychainRequestResponse> => {
     return new Promise(async (resolve, reject) => {
       try {
-        await this.isKeychainInstalled();
+        const isInstalled = await this.isKeychainInstalled();
+        if (!isInstalled) {
+          reject(new Error('Hive Keychain is not installed'));
+          return;
+        }
         this.window.hive_keychain.requestRecurrentTransfer(
           data.username,
           data.to,
@@ -1646,7 +1762,7 @@ export class KeychainSDK {
           data.pair_id,
         );
       } catch (error) {
-        throw error;
+        reject(error);
       }
     });
   };
@@ -1713,7 +1829,11 @@ export class KeychainSDK {
     ): Promise<KeychainSwapRequestResponse> => {
       return new Promise(async (resolve, reject) => {
         try {
-          await this.isKeychainInstalled();
+          const isInstalled = await this.isKeychainInstalled();
+          if (!isInstalled) {
+            reject(new Error('Hive Keychain is not installed'));
+            return;
+          }
           this.window.hive_keychain.requestSwap(
             data.username,
             data.startToken,
@@ -1733,7 +1853,7 @@ export class KeychainSDK {
             data.partnerFee,
           );
         } catch (error) {
-          throw error;
+          reject(error);
         }
       });
     },
@@ -1745,7 +1865,11 @@ export class KeychainSDK {
     ): Promise<KeychainRequestResponse> => {
       return new Promise(async (resolve, reject) => {
         try {
-          await this.isKeychainInstalled();
+          const isInstalled = await this.isKeychainInstalled();
+          if (!isInstalled) {
+            reject(new Error('Hive Keychain is not installed'));
+            return;
+          }
           this.window.hive_keychain.requestVscCallContract(
             data.username,
             data.contractId,
@@ -1762,7 +1886,7 @@ export class KeychainSDK {
             options.rpc ?? this.options?.rpc,
           );
         } catch (error) {
-          throw error;
+          reject(error);
         }
       });
     },
@@ -1772,7 +1896,11 @@ export class KeychainSDK {
     ): Promise<KeychainRequestResponse> => {
       return new Promise(async (resolve, reject) => {
         try {
-          await this.isKeychainInstalled();
+          const isInstalled = await this.isKeychainInstalled();
+          if (!isInstalled) {
+            reject(new Error('Hive Keychain is not installed'));
+            return;
+          }
           this.window.hive_keychain.requestVscDeposit(
             data.username,
             data.amount,
@@ -1788,7 +1916,7 @@ export class KeychainSDK {
             options.rpc ?? this.options?.rpc,
           );
         } catch (error) {
-          throw error;
+          reject(error);
         }
       });
     },
@@ -1799,7 +1927,11 @@ export class KeychainSDK {
     ): Promise<KeychainRequestResponse> => {
       return new Promise(async (resolve, reject) => {
         try {
-          await this.isKeychainInstalled();
+          const isInstalled = await this.isKeychainInstalled();
+          if (!isInstalled) {
+            reject(new Error('Hive Keychain is not installed'));
+            return;
+          }
           this.window.hive_keychain.requestVscWithdrawal(
             data.username,
             data.to,
@@ -1817,7 +1949,7 @@ export class KeychainSDK {
             options.rpc ?? this.options?.rpc,
           );
         } catch (error) {
-          throw error;
+          reject(error);
         }
       });
     },
@@ -1827,7 +1959,11 @@ export class KeychainSDK {
     ): Promise<KeychainRequestResponse> => {
       return new Promise(async (resolve, reject) => {
         try {
-          await this.isKeychainInstalled();
+          const isInstalled = await this.isKeychainInstalled();
+          if (!isInstalled) {
+            reject(new Error('Hive Keychain is not installed'));
+            return;
+          }
           this.window.hive_keychain.requestVscTransfer(
             data.username,
             data.to,
@@ -1845,7 +1981,7 @@ export class KeychainSDK {
             options.rpc ?? this.options?.rpc,
           );
         } catch (error) {
-          throw error;
+          reject(error);
         }
       });
     },
@@ -1855,7 +1991,11 @@ export class KeychainSDK {
     ): Promise<KeychainRequestResponse> => {
       return new Promise(async (resolve, reject) => {
         try {
-          await this.isKeychainInstalled();
+          const isInstalled = await this.isKeychainInstalled();
+          if (!isInstalled) {
+            reject(new Error('Hive Keychain is not installed'));
+            return;
+          }
           this.window.hive_keychain.requestVscStaking(
             data.username,
             data.to,
@@ -1873,7 +2013,7 @@ export class KeychainSDK {
             options.rpc ?? this.options?.rpc,
           );
         } catch (error) {
-          throw error;
+          reject(error);
         }
       });
     },
@@ -1895,3 +2035,4 @@ export class KeychainSDK {
 }
 export * from './interfaces/keychain-sdk.interface';
 export * from './interfaces/keychain.interface';
+
