@@ -59,3 +59,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added VSC waitForComfirmation method
+
+## [0.11.0] - 2026-02-03
+
+- Added Savings request

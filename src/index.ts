@@ -29,6 +29,8 @@ import {
   RemoveAccountAuthority,
   RemoveKeyAuthority,
   RemoveProposal,
+  SavingsDeposit,
+  SavingsWithdraw,
   SendToken,
   SignBuffer,
   SignTx,
@@ -1649,6 +1651,65 @@ export class KeychainSDK {
         throw error;
       }
     });
+  };
+
+  savings = {
+    deposit: async (
+      data: SavingsDeposit,
+      options: KeychainOptions = {},
+    ): Promise<KeychainRequestResponse> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await this.isKeychainInstalled();
+          this.window.hive_keychain.requestSavingsOperation(
+            data.username,
+            data.to,
+            data.amount,
+            data.currency,
+            'deposit',
+            data.memo,
+            (response: KeychainRequestResponse) => {
+              if (response.error) {
+                reject(response);
+              } else {
+                resolve(response);
+              }
+            },
+            options.rpc ?? this.options?.rpc,
+          );
+        } catch (error) {
+          throw error;
+        }
+      });
+    },
+    withdraw: async (
+      data: SavingsWithdraw,
+      options: KeychainOptions = {},
+    ): Promise<KeychainRequestResponse> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await this.isKeychainInstalled();
+          this.window.hive_keychain.requestSavingsOperation(
+            data.username,
+            data.to,
+            data.amount,
+            data.currency,
+            'withdraw',
+            data.memo,
+            (response: KeychainRequestResponse) => {
+              if (response.error) {
+                reject(response);
+              } else {
+                resolve(response);
+              }
+            },
+            options.rpc ?? this.options?.rpc,
+          );
+        } catch (error) {
+          throw error;
+        }
+      });
+    },
   };
 
   swap = {

@@ -21,6 +21,7 @@ import {
   RequestRemoveAccountAuthority,
   RequestRemoveKeyAuthority,
   RequestRemoveProposal,
+  RequestSavings,
   RequestSendToken,
   RequestSignBuffer,
   RequestSignTx,
@@ -58,6 +59,8 @@ export type Post = ExcludeCommonParams<RequestPost>;
 export type Vote = ExcludeCommonParams<RequestVote>;
 export type Custom = ExcludeCommonParams<RequestCustomJSON>;
 export type Transfer = ExcludeCommonParams<RequestTransfer>;
+export type SavingsDeposit = Omit<ExcludeCommonParams<RequestSavings>, 'operation'>;
+export type SavingsWithdraw = Omit<ExcludeCommonParams<RequestSavings>, 'operation'>;
 export type SendToken = ExcludeCommonParams<RequestSendToken>;
 export type Delegation = ExcludeCommonParams<RequestDelegation>;
 export type WitnessVote = ExcludeCommonParams<RequestWitnessVote>;
